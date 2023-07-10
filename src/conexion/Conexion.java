@@ -15,8 +15,8 @@ public class Conexion {
         try {
             Class.forName("oracle.jdbc.OracleDriver");
             url = "jdbc:oracle:thin:@//localhost:1521/orcl";
-            usuario = "HR";
-            pass = "123";
+            usuario = "PROYECTO";
+            pass = "12345";
 
             conexion = DriverManager.getConnection(url, usuario, pass);
             System.out.println("Conecion exitosa");
@@ -35,24 +35,23 @@ public class Conexion {
         }
     }
 
-    public void Select() {
+    public void SelectDePrueba() {
         try {
             Statement sa = conexion.createStatement();
-            String consulta = "SELECT EMPLOYEE_ID, FIRST_NAME, EMAIL FROM HR.EMPLOYEES";
+            String consulta = "SELECT * FROM PROYECTO.CATEGORIA";
             ResultSet rs = sa.executeQuery(consulta);
 
             while (rs.next()) {
-                Integer id = rs.getInt("EMPLOYEE_ID");
-                String firstName = rs.getString("FIRST_NAME");
-                String email = rs.getString("EMAIL");
-
-                System.out.println("ID: " + id + "NAme: " + firstName + " EMAIL: " + email);
+                Integer id = rs.getInt("ID_CATEGORIA");
+                String categoria = rs.getString("NOMBRE_CATEGORIA");
+             
+                System.out.println("ID: " + id + " || NOMBRE CATEGORIA: " + categoria);
             }
 
             sa.close();
 
         } catch (Exception e) {
-            System.out.println("Error en el select " + e);
+            System.out.println("Error en el select o no hay datos" + e);
         }
     }
 }

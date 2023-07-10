@@ -1,0 +1,35 @@
+/* Primero creamos un table space en SQL PLUS */
+ALTER SESSION SET "_ORACLE_SCRIPT" = TRUE;
+CREATE TABLESPACE VETERINARIA
+DATAFILE 'vet.dbf'
+SIZE 10M
+AUTOEXTEND ON NEXT 10M;
+
+/* Creamos el usuario */
+CREATE USER PROYECTO
+IDENTIFIED BY 12345
+DEFAULT TABLESPACE VETERINARIA;
+GRANT DBA TO PROYECTO;
+
+CONNECT PROYECTO/12345;
+
+/* Creamos las tablas */
+CREATE TABLE Categoria (id_categoria number(10) GENERATED AS IDENTITY, nombre_categoria varchar2(30) NOT NULL, PRIMARY KEY (id_categoria));
+CREATE TABLE Cita (id_cita number(10) GENERATED AS IDENTITY, fecha date NOT NULL, hora varchar2(20) NOT NULL, id_empleado number(10) NOT NULL, id_mascota number(10) NOT NULL, PRIMARY KEY (id_cita));
+CREATE TABLE Empleado (id_empleado number(10) GENERATED AS IDENTITY, carnet varchar2(10) NOT NULL, contrasenna varchar2(10) NOT NULL, id_persona number(10) NOT NULL, estado number NOT NULL, id_servicio number(10) NOT NULL, PRIMARY KEY (id_empleado));
+CREATE TABLE Especie (id_especie number(10) GENERATED AS IDENTITY, nombre_especie varchar2(35) NOT NULL, PRIMARY KEY (id_especie));
+CREATE TABLE Hospitalizacion (id_hospitalizacion number(10) GENERATED AS IDENTITY, id_mascota number(10) NOT NULL, fecha_entrada date NOT NULL, descripcion varchar2(100) NOT NULL, precio float(10), PRIMARY KEY (id_hospitalizacion));
+CREATE TABLE Mascota (id_mascota number(10) GENERATED AS IDENTITY, id_persona number(10) NOT NULL, nombre_mascota varchar2(30) NOT NULL, id_especie number(10) NOT NULL, raza varchar2(50), edad number(10), peso float(10), genero varchar2(10), esterilizada number, PRIMARY KEY (id_mascota));
+CREATE TABLE Persona (id_persona number(10) GENERATED AS IDENTITY, nombre varchar2(20) NOT NULL, primer_apellido varchar2(25) NOT NULL, segundo_apellido varchar2(20), telefono varchar2(8), correo varchar2(20) NOT NULL, id_rol number(10) NOT NULL, PRIMARY KEY (id_persona));
+CREATE TABLE Producto (id_producto number(10) GENERATED AS IDENTITY, codigo varchar2(8) NOT NULL, id_categoria number(10) NOT NULL, nombre varchar2(25) NOT NULL, precio float(10) NOT NULL, cantidad number(10) NOT NULL, imagen varchar2(255), PRIMARY KEY (id_producto));
+CREATE TABLE Rol (id_rol number(10) GENERATED AS IDENTITY, nombre_rol varchar2(15) NOT NULL, PRIMARY KEY (id_rol));
+CREATE TABLE Servicio (id_servicio number(10) GENERATED AS IDENTITY, nombre_servicio varchar2(15) NOT NULL, precio float(10) NOT NULL, PRIMARY KEY (id_servicio));
+ALTER TABLE Producto ADD CONSTRAINT FK_categoria FOREIGN KEY (id_categoria) REFERENCES Categoria (id_categoria);
+ALTER TABLE Cita ADD CONSTRAINT FK_empleado FOREIGN KEY (id_empleado) REFERENCES Empleado (id_empleado);
+ALTER TABLE Mascota ADD CONSTRAINT FK_especie FOREIGN KEY (id_especie) REFERENCES Especie (id_especie);
+ALTER TABLE Cita ADD CONSTRAINT FK_mascota_cita FOREIGN KEY (id_mascota) REFERENCES Mascota (id_mascota);
+ALTER TABLE Hospitalizacion ADD CONSTRAINT FK_mascota_hospitalizacion FOREIGN KEY (id_mascota) REFERENCES Mascota (id_mascota);
+ALTER TABLE Empleado ADD CONSTRAINT FK_persona FOREIGN KEY (id_persona) REFERENCES Persona (id_persona);
+ALTER TABLE Mascota ADD CONSTRAINT FK_persona_mascota FOREIGN KEY (id_persona) REFERENCES Persona (id_persona);
+ALTER TABLE Persona ADD CONSTRAINT FK_rol FOREIGN KEY (id_rol) REFERENCES Rol (id_rol);
+ALTER TABLE Empleado ADD CONSTRAINT FK_servicio FOREIGN KEY (id_servicio) REFERENCES Servicio (id_servicio);

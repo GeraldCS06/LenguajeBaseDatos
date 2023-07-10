@@ -1,23 +1,24 @@
-
 package proyectoveterinaria;
 
+import GUI.Frm_Menu_administrador;
 import conexion.Conexion;
 
 public class ProyectoVeterinaria {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
-        IniciarConexion();
+        
+        //IniciarConexion();
+        
+        Frm_Menu_administrador menu_admin = new Frm_Menu_administrador();
     }
-    
-    static void IniciarConexion(){
-        Conexion c= new Conexion();
-        
+
+    static void IniciarConexion() {
+        Conexion c = new Conexion();
+
         c.Conectar();
-        
+
+        c.SelectDePrueba();
+
         c.Desconectar();
     }
 }
