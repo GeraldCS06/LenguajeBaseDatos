@@ -85,22 +85,47 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
         btn_hospitalizaciones.setBackground(new java.awt.Color(1, 186, 59));
         btn_hospitalizaciones.setForeground(new java.awt.Color(255, 255, 255));
         btn_hospitalizaciones.setText("Hospitalizaciones");
+        btn_hospitalizaciones.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_hospitalizacionesActionPerformed(evt);
+            }
+        });
 
         btn_clientes.setBackground(new java.awt.Color(1, 186, 59));
         btn_clientes.setForeground(new java.awt.Color(255, 255, 255));
         btn_clientes.setText("Clientes");
+        btn_clientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_clientesActionPerformed(evt);
+            }
+        });
 
         btn_empleado.setBackground(new java.awt.Color(1, 186, 59));
         btn_empleado.setForeground(new java.awt.Color(255, 255, 255));
         btn_empleado.setText("Empleados");
+        btn_empleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_empleadoActionPerformed(evt);
+            }
+        });
 
         btn_mascotas1.setBackground(new java.awt.Color(1, 186, 59));
         btn_mascotas1.setForeground(new java.awt.Color(255, 255, 255));
         btn_mascotas1.setText("Mascotas");
+        btn_mascotas1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_mascotas1ActionPerformed(evt);
+            }
+        });
 
         btn_citas2.setBackground(new java.awt.Color(1, 186, 59));
         btn_citas2.setForeground(new java.awt.Color(255, 255, 255));
         btn_citas2.setText("Citas");
+        btn_citas2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_citas2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -165,6 +190,31 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
     private void btn_salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_salirActionPerformed
         
     }//GEN-LAST:event_btn_salirActionPerformed
+
+    private void btn_mascotas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mascotas1ActionPerformed
+        // TODO add your handling code here:
+        Frm_Mascota vista_mascotas = new Frm_Mascota();
+    }//GEN-LAST:event_btn_mascotas1ActionPerformed
+
+    private void btn_clientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clientesActionPerformed
+        // TODO add your handling code here:
+        Frm_Persona vista_personas= new Frm_Persona();
+    }//GEN-LAST:event_btn_clientesActionPerformed
+
+    private void btn_empleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_empleadoActionPerformed
+        // TODO add your handling code here:
+        Frm_Empleado vista_empleados= new Frm_Empleado();
+    }//GEN-LAST:event_btn_empleadoActionPerformed
+
+    private void btn_hospitalizacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hospitalizacionesActionPerformed
+        // TODO add your handling code here:
+        Frm_Empleado vista_empleado = new Frm_Empleado();
+    }//GEN-LAST:event_btn_hospitalizacionesActionPerformed
+
+    private void btn_citas2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_citas2ActionPerformed
+        // TODO add your handling code here:
+        Frm_Cita vista_cita = new Frm_Cita();
+    }//GEN-LAST:event_btn_citas2ActionPerformed
 
     /**
      * @param args the command line arguments

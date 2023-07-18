@@ -83,11 +83,21 @@ public class Frm_Menu_empleado extends javax.swing.JFrame {
         btn_clientes.setForeground(new java.awt.Color(255, 255, 255));
         btn_clientes.setText("Clientes");
         btn_clientes.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btn_clientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_clientesActionPerformed(evt);
+            }
+        });
 
         btn_mascotas1.setBackground(new java.awt.Color(1, 186, 59));
         btn_mascotas1.setForeground(new java.awt.Color(255, 255, 255));
         btn_mascotas1.setText("Mascotas");
         btn_mascotas1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btn_mascotas1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_mascotas1ActionPerformed(evt);
+            }
+        });
 
         btn_citas2.setBackground(new java.awt.Color(1, 186, 59));
         btn_citas2.setForeground(new java.awt.Color(255, 255, 255));
@@ -150,6 +160,16 @@ public class Frm_Menu_empleado extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btn_mascotas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mascotas1ActionPerformed
+        // TODO add your handling code here:
+        Frm_Mascota vista_mascota = new Frm_Mascota();
+    }//GEN-LAST:event_btn_mascotas1ActionPerformed
+
+    private void btn_clientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clientesActionPerformed
+        // TODO add your handling code here:
+        Frm_Persona vista_persona = new Frm_Persona();
+    }//GEN-LAST:event_btn_clientesActionPerformed
 
     /**
      * @param args the command line arguments
