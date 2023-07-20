@@ -4,6 +4,8 @@
  */
 package GUI;
 
+
+
 /**
  *
  * @author vrb00
@@ -89,6 +91,12 @@ public class Frm_Mascota extends javax.swing.JFrame {
 
         jLabel3.setText("Nombre mascota");
 
+        txt_nombre_mascota.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_nombre_mascotaActionPerformed(evt);
+            }
+        });
+
         jLabel4.setText("Escoge la especie");
 
         jLabel5.setText("Raza");
@@ -128,8 +136,18 @@ public class Frm_Mascota extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tabla_mascotas);
 
         combo_persona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_persona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_personaActionPerformed(evt);
+            }
+        });
 
         combo_especie.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_especie.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_especieActionPerformed(evt);
+            }
+        });
 
         txt_peso.setText("jTextField1");
 
@@ -262,6 +280,18 @@ public class Frm_Mascota extends javax.swing.JFrame {
         // TODO add your handling code here:
         Frm_Especie vista_especie = new Frm_Especie();
     }//GEN-LAST:event_menu_especieActionPerformed
+
+    private void combo_personaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_personaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_combo_personaActionPerformed
+
+    private void combo_especieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_especieActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_combo_especieActionPerformed
+
+    private void txt_nombre_mascotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nombre_mascotaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_nombre_mascotaActionPerformed
 
     /**
      * @param args the command line arguments
