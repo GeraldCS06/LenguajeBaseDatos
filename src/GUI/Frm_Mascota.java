@@ -108,6 +108,11 @@ public class Frm_Mascota extends javax.swing.JFrame {
         btn_agregar.setBackground(new java.awt.Color(1, 186, 59));
         btn_agregar.setForeground(new java.awt.Color(255, 255, 255));
         btn_agregar.setText("Agregar");
+        btn_agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_agregarActionPerformed(evt);
+            }
+        });
 
         btn_editar.setBackground(new java.awt.Color(49, 66, 82));
         btn_editar.setForeground(new java.awt.Color(255, 255, 255));
@@ -292,6 +297,10 @@ public class Frm_Mascota extends javax.swing.JFrame {
     private void txt_nombre_mascotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nombre_mascotaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_nombre_mascotaActionPerformed
+
+    private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_agregarActionPerformed
 
     /**
      * @param args the command line arguments
