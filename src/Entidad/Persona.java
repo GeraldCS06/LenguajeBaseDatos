@@ -8,32 +8,22 @@ package Entidad;
  *
  * @author fidelitas
  */
-public class registroPersona {
-    int id_persona;
+public class Persona {
     String nombre;
     String primer_apellido;
     String segundo_apellido;
     String telefono;
     String correo;
 
-    public registroPersona(){
+    public Persona(){
     }
 
-    public registroPersona(int id_persona, String nombre, String primer_apellido, String segundo_apellido, String telefono, String correo) {
-        this.id_persona = id_persona;
+    public Persona(String nombre, String primer_apellido, String segundo_apellido, String telefono, String correo) {
         this.nombre = nombre;
         this.primer_apellido = primer_apellido;
         this.segundo_apellido = segundo_apellido;
         this.telefono = telefono;
         this.correo = correo;
-    }
-
-    public int getId_persona() {
-        return id_persona;
-    }
-
-    public void setId_persona(int id_persona) {
-        this.id_persona = id_persona;
     }
 
     public String getNombre() {
@@ -78,8 +68,10 @@ public class registroPersona {
 
     @Override
     public String toString() {
-        return "registroPersona{" + "id_persona=" + id_persona + ", nombre=" + nombre + ", primer_apellido=" + primer_apellido + ", segundo_apellido=" + segundo_apellido + ", telefono=" + telefono + ", correo=" + correo + '}';
+        return "Persona{" + "id_persona=" + ", nombre=" + nombre + ", primer_apellido=" + primer_apellido + ", segundo_apellido=" + segundo_apellido + ", telefono=" + telefono + ", correo=" + correo + '}';
     }
+
+    
     
     
 
