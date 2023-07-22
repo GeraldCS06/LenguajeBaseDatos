@@ -4,27 +4,38 @@
  */
 package GUI;
 
-import com.sun.jdi.connect.spi.Connection;
 import javax.swing.table.DefaultTableModel;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+import conexion.Conexion;
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.CallableStatement;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author vrb00
  */
 public class Frm_Persona extends javax.swing.JFrame {
-    
-    private Connection con;
+
+    //private Connection con;
     int id;
     private DefaultTableModel tabla;
 
     /**
      * Creates new form Frm_Persona
      */
-    public Frm_Persona(){
+    public Frm_Persona() {
         initComponents();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        MostrarDatos();
     }
 
     /**
@@ -41,9 +52,9 @@ public class Frm_Persona extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txt_nombre = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        txt_primer_apellido = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
         txt_segundo_apellido = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txt_primer_apellido = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txt_telefono = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
@@ -87,7 +98,7 @@ public class Frm_Persona extends javax.swing.JFrame {
 
         jLabel3.setText("Primer Apellido");
 
-        jLabel4.setText("Seundo Apellido");
+        jLabel4.setText("Segundo Apellido");
 
         jLabel5.setText("Telefono");
 
@@ -96,6 +107,11 @@ public class Frm_Persona extends javax.swing.JFrame {
         btn_agregar.setBackground(new java.awt.Color(1, 186, 59));
         btn_agregar.setForeground(new java.awt.Color(255, 255, 255));
         btn_agregar.setText("Agregar");
+        btn_agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_agregarActionPerformed(evt);
+            }
+        });
 
         btn_editar.setBackground(new java.awt.Color(49, 66, 82));
         btn_editar.setForeground(new java.awt.Color(255, 255, 255));
@@ -109,16 +125,18 @@ public class Frm_Persona extends javax.swing.JFrame {
         btn_eliminar.setBackground(new java.awt.Color(255, 0, 0));
         btn_eliminar.setForeground(new java.awt.Color(255, 255, 255));
         btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
 
         tabla_personas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Nombre", "Apellidos", "Telefono", "Correo", "Rol"
             }
         ));
         jScrollPane1.setViewportView(tabla_personas);
@@ -154,35 +172,27 @@ public class Frm_Persona extends javax.swing.JFrame {
                 .addComponent(btn_eliminar)
                 .addGap(47, 91, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(67, 67, 67)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(80, 80, 80)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txt_segundo_apellido, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(txt_primer_apellido, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txt_telefono, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txt_correo, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(158, 158, 158))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel1)
+                        .addComponent(jLabel3))
+                    .addComponent(jLabel4))
+                .addGap(25, 25, 25)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txt_primer_apellido, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_segundo_apellido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(62, 62, 62)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txt_telefono, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_correo, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -191,30 +201,26 @@ public class Frm_Persona extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11)
+                    .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_telefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(txt_telefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txt_segundo_apellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_primer_apellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
                     .addComponent(jLabel6)
                     .addComponent(txt_correo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8)
+                .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txt_primer_apellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_segundo_apellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
                 .addGap(55, 55, 55)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_agregar)
                     .addComponent(btn_editar)
                     .addComponent(btn_buscar)
                     .addComponent(btn_eliminar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -224,6 +230,162 @@ public class Frm_Persona extends javax.swing.JFrame {
     private void menu_rolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_rolActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_menu_rolActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = tabla_personas.getSelectedRow();
+
+        Object id_persona = tabla_personas.getValueAt(selectedRow, 0);
+
+        int id = (int) id_persona;
+
+        String url, usuario, pass;
+        try {
+            Class.forName("oracle.jdbc.OracleDriver");
+            url = "jdbc:oracle:thin:@//localhost:1521/orcl";
+            usuario = "PROYECTO";
+            pass = "12345";
+
+            Connection conn;
+            conn = DriverManager.getConnection(url, usuario, pass);
+
+            // Procedimiento
+            String procedureCall = "{call eliminar_persona(?)}";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.setInt(1, id);
+
+            stmt.execute();
+
+            JOptionPane.showMessageDialog(this, "Se elimino la persona exitosamente");
+
+            stmt.close();
+            conn.close();
+
+            MostrarDatos();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocurrio un error al eliminar la persona");
+        }
+    }//GEN-LAST:event_btn_eliminarActionPerformed
+
+    private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
+        // TODO add your handling code here:
+        if(VerificaDatos()){
+            
+            String url, usuario, pass;
+        try {
+            Class.forName("oracle.jdbc.OracleDriver");
+            url = "jdbc:oracle:thin:@//localhost:1521/orcl";
+            usuario = "PROYECTO";
+            pass = "12345";
+
+            Connection conn;
+            conn = DriverManager.getConnection(url, usuario, pass);
+
+            //Vista
+            String procedureCall = "Select * from datos_persona";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer personaID = resultSet.getInt("ID");
+                    String nombre = resultSet.getString("Nombre");
+                    String apellidos = resultSet.getString("Apellidos");
+                    String telefono = resultSet.getString("Telefono");
+                    String correo = resultSet.getString("Correo");
+                    String rol = resultSet.getString("Rol");
+
+                    // Agregar los datos a la tabla
+                    ((DefaultTableModel) tabla_personas.getModel()).addRow(new Object[]{personaID, nombre, apellidos,
+                        telefono, correo, rol});
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+            
+            JOptionPane.showMessageDialog(this, "Se agrego exitosamente a la persona!");
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_agregarActionPerformed
+
+    private void MostrarDatos() {
+        DefaultTableModel contenido = (DefaultTableModel) tabla_personas.getModel();
+        
+        contenido.setRowCount(0);
+        
+        String url, usuario, pass;
+        try {
+            Class.forName("oracle.jdbc.OracleDriver");
+            url = "jdbc:oracle:thin:@//localhost:1521/orcl";
+            usuario = "PROYECTO";
+            pass = "12345";
+
+            Connection conn;
+            conn = DriverManager.getConnection(url, usuario, pass);
+
+            //Vista
+            String procedureCall = "Select * from datos_persona";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer personaID = resultSet.getInt("ID");
+                    String nombre = resultSet.getString("Nombre");
+                    String apellidos = resultSet.getString("Apellidos");
+                    String telefono = resultSet.getString("Telefono");
+                    String correo = resultSet.getString("Correo");
+                    String rol = resultSet.getString("Rol");
+
+                    // Agregar los datos a la tabla
+                    ((DefaultTableModel) tabla_personas.getModel()).addRow(new Object[]{personaID, nombre, apellidos,
+                        telefono, correo, rol});
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private boolean VerificaDatos() {
+        boolean verificar = false;
+        String nombre = txt_nombre.getText();
+        String primerApellido = txt_segundo_apellido.getText();
+        String segundoApellido = txt_primer_apellido.getText();
+        String telefono = txt_telefono.getText();
+        String correo = txt_correo.getText();
+
+        if (nombre == "" && primerApellido == "" && segundoApellido == ""
+                && telefono == "" && correo == "") {
+            verificar = true;
+        }
+        return verificar;
+    }
 
     /**
      * @param args the command line arguments

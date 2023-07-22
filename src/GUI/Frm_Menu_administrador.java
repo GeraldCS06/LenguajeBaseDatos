@@ -93,7 +93,7 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
 
         btn_clientes.setBackground(new java.awt.Color(1, 186, 59));
         btn_clientes.setForeground(new java.awt.Color(255, 255, 255));
-        btn_clientes.setText("Clientes");
+        btn_clientes.setText("Personas");
         btn_clientes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_clientesActionPerformed(evt);
