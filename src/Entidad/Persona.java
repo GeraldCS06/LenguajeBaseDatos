@@ -14,16 +14,18 @@ public class Persona {
     String segundo_apellido;
     String telefono;
     String correo;
+    int id_rol;
 
     public Persona(){
     }
 
-    public Persona(String nombre, String primer_apellido, String segundo_apellido, String telefono, String correo) {
+    public Persona(String nombre, String primer_apellido, String segundo_apellido, String telefono, String correo, int id_rol) {
         this.nombre = nombre;
         this.primer_apellido = primer_apellido;
         this.segundo_apellido = segundo_apellido;
         this.telefono = telefono;
         this.correo = correo;
+        this.id_rol = id_rol;
     }
 
     public String getNombre() {
@@ -66,10 +68,20 @@ public class Persona {
         this.correo = correo;
     }
 
+    public int getId_rol() {
+        return id_rol;
+    }
+
+    public void setId_rol(int id_rol) {
+        this.id_rol = id_rol;
+    }
+
     @Override
     public String toString() {
-        return "Persona{" + "id_persona=" + ", nombre=" + nombre + ", primer_apellido=" + primer_apellido + ", segundo_apellido=" + segundo_apellido + ", telefono=" + telefono + ", correo=" + correo + '}';
+        return "Persona{" + "nombre=" + nombre + ", primer_apellido=" + primer_apellido + ", segundo_apellido=" + segundo_apellido + ", telefono=" + telefono + ", correo=" + correo + ", id_rol=" + id_rol + '}';
     }
+    
+    
 
     
     

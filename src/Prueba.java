@@ -23,6 +23,7 @@ public class Prueba {
         per.setSegundo_apellido("Quiros");
         per.setTelefono("1111111");
         per.setCorreo("aaa@gmail.com");
+        per.setId_rol(2);
         mensaje = perBo.agregarPersona(per);
     }
     
@@ -35,7 +36,7 @@ public class Prueba {
     
     public static void main(String[] args) throws SQLException {
         Prueba prue = new Prueba();
-//        prue.insertar();
-        prue.eliminar();
+        prue.insertar();
+//        prue.eliminar();
     }
 }

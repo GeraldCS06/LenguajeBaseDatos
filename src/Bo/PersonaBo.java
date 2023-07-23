@@ -22,7 +22,7 @@ public class PersonaBo {
 
  
 
-        String sql = "{CALL insertar_persona(?, ?, ?, ?, ?)}";
+        String sql = "{CALL insertar_persona(?, ?, ?, ?, ?, ?)}";
         
         Connection con = Conexion.Conectar();
 
@@ -36,6 +36,7 @@ public class PersonaBo {
             pstmt.setString(3, per.getSegundo_apellido());
             pstmt.setString(4, per.getTelefono());
             pstmt.setString(5, per.getCorreo());
+            pstmt.setInt(6, per.getId_rol());
 
  
 

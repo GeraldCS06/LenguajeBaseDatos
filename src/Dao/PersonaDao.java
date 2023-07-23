@@ -21,7 +21,7 @@ public class PersonaDao {
     
     
     public String agregarPersona(Connection con, Persona per) throws SQLException {
-        String sql = "{ call insertar_persona(?, ?, ?, ?, ?) }";
+        String sql = "{ call insertar_persona(?, ?, ?, ?, ?, ?) }";
         try {
             PreparedStatement pstmt = con.prepareCall(sql);
             pstmt.setString(1, per.getNombre());
@@ -29,6 +29,7 @@ public class PersonaDao {
             pstmt.setString(3, per.getSegundo_apellido());
             pstmt.setString(4, per.getTelefono());
             pstmt.setString(5, per.getCorreo());
+            pstmt.setInt(6, per.getId_rol());
 
             pstmt.execute();
             pstmt.close();
