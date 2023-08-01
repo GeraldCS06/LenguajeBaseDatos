@@ -7,28 +7,25 @@ import java.sql.Statement;
 import java.sql.SQLException;
 
 public class Conexion {
-    
-    public static Connection Conectar () throws SQLException{
-        try{
+
+    public static Connection Conectar() throws SQLException {
+        try {
             Class.forName("oracle.jdbc.OracleDriver");
             String url = "jdbc:oracle:thin:@//localhost:1521/orcl";
             String usuario = "PROYECTO";
             String pass = "12345";
             System.out.println("Conectado a la base de datos");
-            return DriverManager.getConnection(url,usuario, pass);
-        }catch(ClassNotFoundException e){
+            return DriverManager.getConnection(url, usuario, pass);
+        } catch (ClassNotFoundException e) {
             throw new SQLException(e.getMessage());
         }
     }
-    public static void main(String[] args) throws SQLException{
+
+    public static void main(String[] args) throws SQLException {
         Conexion c = new Conexion();
         c.Conectar();
     }
-    
 }
-
-
-
 
 //    private Connection conexion = null;
 //
@@ -48,7 +45,6 @@ public class Conexion {
 //            System.out.println("Error al conectar: " + e);
 //        }
 //    }
-
 //    public void Desconectar() {
 //        try {
 //            conexion.close();
@@ -57,7 +53,6 @@ public class Conexion {
 //            System.out.println("Error al desconectar");
 //        }
 //    }
-
 //    public void SelectDePrueba() {
 //        try {
 //            Statement sa = conexion.createStatement();

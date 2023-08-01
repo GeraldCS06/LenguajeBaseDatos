@@ -10,16 +10,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Connection;
 
-
 /**
  *
  * @author fidelitas
  */
 public class PersonaDao {
-    
+
     private String mensaje = "";
-    
-    
+
     public String agregarPersona(Connection con, Persona per) throws SQLException {
         String sql = "{ call insertar_persona(?, ?, ?, ?, ?, ?) }";
         try {
@@ -41,7 +39,7 @@ public class PersonaDao {
         }
         return mensaje;
     }
-    
+
     public String eliminarPersona(Connection con, int id_persona) throws SQLException {
 
         String sql = "{CALL eliminar_persona(?)}";
@@ -64,5 +62,5 @@ public class PersonaDao {
         }
         return mensaje;
     }
-    
+
 }

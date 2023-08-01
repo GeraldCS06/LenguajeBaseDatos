@@ -33,3 +33,97 @@ ALTER TABLE Empleado ADD CONSTRAINT FK_persona FOREIGN KEY (id_persona) REFERENC
 ALTER TABLE Mascota ADD CONSTRAINT FK_persona_mascota FOREIGN KEY (id_persona) REFERENCES Persona (id_persona);
 ALTER TABLE Persona ADD CONSTRAINT FK_rol FOREIGN KEY (id_rol) REFERENCES Rol (id_rol);
 ALTER TABLE Empleado ADD CONSTRAINT FK_servicio FOREIGN KEY (id_servicio) REFERENCES Servicio (id_servicio);
+
+
+/* !!!!!!!!!!!!!!!!!! PARA DROPS  !!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+DROP TABLE Categoria CASCADE CONSTRAINTS;
+DROP TABLE Cita CASCADE CONSTRAINTS;
+DROP TABLE Empleado CASCADE CONSTRAINTS;
+DROP TABLE Especie CASCADE CONSTRAINTS;
+DROP TABLE Hospitalizacion CASCADE CONSTRAINTS;
+DROP TABLE Mascota CASCADE CONSTRAINTS;
+DROP TABLE Persona CASCADE CONSTRAINTS;
+DROP TABLE Producto CASCADE CONSTRAINTS;
+DROP TABLE Rol CASCADE CONSTRAINTS;
+DROP TABLE Servicio CASCADE CONSTRAINTS;
+
+
+DROP USER PROYECTO;
+
+DROP TABLESPACE VETERINARIA INCLUDING CONTENTS CASCADE CONSTRAINTS;
+
+SELECT FILE_NAME, FILE_ID FROM DBA_DATA_FILES;
+
+Ir a la ruta y ver si existe el archivo : C:\Oracle\Product\21c\dbhomeXE\database */
+
+
+-----------------PROCEDIMIENTOS Y VISTAS-----------------------------
+CREATE OR REPLACE PROCEDURE insertar_persona (
+    p_nombre IN VARCHAR2,
+    p_primer_apellido IN VARCHAR2,
+    p_segundo_apellido IN VARCHAR2,
+    p_telefono IN VARCHAR2,
+    p_correo IN VARCHAR2,
+    p_id_rol IN NUMBER
+)
+AS
+BEGIN
+    INSERT INTO Persona (nombre, primer_apellido, segundo_apellido, telefono, correo,id_rol)
+    VALUES (p_nombre, p_primer_apellido, p_segundo_apellido, p_telefono, p_correo,p_id_rol);
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-----------
+CREATE OR REPLACE PROCEDURE eliminar_persona (
+    p_id_persona IN NUMBER
+)
+AS
+BEGIN
+    DELETE FROM Persona
+    WHERE id_persona = p_id_persona;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-----------
+CREATE OR REPLACE PROCEDURE buscar_persona_id (P_id_persona IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    -- Abrir el cursor para almacenar los resultados de la consulta
+    OPEN P_resultados FOR
+    SELECT id_persona AS ID,
+           nombre AS Nombre,
+           primer_apellido AS Primer_Apellido,
+           segundo_apellido AS Segundo_Apellido,
+           telefono AS Telefono,
+           correo AS Correo,
+           id_rol AS Rol
+    FROM persona p
+    WHERE id_persona = P_id_persona;
+END;
+
+-----------
+CREATE OR REPLACE VIEW DATOS_ROL AS
+SELECT r.id_rol as ID, r.nombre_rol as NombreRol
+FROM Rol r;
+
+-----------
+CREATE OR REPLACE VIEW datos_persona AS
+
+SELECT p.id_persona as ID, p.nombre as Nombre, p.primer_apellido || p.segundo_apellido as Apellidos,
+
+p.telefono as Telefono, p.correo as Correo, r.nombre_rol as Rol
+
+FROM persona p
+
+inner join rol r
+
+on p.id_rol=r.id_rol;

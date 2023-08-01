@@ -1,21 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package GUI;
 
+import Bo.PersonaBo;
+import Entidad.Persona;
 import javax.swing.table.DefaultTableModel;
-
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.SQLException;
-import conexion.Conexion;
-import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.CallableStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
@@ -23,9 +19,11 @@ import javax.swing.JOptionPane;
  */
 public class Frm_Persona extends javax.swing.JFrame {
 
-    //private Connection con;
-    int id;
+    private int id_p;
     private DefaultTableModel tabla;
+    private Persona per = new Persona();
+    private PersonaBo perBo = new PersonaBo();
+    private String mensaje = "";
 
     /**
      * Creates new form Frm_Persona
@@ -35,7 +33,9 @@ public class Frm_Persona extends javax.swing.JFrame {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
-        MostrarDatos();
+        MostrarDatosTabla();
+        MostrarRoles();
+        ObtenerSeleccion();
     }
 
     /**
@@ -65,6 +65,8 @@ public class Frm_Persona extends javax.swing.JFrame {
         btn_eliminar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla_personas = new javax.swing.JTable();
+        jLabel7 = new javax.swing.JLabel();
+        combo_rol = new javax.swing.JComboBox<>();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menu_rol = new javax.swing.JMenuItem();
@@ -117,10 +119,20 @@ public class Frm_Persona extends javax.swing.JFrame {
         btn_editar.setForeground(new java.awt.Color(255, 255, 255));
         btn_editar.setText("Editar");
         btn_editar.setToolTipText("Guardar cambios");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         btn_buscar.setBackground(new java.awt.Color(0, 204, 204));
         btn_buscar.setForeground(new java.awt.Color(255, 255, 255));
         btn_buscar.setText("Buscar");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscarActionPerformed(evt);
+            }
+        });
 
         btn_eliminar.setBackground(new java.awt.Color(255, 0, 0));
         btn_eliminar.setForeground(new java.awt.Color(255, 255, 255));
@@ -139,7 +151,12 @@ public class Frm_Persona extends javax.swing.JFrame {
                 "ID", "Nombre", "Apellidos", "Telefono", "Correo", "Rol"
             }
         ));
+        tabla_personas.setVerifyInputWhenFocusTarget(false);
         jScrollPane1.setViewportView(tabla_personas);
+
+        jLabel7.setText("Rol");
+
+        combo_rol.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona un Rol" }));
 
         jMenu1.setText("Agregar");
 
@@ -187,11 +204,13 @@ public class Frm_Persona extends javax.swing.JFrame {
                 .addGap(62, 62, 62)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_telefono, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_correo, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txt_telefono)
+                    .addComponent(txt_correo)
+                    .addComponent(combo_rol, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -213,15 +232,17 @@ public class Frm_Persona extends javax.swing.JFrame {
                 .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_segundo_apellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel7)
+                    .addComponent(combo_rol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(55, 55, 55)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_agregar)
                     .addComponent(btn_editar)
                     .addComponent(btn_buscar)
                     .addComponent(btn_eliminar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE))
         );
 
         pack();
@@ -239,105 +260,88 @@ public class Frm_Persona extends javax.swing.JFrame {
 
         int id = (int) id_persona;
 
-        String url, usuario, pass;
         try {
-            Class.forName("oracle.jdbc.OracleDriver");
-            url = "jdbc:oracle:thin:@//localhost:1521/orcl";
-            usuario = "PROYECTO";
-            pass = "12345";
-
-            Connection conn;
-            conn = DriverManager.getConnection(url, usuario, pass);
-
-            // Procedimiento
-            String procedureCall = "{call eliminar_persona(?)}";
-            CallableStatement stmt = conn.prepareCall(procedureCall);
-
-            stmt.setInt(1, id);
-
-            stmt.execute();
-
-            JOptionPane.showMessageDialog(this, "Se elimino la persona exitosamente");
-
-            stmt.close();
-            conn.close();
-
-            MostrarDatos();
+            mensaje = perBo.eliminarPersona(id);
+            JOptionPane.showMessageDialog(this, mensaje);
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Ocurrio un error al eliminar la persona");
+            JOptionPane.showMessageDialog(this, mensaje);
         }
+        MostrarDatosTabla();
     }//GEN-LAST:event_btn_eliminarActionPerformed
 
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
         // TODO add your handling code here:
-        if(VerificaDatos()){
-            
-            String url, usuario, pass;
-        try {
-            Class.forName("oracle.jdbc.OracleDriver");
-            url = "jdbc:oracle:thin:@//localhost:1521/orcl";
-            usuario = "PROYECTO";
-            pass = "12345";
-
-            Connection conn;
-            conn = DriverManager.getConnection(url, usuario, pass);
-
-            //Vista
-            String procedureCall = "Select * from datos_persona";
-            CallableStatement stmt = conn.prepareCall(procedureCall);
-
-            stmt.execute();
-
-            ResultSet resultSet = stmt.getResultSet();
-            if (resultSet != null) {
-                while (resultSet.next()) {
-
-                    Integer personaID = resultSet.getInt("ID");
-                    String nombre = resultSet.getString("Nombre");
-                    String apellidos = resultSet.getString("Apellidos");
-                    String telefono = resultSet.getString("Telefono");
-                    String correo = resultSet.getString("Correo");
-                    String rol = resultSet.getString("Rol");
-
-                    // Agregar los datos a la tabla
-                    ((DefaultTableModel) tabla_personas.getModel()).addRow(new Object[]{personaID, nombre, apellidos,
-                        telefono, correo, rol});
-                }
+        if (VerificaDatos()) {
+            try {
+                per.setNombre(txt_nombre.getText());
+                per.setPrimer_apellido(txt_primer_apellido.getText());
+                per.setSegundo_apellido(txt_segundo_apellido.getText());
+                per.setTelefono(txt_telefono.getText());
+                per.setCorreo(txt_correo.getText());
+                per.setId_rol(GetRol());
+                mensaje = perBo.agregarPersona(per);
+                JOptionPane.showMessageDialog(this, mensaje);
+                LimpiarCampos();
+                MostrarDatosTabla();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
             }
-
-            if (resultSet != null) {
-                resultSet.close();
-            }
-            stmt.close();
-            conn.close();
-
-        } catch (Exception e) {
-            System.out.println("Error al conectar: " + e);
-        }
-            
-            JOptionPane.showMessageDialog(this, "Se agrego exitosamente a la persona!");
-        }
-        else{
+        } else {
             JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
         }
     }//GEN-LAST:event_btn_agregarActionPerformed
 
-    private void MostrarDatos() {
-        DefaultTableModel contenido = (DefaultTableModel) tabla_personas.getModel();
-        
-        contenido.setRowCount(0);
-        
-        String url, usuario, pass;
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        // TODO add your handling code here:
+        if (VerificaDatos()) {
+            try {
+                per.setId_persona(id_p);
+                per.setNombre(txt_nombre.getText());
+                per.setPrimer_apellido(txt_primer_apellido.getText());
+                per.setSegundo_apellido(txt_segundo_apellido.getText());
+                per.setTelefono(txt_telefono.getText());
+                per.setCorreo(txt_correo.getText());
+                per.setId_rol(GetRol());
+                mensaje = perBo.actualizarPersona(per);
+                tabla_personas.clearSelection();
+                JOptionPane.showMessageDialog(this, mensaje);
+                MostrarDatosTabla();
+                LimpiarCampos();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        // TODO add your handling code here:
         try {
-            Class.forName("oracle.jdbc.OracleDriver");
-            url = "jdbc:oracle:thin:@//localhost:1521/orcl";
-            usuario = "PROYECTO";
-            pass = "12345";
+            ArrayList<Persona> persona = perBo.buscarPersonaNombre(txt_nombre.getText());
 
-            Connection conn;
-            conn = DriverManager.getConnection(url, usuario, pass);
+            for (Persona p : persona) {
+                id_p = p.getId_persona();
+                txt_nombre.setText(p.getNombre());
+                txt_primer_apellido.setText(p.getPrimer_apellido());
+                txt_segundo_apellido.setText(p.getSegundo_apellido());
+                txt_telefono.setText(p.getTelefono());
+                txt_correo.setText(p.getCorreo());
+                SetIndexComboRol(p.getId_rol());
+            }
+        } catch (Exception sql) {
+            JOptionPane.showMessageDialog(null, sql);
+        }
+    }//GEN-LAST:event_btn_buscarActionPerformed
 
+    private void MostrarDatosTabla() {
+        DefaultTableModel contenido = (DefaultTableModel) tabla_personas.getModel();
+
+        contenido.setRowCount(0);
+
+        Connection conn = EstablecerConexion();
+        try {
             //Vista
             String procedureCall = "Select * from datos_persona";
             CallableStatement stmt = conn.prepareCall(procedureCall);
@@ -372,19 +376,147 @@ public class Frm_Persona extends javax.swing.JFrame {
         }
     }
 
+    private void MostrarRoles() {
+        Connection conn = EstablecerConexion();
+
+        try {
+            //Vista
+            String procedureCall = "Select * from DATOS_ROL";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer rolID = resultSet.getInt("ID");
+                    String nombreRol = resultSet.getString("NombreRol");
+
+                    // Agregar los datos al Combo Box
+                    combo_rol.addItem(rolID + "- " + nombreRol);
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
     private boolean VerificaDatos() {
-        boolean verificar = false;
+        boolean verificar = false, verificarD = true;
         String nombre = txt_nombre.getText();
-        String primerApellido = txt_segundo_apellido.getText();
-        String segundoApellido = txt_primer_apellido.getText();
+        String primerApellido = txt_primer_apellido.getText();
+        String segundoApellido = txt_segundo_apellido.getText();
         String telefono = txt_telefono.getText();
         String correo = txt_correo.getText();
 
         if (nombre == "" && primerApellido == "" && segundoApellido == ""
                 && telefono == "" && correo == "") {
+            verificarD = false;
+        }
+
+        boolean verificarR = false;
+        if (combo_rol.getSelectedIndex() != 0) {
+            verificarR = true;
+        }
+
+        if (verificarD && verificarR) {
             verificar = true;
         }
         return verificar;
+    }
+
+    private int GetRol() {
+        String Drol = combo_rol.getSelectedItem().toString();
+        char rol = Drol.charAt(0);
+        return Integer.parseInt(rol + "");
+    }
+
+    private void SetIndexComboRol(int id_rol) {
+        for (int i = 1; i < combo_rol.getItemCount(); i++) {
+
+            String item = combo_rol.getItemAt(i);
+            char rolc = item.charAt(0);
+            int rol = Integer.parseInt(rolc + "");
+            if (rol == id_rol) {
+                combo_rol.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    private Connection EstablecerConexion() {
+        String url, usuario, pass;
+        Connection conn;
+        try {
+            Class.forName("oracle.jdbc.OracleDriver");
+            url = "jdbc:oracle:thin:@//localhost:1521/orcl";
+            usuario = "PROYECTO";
+            pass = "12345";
+            conn = DriverManager.getConnection(url, usuario, pass);
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+            conn = null;
+        }
+        return conn;
+    }
+
+    private void LimpiarCampos() {
+        txt_nombre.setText("");
+        txt_primer_apellido.setText("");
+        txt_segundo_apellido.setText("");
+        txt_telefono.setText("");
+        txt_correo.setText("");
+        try {
+            combo_rol.setSelectedIndex(0);
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
+    }
+
+    private void ObtenerSeleccion() {
+        // Agregar un ListSelectionListener a la tabla
+        tabla_personas.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // Obtener el número de fila y columna seleccionada
+                    int selectedRow = tabla_personas.getSelectedRow();
+
+                    System.out.println(selectedRow);
+
+                    // Obtener la primera celda seleccionada
+                    Object selectedData = tabla_personas.getValueAt(selectedRow, 0);
+
+                    String id = selectedData.toString();
+                    int idConsulta = Integer.parseInt(id);
+
+                    try {
+                        ArrayList<Persona> persona = perBo.buscarPersonaId(idConsulta);
+
+                        for (Persona p : persona) {
+                            id_p = p.getId_persona();
+                            txt_nombre.setText(p.getNombre());
+                            txt_primer_apellido.setText(p.getPrimer_apellido());
+                            txt_segundo_apellido.setText(p.getSegundo_apellido());
+                            txt_telefono.setText(p.getTelefono());
+                            txt_correo.setText(p.getCorreo());
+                            SetIndexComboRol(p.getId_rol());
+                        }
+                    } catch (Exception sql) {
+                        JOptionPane.showMessageDialog(null, sql);
+                    }
+                    //tabla_personas.clearSelection();
+                }
+            }
+        });
     }
 
     /**
@@ -427,12 +559,14 @@ public class Frm_Persona extends javax.swing.JFrame {
     private javax.swing.JButton btn_buscar;
     private javax.swing.JButton btn_editar;
     private javax.swing.JButton btn_eliminar;
+    private javax.swing.JComboBox<String> combo_rol;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel2;
