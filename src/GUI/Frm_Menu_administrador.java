@@ -1,10 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package GUI;
-
-import proyectoveterinaria.frm_Inicio_Sesion;
 
 /**
  *
@@ -37,12 +31,15 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
         btn_salir = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btn_hospitalizaciones = new javax.swing.JButton();
-        btn_clientes = new javax.swing.JButton();
+        btn_estadistica = new javax.swing.JButton();
         btn_empleado = new javax.swing.JButton();
         btn_mascotas1 = new javax.swing.JButton();
         btn_citas2 = new javax.swing.JButton();
+        btn_productos = new javax.swing.JButton();
+        btn_clientes1 = new javax.swing.JButton();
+        btn_facturas1 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jPanel2.setBackground(new java.awt.Color(49, 66, 82));
 
@@ -51,6 +48,7 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
         jLabel2.setText("Veterinaria Patitas");
 
         btn_salir.setBackground(new java.awt.Color(255, 0, 0));
+        btn_salir.setForeground(new java.awt.Color(255, 255, 255));
         btn_salir.setText("Salir");
         btn_salir.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         btn_salir.addActionListener(new java.awt.event.ActionListener() {
@@ -91,12 +89,12 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
             }
         });
 
-        btn_clientes.setBackground(new java.awt.Color(1, 186, 59));
-        btn_clientes.setForeground(new java.awt.Color(255, 255, 255));
-        btn_clientes.setText("Personas");
-        btn_clientes.addActionListener(new java.awt.event.ActionListener() {
+        btn_estadistica.setBackground(new java.awt.Color(1, 186, 59));
+        btn_estadistica.setForeground(new java.awt.Color(255, 255, 255));
+        btn_estadistica.setText("Sobre este mes");
+        btn_estadistica.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_clientesActionPerformed(evt);
+                btn_estadisticaActionPerformed(evt);
             }
         });
 
@@ -127,50 +125,93 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
             }
         });
 
+        btn_productos.setBackground(new java.awt.Color(1, 186, 59));
+        btn_productos.setForeground(new java.awt.Color(255, 255, 255));
+        btn_productos.setText("Productos");
+        btn_productos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_productosActionPerformed(evt);
+            }
+        });
+
+        btn_clientes1.setBackground(new java.awt.Color(1, 186, 59));
+        btn_clientes1.setForeground(new java.awt.Color(255, 255, 255));
+        btn_clientes1.setText("Personas");
+        btn_clientes1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_clientes1ActionPerformed(evt);
+            }
+        });
+
+        btn_facturas1.setBackground(new java.awt.Color(1, 186, 59));
+        btn_facturas1.setForeground(new java.awt.Color(255, 255, 255));
+        btn_facturas1.setText("Facturas");
+        btn_facturas1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_facturas1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addComponent(btn_hospitalizaciones)
-                .addGap(123, 123, 123)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_empleado, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
+                .addGap(32, 32, 32))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_mascotas1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_clientes, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(41, 41, 41))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(223, 223, 223)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(43, 43, 43)
-                    .addComponent(btn_citas2, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(517, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btn_mascotas1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_clientes1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_citas2, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(83, 83, 83)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btn_hospitalizaciones))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(118, 118, 118)
+                        .addComponent(btn_productos, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(32, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btn_estadistica)
+                            .addComponent(btn_facturas1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(32, 32, 32))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btn_mascotas1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_empleado, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_citas2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(24, 24, 24)
+                                .addComponent(btn_productos, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btn_facturas1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addComponent(btn_mascotas1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_clientes1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(52, 52, 52)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_hospitalizaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_clientes, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_empleado, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btn_estadistica, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(42, 42, 42))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(119, 119, 119)
-                    .addComponent(btn_citas2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(336, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -188,7 +229,8 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_salirActionPerformed
-        
+        Frm_InicioSesion salir = new Frm_InicioSesion();
+        this.dispose();
     }//GEN-LAST:event_btn_salirActionPerformed
 
     private void btn_mascotas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mascotas1ActionPerformed
@@ -196,14 +238,14 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
         Frm_Mascota vista_mascotas = new Frm_Mascota();
     }//GEN-LAST:event_btn_mascotas1ActionPerformed
 
-    private void btn_clientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clientesActionPerformed
+    private void btn_estadisticaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_estadisticaActionPerformed
         // TODO add your handling code here:
-        Frm_Persona vista_personas= new Frm_Persona();
-    }//GEN-LAST:event_btn_clientesActionPerformed
+        Frm_Persona vista_personas = new Frm_Persona();
+    }//GEN-LAST:event_btn_estadisticaActionPerformed
 
     private void btn_empleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_empleadoActionPerformed
         // TODO add your handling code here:
-        Frm_Empleado vista_empleados= new Frm_Empleado();
+        Frm_Empleado vista_empleados = new Frm_Empleado();
     }//GEN-LAST:event_btn_empleadoActionPerformed
 
     private void btn_hospitalizacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hospitalizacionesActionPerformed
@@ -215,6 +257,20 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
         // TODO add your handling code here:
         Frm_Cita vista_cita = new Frm_Cita();
     }//GEN-LAST:event_btn_citas2ActionPerformed
+
+    private void btn_productosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_productosActionPerformed
+        // TODO add your handling code here:
+        Frm_Producto vista_producto = new Frm_Producto();
+    }//GEN-LAST:event_btn_productosActionPerformed
+
+    private void btn_clientes1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clientes1ActionPerformed
+        // TODO add your handling code here:
+        Frm_Persona p= new Frm_Persona();
+    }//GEN-LAST:event_btn_clientes1ActionPerformed
+
+    private void btn_facturas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_facturas1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_facturas1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -254,10 +310,13 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_citas2;
-    private javax.swing.JButton btn_clientes;
+    private javax.swing.JButton btn_clientes1;
     private javax.swing.JButton btn_empleado;
+    private javax.swing.JButton btn_estadistica;
+    private javax.swing.JButton btn_facturas1;
     private javax.swing.JButton btn_hospitalizaciones;
     private javax.swing.JButton btn_mascotas1;
+    private javax.swing.JButton btn_productos;
     private javax.swing.JButton btn_salir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

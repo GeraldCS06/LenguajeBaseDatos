@@ -36,7 +36,6 @@ ALTER TABLE Empleado ADD CONSTRAINT FK_servicio FOREIGN KEY (id_servicio) REFERE
 
 
 /* !!!!!!!!!!!!!!!!!! PARA DROPS  !!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 DROP TABLE Categoria CASCADE CONSTRAINTS;
 DROP TABLE Cita CASCADE CONSTRAINTS;
 DROP TABLE Empleado CASCADE CONSTRAINTS;
@@ -47,8 +46,7 @@ DROP TABLE Persona CASCADE CONSTRAINTS;
 DROP TABLE Producto CASCADE CONSTRAINTS;
 DROP TABLE Rol CASCADE CONSTRAINTS;
 DROP TABLE Servicio CASCADE CONSTRAINTS;
-
-
+/*
 DROP USER PROYECTO;
 
 DROP TABLESPACE VETERINARIA INCLUDING CONTENTS CASCADE CONSTRAINTS;
@@ -57,45 +55,164 @@ SELECT FILE_NAME, FILE_ID FROM DBA_DATA_FILES;
 
 Ir a la ruta y ver si existe el archivo : C:\Oracle\Product\21c\dbhomeXE\database */
 
+---------------------------------------------------------------------
+--- PROCEDIMIENTOS Y VISTAS
+---------------------------------------------------------------------
+Para Rol
+---------------------------------------------------------------------
+-- Vista Rol
+create or replace view datos_rol as
+select id_rol as ID, nombre_rol as Rol
+FROM rol;
 
------------------PROCEDIMIENTOS Y VISTAS-----------------------------
-CREATE OR REPLACE PROCEDURE insertar_persona (
-    p_nombre IN VARCHAR2,
-    p_primer_apellido IN VARCHAR2,
-    p_segundo_apellido IN VARCHAR2,
-    p_telefono IN VARCHAR2,
-    p_correo IN VARCHAR2,
+--- Paquete ROL. Crear
+CREATE OR REPLACE PACKAGE PKG_ROL AS
+  --variables
+
+  --funciones
+
+  --procedimientos
+  PROCEDURE insertar_rol (p_nombre_rol IN VARCHAR2);
+  PROCEDURE buscar_nombre_rol (P_nombre_rol IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE buscar_rol_id (P_id_rol IN NUMBER, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE actualizar_rol (p_id_rol IN NUMBER, p_nombre_rol IN VARCHAR2);
+  PROCEDURE eliminar_rol (p_id_rol IN NUMBER);  
+END PKG_ROL;
+
+ -- Body del package
+create or replace package body PKG_ROL
+as
+-- Procedimiento Agregar Rol
+    PROCEDURE insertar_rol (p_nombre_rol IN VARCHAR2)
+    AS
+        BEGIN
+        INSERT INTO Rol (nombre_rol)
+        VALUES (p_nombre_rol);
+        COMMIT;
+        EXCEPTION
+            WHEN OTHERS THEN
+            ROLLBACK;
+            RAISE;
+        END;
+        
+-- Procedimiento Buscar por nombre del rol
+procedure buscar_nombre_rol (P_nombre_rol IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_rol AS ID,
+           nombre_rol AS Rol
+    FROM rol
+    WHERE nombre_rol LIKE '%' || P_nombre_rol || '%'; 
+END;
+
+-- Procedimiento Buscar Rol por id
+PROCEDURE buscar_rol_id (P_id_rol IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_rol AS ID,
+           nombre_rol AS Nombre
+    FROM rol
+    WHERE id_rol = P_id_rol;
+END;
+
+-- Actualizar Rol
+PROCEDURE actualizar_rol (
+    p_id_rol IN NUMBER,
+    p_nombre_rol IN VARCHAR2)
+AS
+BEGIN
+    UPDATE Rol
+    SET nombre_rol = p_nombre_rol
+    WHERE id_rol = p_id_rol;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-- Eliminar Rol
+PROCEDURE eliminar_rol (
     p_id_rol IN NUMBER
 )
 AS
 BEGIN
-    INSERT INTO Persona (nombre, primer_apellido, segundo_apellido, telefono, correo,id_rol)
-    VALUES (p_nombre, p_primer_apellido, p_segundo_apellido, p_telefono, p_correo,p_id_rol);
+    DELETE FROM Rol
+    WHERE id_rol = p_id_rol;
+
     COMMIT;
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
         RAISE;
 END;
+  end PKG_ROL;
 
------------
-CREATE OR REPLACE PROCEDURE eliminar_persona (
-    p_id_persona IN NUMBER
-)
-AS
+---------------------------------------------------------------------
+Para Persona
+---------------------------------------------------------------------
+-- Vista Persona
+create or replace view datos_persona as
+select p.id_persona as ID, p.nombre as Nombre, p.primer_apellido || ' '|| p.segundo_apellido as Apellidos,
+p.telefono as Telefono, p.correo as Correo, r.nombre_rol as Rol
+from persona p
+inner join rol r
+on p.id_rol=r.id_rol;
+
+-- Paquete Persona. CREAR
+CREATE OR REPLACE PACKAGE PKG_PERSONA AS
+  --variables
+
+  --funciones
+
+  --procedimientos
+  PROCEDURE insertar_persona ( p_nombre IN VARCHAR2, p_primer_apellido IN VARCHAR2, p_segundo_apellido IN VARCHAR2, p_telefono IN VARCHAR2,
+    p_correo IN VARCHAR2, p_id_rol IN NUMBER);
+  PROCEDURE buscar_persona_nombre (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE buscar_persona_id (P_id_persona IN NUMBER, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE actualizar_persona (p_id_persona IN NUMBER, p_nombre IN VARCHAR2, p_primer_apellido IN VARCHAR2, p_segundo_apellido IN VARCHAR2,
+    p_telefono IN VARCHAR2, p_correo IN VARCHAR2, p_id_rol IN NUMBER);
+  PROCEDURE eliminar_persona (p_id_persona IN NUMBER);
+  
+END PKG_PERSONA;
+
+  -- Body del package
+create or replace package body PKG_PERSONA
+as
+-- Procedimiento Agregar Persona
+    PROCEDURE insertar_persona ( p_nombre IN VARCHAR2, p_primer_apellido IN VARCHAR2, p_segundo_apellido IN VARCHAR2,
+    p_telefono IN VARCHAR2,
+    p_correo IN VARCHAR2,
+    p_id_rol IN NUMBER)
+    AS
+        BEGIN
+        INSERT INTO Persona (nombre, primer_apellido, segundo_apellido, telefono, correo,id_rol)
+        VALUES (p_nombre, p_primer_apellido, p_segundo_apellido, p_telefono, p_correo,p_id_rol);
+        COMMIT;
+        EXCEPTION
+        WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+    END;
+    
+-- Procedimiento Buscar por nombre de Persona
+PROCEDURE buscar_persona_nombre (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
 BEGIN
-    DELETE FROM Persona
-    WHERE id_persona = p_id_persona;
-
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
+    OPEN P_resultados FOR
+    SELECT id_persona AS ID,
+           nombre AS Nombre,
+           primer_apellido AS Primer_Apellido,
+           segundo_apellido AS Segundo_Apellido,
+           telefono AS Telefono,
+           correo AS Correo,
+           id_rol AS Rol
+    FROM persona p
+    WHERE nombre LIKE '%' || P_nombre || '%'; 
 END;
 
------------
-CREATE OR REPLACE PROCEDURE buscar_persona_id (P_id_persona IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+-- Procedimiento Buscar Persona por id
+PROCEDURE buscar_persona_id (P_id_persona IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
 BEGIN
     -- Abrir el cursor para almacenar los resultados de la consulta
     OPEN P_resultados FOR
@@ -110,20 +227,322 @@ BEGIN
     WHERE id_persona = P_id_persona;
 END;
 
------------
-CREATE OR REPLACE VIEW DATOS_ROL AS
-SELECT r.id_rol as ID, r.nombre_rol as NombreRol
-FROM Rol r;
+-- Actualizar Persona
+PROCEDURE actualizar_persona (
+    p_id_persona IN NUMBER,
+    p_nombre IN VARCHAR2,
+    p_primer_apellido IN VARCHAR2,
+    p_segundo_apellido IN VARCHAR2,
+    p_telefono IN VARCHAR2,
+    p_correo IN VARCHAR2,
+    p_id_rol IN NUMBER
+)
+AS
+BEGIN
+    UPDATE Persona
+    SET nombre = p_nombre,
+        primer_apellido = p_primer_apellido,
+        segundo_apellido = p_segundo_apellido,
+        telefono = p_telefono,
+        correo = p_correo,
+        id_rol = p_id_rol
+    WHERE id_persona = p_id_persona;
 
------------
-CREATE OR REPLACE VIEW datos_persona AS
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
 
-SELECT p.id_persona as ID, p.nombre as Nombre, p.primer_apellido || p.segundo_apellido as Apellidos,
+-- Eliminar Persona
+PROCEDURE eliminar_persona (
+    p_id_persona IN NUMBER
+)
+AS
+BEGIN
+    DELETE FROM Persona
+    WHERE id_persona = p_id_persona;
 
-p.telefono as Telefono, p.correo as Correo, r.nombre_rol as Rol
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+end PKG_PERSONA;
 
-FROM persona p
+---------------------------------------------------------------------
+Para Servicio
+---------------------------------------------------------------------
+-- Vista Servicio
+create or replace view datos_servicio as
+select id_servicio as ID, nombre_servicio as NombreServicio, precio as Precio
+from Servicio;
 
-inner join rol r
+-- Paquete Servicio. CREAR
+CREATE OR REPLACE PACKAGE PKG_SERVICIO AS
+  --variables
 
-on p.id_rol=r.id_rol;
+  --funciones
+
+  --procedimientos
+  PROCEDURE insertar_servicio ( p_nombre_servicio IN VARCHAR2, p_precio IN NUMBER);
+  PROCEDURE buscar_nombre_servicio (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE buscar_servicio_id (P_servicio_id IN NUMBER, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE actualizar_servicio ( p_id_servicio IN NUMBER, p_nombre_servicio IN VARCHAR2, p_precio IN VARCHAR2);
+  PROCEDURE eliminar_servicio (p_id_servicio IN NUMBER);
+  
+END PKG_SERVICIO;
+
+-- Body del package
+create or replace package body PKG_SERVICIO
+as
+-- Procedimiento Agregar Servicio
+    PROCEDURE insertar_servicio ( p_nombre_servicio IN VARCHAR2, p_precio IN NUMBER)
+    AS
+        BEGIN
+        INSERT INTO Servicio (nombre_servicio, precio)
+        VALUES (p_nombre_servicio, p_precio);
+        COMMIT;
+        EXCEPTION
+        WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+    END;
+    
+-- Procedimiento Buscar por nombre de Servicio
+PROCEDURE buscar_nombre_servicio (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_servicio AS ID,
+           nombre_servicio AS NombreServicio,
+           precio AS Precio
+    FROM Servicio
+    WHERE nombre_servicio LIKE '%' || P_nombre || '%'; 
+END;
+
+-- Procedimiento Buscar Servicio por id
+PROCEDURE buscar_servicio_id (P_servicio_id IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_servicio AS ID,
+           nombre_servicio AS NombreServicio,
+           precio AS Precio
+    FROM Servicio
+    WHERE id_servicio = P_servicio_id;
+END;
+
+-- Actualizar Servicio
+PROCEDURE actualizar_servicio ( p_id_servicio IN NUMBER, p_nombre_servicio IN VARCHAR2, p_precio IN VARCHAR2)
+AS
+BEGIN
+    UPDATE Servicio
+    SET nombre_servicio = p_nombre_servicio,
+        precio = p_precio
+    WHERE id_servicio = p_id_servicio;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-- Eliminar Servicio
+PROCEDURE eliminar_servicio (p_id_servicio IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Servicio
+    WHERE id_servicio = p_id_servicio;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+end PKG_SERVICIO;
+
+---------------------------------------------------------------------
+Para Especie
+---------------------------------------------------------------------
+-- Vista Especie
+create or replace view datos_especie as
+select id_especie as ID, nombre_especie as NombreEspecie
+from Especie;
+
+--- Paquete Especie. CREAR
+CREATE OR REPLACE PACKAGE PKG_ESPECIE AS
+  --variables
+
+  --funciones
+
+  --procedimientos
+  PROCEDURE insertar_especie ( p_nombre_especie IN VARCHAR2);
+  PROCEDURE buscar_nombre_especie (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE buscar_especie_id (P_especie_id IN NUMBER, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE actualizar_especie ( p_id_especie IN NUMBER, p_nombre_especie IN VARCHAR2);
+  PROCEDURE eliminar_especie (p_id_especie IN NUMBER);
+  
+END PKG_ESPECIE;
+
+-- Body del package
+create or replace package body PKG_ESPECIE
+as
+-- Procedimiento Agregar Especie
+    PROCEDURE insertar_especie ( p_nombre_especie IN VARCHAR2)
+    AS
+        BEGIN
+        INSERT INTO Especie (nombre_especie)
+        VALUES (p_nombre_especie);
+        COMMIT;
+        EXCEPTION
+        WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+    END;
+    
+-- Procedimiento Buscar por nombre de Especie
+PROCEDURE buscar_nombre_especie (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_especie AS ID,
+           nombre_especie AS NombreEspecie
+    FROM Especie
+    WHERE nombre_especie LIKE '%' || P_nombre || '%'; 
+END;
+
+-- Procedimiento Buscar Especie por id
+PROCEDURE buscar_especie_id (P_especie_id IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_especie AS ID,
+           nombre_especie AS NombreEspecie
+    FROM Especie
+    WHERE id_especie = P_especie_id;
+END;
+
+-- Actualizar Especie
+PROCEDURE actualizar_especie ( p_id_especie IN NUMBER, p_nombre_especie IN VARCHAR2)
+AS
+BEGIN
+    UPDATE Especie
+    SET nombre_especie = p_nombre_especie
+    WHERE id_especie = p_id_especie;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-- Eliminar Especie
+PROCEDURE eliminar_especie (p_id_especie IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Especie
+    WHERE id_especie = p_id_especie;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+end PKG_ESPECIE;
+
+---------------------------------------------------------------------
+Para Categoria
+---------------------------------------------------------------------
+-- Vista Categoria
+create or replace view datos_categoria as
+select id_categoria as ID, nombre_categoria as NombreCategoria
+from Categoria;
+
+--- Paquete Categoria. CREAR
+CREATE OR REPLACE PACKAGE PKG_CATEGORIA AS
+  --variables
+
+  --funciones
+
+  --procedimientos
+  PROCEDURE insertar_categoria ( p_nombre_categoria IN VARCHAR2);
+  PROCEDURE buscar_nombre_categoria (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE buscar_categoria_id (P_categoria_id IN NUMBER, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE actualizar_categoria ( p_id_categoria IN NUMBER, p_nombre_categoria IN VARCHAR2);
+  PROCEDURE eliminar_categoria (p_id_categoria IN NUMBER);
+  
+END PKG_CATEGORIA;
+
+-- Body del package
+create or replace package body PKG_CATEGORIA
+as
+-- Procedimiento Agregar Categoria
+    PROCEDURE insertar_categoria ( p_nombre_categoria IN VARCHAR2)
+    AS
+        BEGIN
+        INSERT INTO Categoria (nombre_categoria)
+        VALUES (p_nombre_categoria);
+        COMMIT;
+        EXCEPTION
+        WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+    END;
+    
+-- Procedimiento Buscar por nombre de Categoria
+PROCEDURE buscar_nombre_categoria (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_categoria AS ID,
+           nombre_categoria AS NombreCategoria
+    FROM Categoria
+    WHERE nombre_categoria LIKE '%' || P_nombre || '%'; 
+END;
+
+-- Procedimiento Buscar Categoria por id
+PROCEDURE buscar_categoria_id (P_categoria_id IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_categoria AS ID,
+           nombre_categoria AS NombreCategoria
+    FROM Categoria
+    WHERE id_categoria = P_categoria_id;
+END;
+
+-- Actualizar Categoria
+PROCEDURE actualizar_categoria ( p_id_categoria IN NUMBER, p_nombre_categoria IN VARCHAR2)
+AS
+BEGIN
+    UPDATE Categoria
+    SET nombre_categoria = p_nombre_categoria
+    WHERE id_categoria = p_id_categoria;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-- Eliminar Categoria
+PROCEDURE eliminar_categoria (p_id_categoria IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Categoria
+    WHERE id_categoria = p_id_categoria;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+end PKG_CATEGORIA;
+
+
+---------------------------------------------------------------------
+Para Continuar ...
+---------------------------------------------------------------------

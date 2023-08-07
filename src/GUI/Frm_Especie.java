@@ -1,10 +1,29 @@
 package GUI;
 
+import Bo.EspecieBo;
+import Entidad.Especie;
+import conexion.Conexion;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author vrb00
  */
 public class Frm_Especie extends javax.swing.JFrame {
+
+    private int id_especie;
+    private DefaultTableModel tabla;
+    private Especie especie = new Especie();
+    private EspecieBo especieBo = new EspecieBo();
+    private String mensaje = "";
 
     /**
      * Creates new form Frm_Rol
@@ -14,6 +33,8 @@ public class Frm_Especie extends javax.swing.JFrame {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        mostrarDatosTabla();
+        obtenerSeleccion();
     }
 
     /**
@@ -63,13 +84,14 @@ public class Frm_Especie extends javax.swing.JFrame {
 
         tabla_especies.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Especie"
             }
         ));
         jScrollPane1.setViewportView(tabla_especies);
@@ -79,19 +101,39 @@ public class Frm_Especie extends javax.swing.JFrame {
         btn_buscar.setBackground(new java.awt.Color(0, 204, 204));
         btn_buscar.setForeground(new java.awt.Color(255, 255, 255));
         btn_buscar.setText("Buscar");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscarActionPerformed(evt);
+            }
+        });
 
         btn_agregar.setBackground(new java.awt.Color(1, 186, 59));
         btn_agregar.setForeground(new java.awt.Color(255, 255, 255));
         btn_agregar.setText("Agregar");
+        btn_agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_agregarActionPerformed(evt);
+            }
+        });
 
         btn_editar.setBackground(new java.awt.Color(49, 66, 82));
         btn_editar.setForeground(new java.awt.Color(255, 255, 255));
         btn_editar.setText("Editar");
         btn_editar.setToolTipText("Guardar cambios");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         btn_eliminar.setBackground(new java.awt.Color(255, 0, 0));
         btn_eliminar.setForeground(new java.awt.Color(255, 255, 255));
         btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -139,6 +181,69 @@ public class Frm_Especie extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
+        // TODO add your handling code here:
+        if (verificarDatos()) {
+            try {
+                especie.setNombre_especie(txt_nombre_especie.getText());
+                mensaje = especieBo.agregarEspecie(especie);
+                JOptionPane.showMessageDialog(this, mensaje);
+                limpiarCampos();
+                mostrarDatosTabla();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_agregarActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        // TODO add your handling code here:
+        if (verificarDatos()) {
+            try {
+                especie.setId_especie(id_especie);
+                especie.setNombre_especie(txt_nombre_especie.getText());
+                tabla_especies.clearSelection();
+                mensaje = especieBo.actualizarEspecie(especie);
+                JOptionPane.showMessageDialog(this, mensaje);
+                mostrarDatosTabla();
+                limpiarCampos();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        // TODO add your handling code here:
+        try {
+            ArrayList<Especie> especie = especieBo.buscarNombreEspecie(txt_nombre_especie.getText());
+
+            for (Especie e : especie) {
+                id_especie = e.getId_especie();
+                txt_nombre_especie.setText(e.getNombre_especie());
+            }
+        } catch (Exception sql) {
+            JOptionPane.showMessageDialog(null, sql);
+        }
+    }//GEN-LAST:event_btn_buscarActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+        // TODO add your handling code here:
+        try {
+            mensaje = especieBo.eliminarEspecie(id_especie);
+            JOptionPane.showMessageDialog(this, mensaje);
+            mostrarDatosTabla();
+            limpiarCampos();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, mensaje);
+        }
+        mostrarDatosTabla();
+    }//GEN-LAST:event_btn_eliminarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -175,6 +280,91 @@ public class Frm_Especie extends javax.swing.JFrame {
         });
     }
 
+    private void mostrarDatosTabla() {
+        DefaultTableModel contenido = (DefaultTableModel) tabla_especies.getModel();
+
+        contenido.setRowCount(0);
+
+        try {
+            Connection conn = Conexion.Conectar();
+            
+            //Vista
+            String procedureCall = "Select * from datos_especie";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer especieID = resultSet.getInt("ID");
+                    String especieNombre = resultSet.getString("NombreEspecie");
+
+                    // Agregar los datos a la tabla
+                    ((DefaultTableModel) tabla_especies.getModel()).addRow(new Object[]{especieID, especieNombre});
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private boolean verificarDatos() {
+        String nombre_especie = txt_nombre_especie.getText();
+        boolean verificar = false;
+        if (nombre_especie != "") {
+            verificar = true;
+        }
+        return verificar;
+    }
+    
+    private void limpiarCampos(){
+        txt_nombre_especie.setText("");
+    }
+    
+    private void obtenerSeleccion() {
+        // Agregar un ListSelectionListener a la tabla
+        tabla_especies.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // Obtener el número de fila y columna seleccionada
+                    int selectedRow = tabla_especies.getSelectedRow();
+
+                    System.out.println(selectedRow);
+
+                    // Obtener la primera celda seleccionada
+                    Object selectedData = tabla_especies.getValueAt(selectedRow, 0);
+
+                    String id = selectedData.toString();
+                    int idConsulta = Integer.parseInt(id);
+
+                    try {
+                        ArrayList<Especie> especie = especieBo.buscarIdEspecie(idConsulta);
+
+                        for (Especie es : especie) {
+                            id_especie = es.getId_especie();
+                            txt_nombre_especie.setText(es.getNombre_especie());
+                        }
+                    } catch (Exception sql) {
+                        JOptionPane.showMessageDialog(null, sql);
+                    }
+                    
+                    tabla_especies.clearSelection();
+                }
+            }
+        });
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_agregar;
     private javax.swing.JButton btn_buscar;

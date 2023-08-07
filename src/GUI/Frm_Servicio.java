@@ -1,8 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package GUI;
+
+import Bo.ServicioBo;
+import Entidad.Servicio;
+import conexion.Conexion;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -10,14 +19,22 @@ package GUI;
  */
 public class Frm_Servicio extends javax.swing.JFrame {
 
+    private int id_servicio;
+    private DefaultTableModel tabla;
+    private Servicio servicio = new Servicio();
+    private ServicioBo servicioBo = new ServicioBo();
+    private String mensaje = "";
+
     /**
-     * Creates new form Frm_Rol
+     * Creates new form Frm_Servicio
      */
     public Frm_Servicio() {
         initComponents();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        mostrarDatosTabla();
+        obtenerSeleccion();
     }
 
     /**
@@ -69,13 +86,14 @@ public class Frm_Servicio extends javax.swing.JFrame {
 
         tabla_servicios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Servicio", "Precio"
             }
         ));
         jScrollPane1.setViewportView(tabla_servicios);
@@ -85,19 +103,39 @@ public class Frm_Servicio extends javax.swing.JFrame {
         btn_buscar.setBackground(new java.awt.Color(0, 204, 204));
         btn_buscar.setForeground(new java.awt.Color(255, 255, 255));
         btn_buscar.setText("Buscar");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscarActionPerformed(evt);
+            }
+        });
 
         btn_agregar.setBackground(new java.awt.Color(1, 186, 59));
         btn_agregar.setForeground(new java.awt.Color(255, 255, 255));
         btn_agregar.setText("Agregar");
+        btn_agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_agregarActionPerformed(evt);
+            }
+        });
 
         btn_editar.setBackground(new java.awt.Color(49, 66, 82));
         btn_editar.setForeground(new java.awt.Color(255, 255, 255));
         btn_editar.setText("Editar");
         btn_editar.setToolTipText("Guardar cambios");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         btn_eliminar.setBackground(new java.awt.Color(255, 0, 0));
         btn_eliminar.setForeground(new java.awt.Color(255, 255, 255));
         btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Precio");
 
@@ -155,6 +193,82 @@ public class Frm_Servicio extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
+        // TODO add your handling code here:
+        if (verificarDatos()) {
+            if (verificarPrecio()) {
+                try {
+                    servicio.setNombre_servicio(txt_nombre_servicio.getText());
+                    int precioS = Integer.parseInt(txt_precio.getText());
+                    servicio.setPrecio(precioS);
+
+                    mensaje = servicioBo.agregarServicio(servicio);
+                    JOptionPane.showMessageDialog(this, mensaje);
+                    limpiarCampos();
+                    mostrarDatosTabla();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this, mensaje);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "El precio del servicio tiene que ser un valor numerico.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_agregarActionPerformed
+
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        // TODO add your handling code here:
+        try {
+            ArrayList<Servicio> servicio = servicioBo.buscarNombreServicio(txt_nombre_servicio.getText());
+
+            for (Servicio s : servicio) {
+                id_servicio = s.getId_servicio();
+                txt_nombre_servicio.setText(s.getNombre_servicio());
+                txt_precio.setText(s.getPrecio() + "");
+            }
+        } catch (Exception sql) {
+            JOptionPane.showMessageDialog(null, sql);
+        }
+    }//GEN-LAST:event_btn_buscarActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        // TODO add your handling code here:
+        if (verificarDatos()) {
+            if (verificarPrecio()) {
+                try {
+                    servicio.setId_servicio(id_servicio);
+                    servicio.setNombre_servicio(txt_nombre_servicio.getText());
+                    servicio.setPrecio(Integer.parseInt(txt_precio.getText()));
+                    mensaje = servicioBo.actualizarServicio(servicio);
+                    tabla_servicios.clearSelection();
+                    JOptionPane.showMessageDialog(this, mensaje);
+                    mostrarDatosTabla();
+                    limpiarCampos();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this, mensaje);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "El precio del servicio tiene que ser un valor numerico.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+        // TODO add your handling code here:
+        try {
+            mensaje = servicioBo.eliminarServicio(id_servicio);
+            JOptionPane.showMessageDialog(this, mensaje);
+            mostrarDatosTabla();
+            limpiarCampos();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, mensaje);
+        }
+        mostrarDatosTabla();
+    }//GEN-LAST:event_btn_eliminarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -187,6 +301,109 @@ public class Frm_Servicio extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Frm_Servicio().setVisible(true);
+            }
+        });
+    }
+
+    private void mostrarDatosTabla() {
+        DefaultTableModel contenido = (DefaultTableModel) tabla_servicios.getModel();
+
+        contenido.setRowCount(0);
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_servicio";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer servicioID = resultSet.getInt("ID");
+                    String servicio = resultSet.getString("NombreServicio");
+                    int precio = resultSet.getInt("Precio");
+                    String precioServicio = "₡" + precio;
+
+                    // Agregar los datos a la tabla
+                    ((DefaultTableModel) tabla_servicios.getModel()).addRow(new Object[]{servicioID, servicio, precioServicio});
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private boolean verificarDatos() {
+        boolean verificar = false;
+        String nombre = txt_nombre_servicio.getText();
+        String precio = txt_precio.getText();
+
+        if (nombre != "" && precio != "") {
+            verificar = true;
+        }
+
+        return verificar;
+    }
+
+    private boolean verificarPrecio() {
+        String precio = txt_precio.getText();
+        boolean verifica = true;
+        try {
+            int precioS = Integer.parseInt(precio);
+        } catch (Exception e) {
+            System.out.println("El precio no es un valor numerico");
+            verifica = false;
+        }
+        return verifica;
+    }
+
+    private void limpiarCampos() {
+        txt_nombre_servicio.setText("");
+        txt_precio.setText("");
+    }
+
+    private void obtenerSeleccion() {
+        // Agregar un ListSelectionListener a la tabla
+        tabla_servicios.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // Obtener el número de fila y columna seleccionada
+                    int selectedRow = tabla_servicios.getSelectedRow();
+
+                    System.out.println(selectedRow);
+
+                    // Obtener la primera celda seleccionada
+                    Object selectedData = tabla_servicios.getValueAt(selectedRow, 0);
+
+                    String id = selectedData.toString();
+                    int idConsulta = Integer.parseInt(id);
+
+                    try {
+                        ArrayList<Servicio> servicio = servicioBo.buscarIdServicio(idConsulta);
+
+                        for (Servicio s : servicio) {
+                            id_servicio = s.getId_servicio();
+                            txt_nombre_servicio.setText(s.getNombre_servicio());
+                        }
+                    } catch (Exception sql) {
+                        JOptionPane.showMessageDialog(null, sql);
+                    }
+
+                    tabla_servicios.clearSelection();
+                }
             }
         });
     }

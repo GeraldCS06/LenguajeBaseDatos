@@ -2,8 +2,6 @@ package conexion;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
 
 public class Conexion {
@@ -19,11 +17,6 @@ public class Conexion {
         } catch (ClassNotFoundException e) {
             throw new SQLException(e.getMessage());
         }
-    }
-
-    public static void main(String[] args) throws SQLException {
-        Conexion c = new Conexion();
-        c.Conectar();
     }
 }
 

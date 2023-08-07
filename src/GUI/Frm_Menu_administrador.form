@@ -2,7 +2,7 @@
 
 <Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
-    <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="defaultCloseOperation" type="int" value="0"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -40,27 +40,38 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-                  <Component id="btn_hospitalizaciones" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="123" max="-2" attributes="0"/>
-                  <Component id="btn_empleado" min="-2" pref="98" max="-2" attributes="0"/>
-                  <EmptySpace pref="141" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="btn_mascotas1" min="-2" pref="98" max="-2" attributes="0"/>
-                      <Component id="btn_clientes" min="-2" pref="98" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="223" max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" pref="187" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
+                  <Component id="btn_empleado" min="-2" pref="98" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
               </Group>
-              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
-                      <Component id="btn_citas2" min="-2" pref="98" max="-2" attributes="0"/>
-                      <EmptySpace pref="517" max="32767" attributes="0"/>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="btn_mascotas1" min="-2" pref="98" max="-2" attributes="0"/>
+                              <Component id="btn_clientes1" min="-2" pref="98" max="-2" attributes="0"/>
+                              <Component id="btn_citas2" alignment="0" min="-2" pref="98" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
+                          <Component id="jLabel1" min="-2" pref="187" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="btn_hospitalizaciones" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="118" max="-2" attributes="0"/>
+                          <Component id="btn_productos" min="-2" pref="98" max="-2" attributes="0"/>
+                          <EmptySpace pref="32" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="btn_estadistica" min="-2" max="-2" attributes="0"/>
+                              <Component id="btn_facturas1" min="-2" pref="98" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="32" pref="32" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
           </Group>
@@ -70,23 +81,36 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="btn_mascotas1" min="-2" pref="45" max="-2" attributes="0"/>
-                  <EmptySpace pref="23" max="32767" attributes="0"/>
-                  <Component id="jLabel1" min="-2" pref="172" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="btn_empleado" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
+                      <Component id="btn_citas2" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace pref="23" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="jLabel1" min="-2" pref="172" max="-2" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                                  <Component id="btn_productos" min="-2" pref="45" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="btn_facturas1" min="-2" pref="45" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
+                          <Component id="btn_mascotas1" min="-2" pref="45" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="btn_clientes1" min="-2" pref="45" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
                   <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btn_hospitalizaciones" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                      <Component id="btn_clientes" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                      <Component id="btn_empleado" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
+                      <Component id="btn_estadistica" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
-              </Group>
-              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="119" max="-2" attributes="0"/>
-                      <Component id="btn_citas2" min="-2" pref="45" max="-2" attributes="0"/>
-                      <EmptySpace pref="336" max="32767" attributes="0"/>
-                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -141,6 +165,9 @@
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Salir"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.SoftBevelBorderInfo">
@@ -175,7 +202,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_hospitalizacionesActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btn_clientes">
+        <Component class="javax.swing.JButton" name="btn_estadistica">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="3b" green="ba" red="1" type="rgb"/>
@@ -183,10 +210,10 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Personas"/>
+            <Property name="text" type="java.lang.String" value="Sobre este mes"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_clientesActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_estadisticaActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btn_empleado">
@@ -229,6 +256,48 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_citas2ActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_productos">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="3b" green="ba" red="1" type="rgb"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Productos"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_productosActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_clientes1">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="3b" green="ba" red="1" type="rgb"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Personas"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_clientes1ActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_facturas1">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="3b" green="ba" red="1" type="rgb"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Facturas"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_facturas1ActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

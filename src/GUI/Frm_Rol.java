@@ -1,10 +1,29 @@
 package GUI;
 
+import Bo.RolBo;
+import Entidad.Rol;
+import conexion.Conexion;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author vrb00
  */
 public class Frm_Rol extends javax.swing.JFrame {
+
+    private int id_rol;
+    private DefaultTableModel tabla;
+    private Rol rol = new Rol();
+    private RolBo rolBo = new RolBo();
+    private String mensaje = "";
 
     /**
      * Creates new form Frm_Rol
@@ -14,6 +33,8 @@ public class Frm_Rol extends javax.swing.JFrame {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        mostrarDatosTabla();
+        obtenerSeleccion();
     }
 
     /**
@@ -63,13 +84,10 @@ public class Frm_Rol extends javax.swing.JFrame {
 
         tabla_roles.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Rol"
             }
         ));
         jScrollPane1.setViewportView(tabla_roles);
@@ -79,19 +97,39 @@ public class Frm_Rol extends javax.swing.JFrame {
         btn_buscar.setBackground(new java.awt.Color(0, 204, 204));
         btn_buscar.setForeground(new java.awt.Color(255, 255, 255));
         btn_buscar.setText("Buscar");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscarActionPerformed(evt);
+            }
+        });
 
         btn_agregar.setBackground(new java.awt.Color(1, 186, 59));
         btn_agregar.setForeground(new java.awt.Color(255, 255, 255));
         btn_agregar.setText("Agregar");
+        btn_agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_agregarActionPerformed(evt);
+            }
+        });
 
         btn_editar.setBackground(new java.awt.Color(49, 66, 82));
         btn_editar.setForeground(new java.awt.Color(255, 255, 255));
         btn_editar.setText("Editar");
         btn_editar.setToolTipText("Guardar cambios");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         btn_eliminar.setBackground(new java.awt.Color(255, 0, 0));
         btn_eliminar.setForeground(new java.awt.Color(255, 255, 255));
         btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -139,6 +177,69 @@ public class Frm_Rol extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
+        // TODO add your handling code here:
+        if (verificarDatos()) {
+            try {
+                rol.setNombre_rol(txt_nombre_rol.getText());
+                mensaje = rolBo.agregarRol(rol);
+                JOptionPane.showMessageDialog(this, mensaje);
+                limpiarCampos();
+                mostrarDatosTabla();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_agregarActionPerformed
+
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        // TODO add your handling code here:
+        try {
+            ArrayList<Rol> rol = rolBo.buscarNombreRol(txt_nombre_rol.getText());
+
+            for (Rol r : rol) {
+                id_rol = r.getId_rol();
+                txt_nombre_rol.setText(r.getNombre_rol());
+            }
+        } catch (Exception sql) {
+            JOptionPane.showMessageDialog(null, sql);
+        }
+    }//GEN-LAST:event_btn_buscarActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        // TODO add your handling code here:
+        if (verificarDatos()) {
+            try {
+                rol.setId_rol(id_rol);
+                rol.setNombre_rol(txt_nombre_rol.getText());
+                mensaje = rolBo.actualizarRol(rol);
+                tabla_roles.clearSelection();
+                JOptionPane.showMessageDialog(this, mensaje);
+                mostrarDatosTabla();
+                limpiarCampos();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+        // TODO add your handling code here:
+        try {
+            mensaje = rolBo.eliminarRol(id_rol);
+            JOptionPane.showMessageDialog(this, mensaje);
+            mostrarDatosTabla();
+            limpiarCampos();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, mensaje);
+        }
+        mostrarDatosTabla();
+    }//GEN-LAST:event_btn_eliminarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -170,6 +271,90 @@ public class Frm_Rol extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Frm_Rol().setVisible(true);
+            }
+        });
+    }
+
+    private boolean verificarDatos() {
+        boolean verificar = false;
+        String rol = txt_nombre_rol.getText();
+
+        if (rol != "") {
+            verificar = true;
+        }
+        return verificar;
+    }
+
+    private void mostrarDatosTabla() {
+        DefaultTableModel contenido = (DefaultTableModel) tabla_roles.getModel();
+
+        contenido.setRowCount(0);
+
+        try {
+            Connection conn = Conexion.Conectar();
+            
+            //Vista
+            String procedureCall = "Select * from datos_rol";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer rolID = resultSet.getInt("ID");
+                    String rol = resultSet.getString("Rol");
+
+                    // Agregar los datos a la tabla
+                    ((DefaultTableModel) tabla_roles.getModel()).addRow(new Object[]{rolID, rol});
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private void limpiarCampos() {
+        txt_nombre_rol.setText("");
+    }
+    
+    private void obtenerSeleccion() {
+        // Agregar un ListSelectionListener a la tabla
+        tabla_roles.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    int selectedRow = tabla_roles.getSelectedRow();
+
+                    System.out.println(selectedRow);
+
+                    // Obtener la primera celda seleccionada
+                    Object selectedData = tabla_roles.getValueAt(selectedRow, 0);
+
+                    String id = selectedData.toString();
+                    int idConsulta = Integer.parseInt(id);
+
+                    try {
+                        ArrayList<Rol> rol = rolBo.buscarRolId(idConsulta);
+
+                        for (Rol r : rol) {
+                            id_rol= r.getId_rol();
+                            txt_nombre_rol.setText(r.getNombre_rol());
+                        }
+                    } catch (Exception sql) {
+                        JOptionPane.showMessageDialog(null, sql);
+                    }
+                    tabla_roles.clearSelection();
+                }
             }
         });
     }
