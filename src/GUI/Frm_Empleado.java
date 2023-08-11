@@ -637,13 +637,13 @@ public class Frm_Empleado extends javax.swing.JFrame {
                     try {
                         ArrayList<Empleado> empleado = empBo.buscarEmpleadoId(idConsulta);
 
-                        for (Empleado e : empleado) {
-                            id_empleado = e.getId_empleado();
-                            txt_carnet.setText(e.getCarnet());
-                            setIndexComboPersona(e.getId_persona());
-                            setIndexComboServicio(e.getId_servicio());
-                            Txt_contrasenna.setText(e.getContrasenna());
-                            setIndexComboEstado(e.getEstado());
+                        for (Empleado es : empleado) {
+                            id_empleado = es.getId_empleado();
+                            txt_carnet.setText(es.getCarnet());
+                            setIndexComboPersona(es.getId_persona());
+                            setIndexComboServicio(es.getId_servicio());
+                            Txt_contrasenna.setText(es.getContrasenna());
+                            setIndexComboEstado(es.getEstado());
                         }
                     } catch (Exception sql) {
                         JOptionPane.showMessageDialog(null, sql);

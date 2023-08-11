@@ -16,17 +16,15 @@ public class Empleado {
     int id_persona;
     String estado;
     int id_servicio;
-    
-    
 
-    public Empleado( String carnet, String contrasenna, int id_persona, String estado, int id_servicio) {
+    public Empleado(String carnet, String contrasenna, int id_persona, String estado, int id_servicio) {
         this.carnet = carnet;
         this.contrasenna = contrasenna;
         this.id_persona = id_persona;
         this.estado = estado;
         this.id_servicio = id_servicio;
     }
-    
+
     public Empleado(int id_empleado, String carnet, String contrasenna, int id_persona, String estado, int id_servicio) {
         this.id_empleado = id_empleado;
         this.carnet = carnet;
@@ -36,11 +34,8 @@ public class Empleado {
         this.id_servicio = id_servicio;
     }
 
-
-
-
-    
-    
+    public Empleado() {
+    }
 
     public int getId_empleado() {
         return id_empleado;
@@ -89,15 +84,10 @@ public class Empleado {
     public void setId_servicio(int id_servicio) {
         this.id_servicio = id_servicio;
     }
-    
 
-    
-
-
-    
     @Override
     public String toString() {
-        return "Empleado{" + "carnet=" + carnet + ", id_persona=" + id_persona + ", estado=" + estado + ", id_servicio=" + id_servicio +'}';
+        return "Empleado{" + "carnet=" + carnet + ", id_persona=" + id_persona + ", estado=" + estado + ", id_servicio=" + id_servicio + '}';
     }
 
 }
