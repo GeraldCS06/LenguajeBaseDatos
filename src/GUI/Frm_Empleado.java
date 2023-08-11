@@ -4,11 +4,30 @@
  */
 package GUI;
 
+import Bo.EmpleadoBo; // Asegúrate de importar el Bo correcto para Empleado
+import Entidad.Empleado; // Asegúrate de importar la Entidad correcta para Empleado
+import conexion.Conexion;
+import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSet;
+import java.sql.Connection;
+import java.sql.CallableStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 /**
  *
  * @author vrb00
  */
 public class Frm_Empleado extends javax.swing.JFrame {
+
+    private int id_empleado;
+    private DefaultTableModel tabla;
+    private Empleado emp = new Empleado();
+    private EmpleadoBo empBo = new EmpleadoBo();
+    private String mensaje = "";
 
     /**
      * Creates new form Frm_Persona
@@ -18,6 +37,8 @@ public class Frm_Empleado extends javax.swing.JFrame {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        mostrarDatosTabla();
+        obtenerSeleccion();
     }
 
     /**
@@ -46,7 +67,7 @@ public class Frm_Empleado extends javax.swing.JFrame {
         combo_persona = new javax.swing.JComboBox<>();
         combo_servicio = new javax.swing.JComboBox<>();
         combo_estado = new javax.swing.JComboBox<>();
-        jPasswordField = new javax.swing.JPasswordField();
+        Txt_contrasenna = new javax.swing.JPasswordField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menu_persona = new javax.swing.JMenuItem();
@@ -91,19 +112,39 @@ public class Frm_Empleado extends javax.swing.JFrame {
         btn_agregar.setBackground(new java.awt.Color(1, 186, 59));
         btn_agregar.setForeground(new java.awt.Color(255, 255, 255));
         btn_agregar.setText("Agregar");
+        btn_agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_agregarActionPerformed(evt);
+            }
+        });
 
         btn_editar.setBackground(new java.awt.Color(49, 66, 82));
         btn_editar.setForeground(new java.awt.Color(255, 255, 255));
         btn_editar.setText("Editar");
         btn_editar.setToolTipText("Guardar cambios");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         btn_buscar.setBackground(new java.awt.Color(0, 204, 204));
         btn_buscar.setForeground(new java.awt.Color(255, 255, 255));
         btn_buscar.setText("Buscar");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscarActionPerformed(evt);
+            }
+        });
 
         btn_eliminar.setBackground(new java.awt.Color(255, 0, 0));
         btn_eliminar.setForeground(new java.awt.Color(255, 255, 255));
         btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
 
         tabla_empleados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -119,6 +160,11 @@ public class Frm_Empleado extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tabla_empleados);
 
         combo_persona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_persona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_personaActionPerformed(evt);
+            }
+        });
 
         combo_servicio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -170,7 +216,7 @@ public class Frm_Empleado extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(combo_estado, 0, 115, Short.MAX_VALUE)
-                    .addComponent(jPasswordField))
+                    .addComponent(Txt_contrasenna))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jScrollPane1)
             .addGroup(layout.createSequentialGroup()
@@ -193,7 +239,7 @@ public class Frm_Empleado extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(txt_carnet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(jPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Txt_contrasenna, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -219,13 +265,395 @@ public class Frm_Empleado extends javax.swing.JFrame {
 
     private void menu_personaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_personaActionPerformed
         // TODO add your handling code here:
-        Frm_Persona vista_persona = new Frm_Persona();
+        Frm_Empleado vista_empleado = new Frm_Empleado();
     }//GEN-LAST:event_menu_personaActionPerformed
 
     private void menu_servicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_servicioActionPerformed
         // TODO add your handling code here:
         Frm_Servicio vista_servicio = new Frm_Servicio();
     }//GEN-LAST:event_menu_servicioActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+        try {
+            mensaje = empBo.eliminarEmpleado(id_empleado);
+            JOptionPane.showMessageDialog(this, mensaje);
+            limpiarCampos();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, mensaje);
+        }
+        mostrarDatosTabla();
+    }//GEN-LAST:event_btn_eliminarActionPerformed
+
+    private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
+        // TODO add your handling code here:
+        if (verificaDatos()) {
+            try {
+                emp.setCarnet(txt_carnet.getText());
+                //emp.setId_persona(getId_persona());
+                //emp.setId_servicio(getId_servicio());
+                emp.setContrasenna(Txt_contrasenna.getText());
+                //emp.setEstado(getEstado());
+                mensaje = empBo.agregarEmpleado(emp);
+                JOptionPane.showMessageDialog(this, mensaje);
+                limpiarCampos();
+                mostrarDatosTabla();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_agregarActionPerformed
+
+    private void combo_personaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_personaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_combo_personaActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        // TODO add your handling code here:
+        if (verificaDatos()) {
+            try {
+                emp.setCarnet(txt_carnet.getText());
+                //emp.setId_persona(getId_persona());
+                //emp.setId_servicio(getId_servicio());
+                emp.setContrasenna(Txt_contrasenna.getText());
+                //emp.setEstado(getEstado());
+                mensaje = empBo.actualizarEmpleado(emp);
+                tabla_empleados.clearSelection();
+                JOptionPane.showMessageDialog(this, mensaje);
+                mostrarDatosTabla();
+                limpiarCampos();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        // TODO add your handling code here:
+        try {
+            ArrayList<Empleado> empleado = empBo.buscarPersonaNombre(txt_carnet.getText());
+
+            for (Empleado e : empleado) {
+                id_empleado = e.getId_empleado();
+                txt_carnet.setText(e.getCarnet());
+                setIndexComboPersona(e.getId_persona());
+                setIndexComboServicio(e.getId_servicio());
+                Txt_contrasenna.setText(e.getContrasenna());
+                setIndexComboEstado(e.getEstado());
+            }
+        } catch (Exception sql) {
+            JOptionPane.showMessageDialog(null, sql);
+        }
+
+    }//GEN-LAST:event_btn_buscarActionPerformed
+
+    private void mostrarDatosTabla() {
+        DefaultTableModel contenido = (DefaultTableModel) tabla_empleados.getModel();
+
+        contenido.setRowCount(0);
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_empleado";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer empleadoID = resultSet.getInt("ID");
+                    String carnet = resultSet.getString("Carnet");
+                    String contrasenna = resultSet.getString("contraseña");
+                    Integer id_persona = resultSet.getInt("Id_persona");
+                    String estado = resultSet.getString("Estado");
+                    Integer id_servicio = resultSet.getInt("Id_servicio");
+
+                    // Agregar los datos a la tabla
+                    ((DefaultTableModel) tabla_empleados.getModel()).addRow(new Object[]{empleadoID, carnet, contrasenna,
+                        id_persona, estado, id_servicio});
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private void mostrarPersona() {
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_id_empleado";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer personaID = resultSet.getInt("ID");
+                    String persona = resultSet.getString("Persona");
+
+                    // Agregar los datos al Combo Box
+                    combo_persona.addItem(personaID + "- " + persona);
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private void mostrarServicio() {
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_id_servicio";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer servicioID = resultSet.getInt("ID");
+                    String servicio = resultSet.getString("Servicio");
+
+                    // Agregar los datos al Combo Box
+                    combo_servicio.addItem(servicioID + "- " + servicio);
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private void mostrarEstado() {
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_estado";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    String estado = resultSet.getString("Estado");
+
+                    // Agregar los datos al Combo Box
+                    combo_servicio.addItem("- " + estado);
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private boolean verificaDatos() {
+        boolean verificar = false, verificarD = true;
+        String carnet = txt_carnet.getText();
+        String contrasenna = Txt_contrasenna.getText();
+
+        if (carnet == "" && contrasenna == "") {
+            verificarD = false;
+        }
+
+        boolean verificarR = false;
+        if (combo_persona.getSelectedIndex() != 0) {
+            verificarR = true;
+        }
+        if (combo_servicio.getSelectedIndex() != 0) {
+            verificarR = true;
+        }
+        if (combo_estado.getSelectedIndex() != 0) {
+            verificarR = true;
+        }
+
+        if (verificarD && verificarR) {
+            verificar = true;
+        }
+        return verificar;
+    }
+
+    private int getId_persona() {
+        String Dpersona = combo_persona.getSelectedItem().toString();
+        int id;
+        try {
+            String persona = Dpersona.substring(0, 2);
+            id = Integer.parseInt(persona + "");
+        } catch (Exception e) {
+            String persona = Dpersona.substring(0, 1);
+            id = Integer.parseInt(persona + "");
+        }
+        return id;
+    }
+
+    private int getId_servicio() {
+        String Dservicio = combo_servicio.getSelectedItem().toString();
+        int id;
+        try {
+            String servicio = Dservicio.substring(0, 2);
+            id = Integer.parseInt(servicio + "");
+        } catch (Exception e) {
+            String servicio = Dservicio.substring(0, 1);
+            id = Integer.parseInt(servicio + "");
+        }
+        return id;
+    }
+
+    private String getEstado() {
+        String Destado = combo_estado.getSelectedItem().toString();
+        String estado;
+        try {
+            estado = Destado.substring(0, 2);
+        } catch (Exception e) {
+            estado = Destado.substring(0, 1);
+        }
+        return estado;
+    }
+
+    private void setIndexComboPersona(int id_persona) {
+        for (int i = 1; i < combo_persona.getItemCount(); i++) {
+
+            String item = combo_persona.getItemAt(i);
+            char personac = item.charAt(0);
+            int persona = Integer.parseInt(personac + "");
+            if (persona == id_persona) {
+                combo_persona.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+    
+    private void setIndexComboServicio(int id_servicio) {
+        for (int i = 1; i < combo_servicio.getItemCount(); i++) {
+
+            String item = combo_servicio.getItemAt(i);
+            char servicioc = item.charAt(0);
+            int rol = Integer.parseInt(servicioc + "");
+            if (rol == id_servicio) {
+                combo_servicio.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+    
+    private void setIndexComboEstado(String estado) {
+    for (int i = 1; i < combo_estado.getItemCount(); i++) {
+        String item = combo_estado.getItemAt(i);
+        char estadoc = item.charAt(0);
+        String estadoStr = String.valueOf(estadoc);
+        if (estadoStr.equals(estado)) {
+            combo_estado.setSelectedIndex(i);
+            break;
+        }
+    }
+}
+
+
+    private void limpiarCampos() {
+    txt_carnet.setText("");
+    Txt_contrasenna.setText("");
+    try {
+        combo_persona.setSelectedIndex(0);
+        combo_servicio.setSelectedIndex(0);
+        
+        String estadoDeseado = "ValorDeseado"; // Reemplaza "ValorDeseado" con el estado que deseas seleccionar
+        for (int i = 0; i < combo_estado.getItemCount(); i++) {
+            if (estadoDeseado.equals(combo_estado.getItemAt(i))) {
+                combo_estado.setSelectedIndex(i);
+                break;
+            }
+        }
+    } catch (ArrayIndexOutOfBoundsException e) {
+        // Manejo de excepciones si es necesario
+    }
+}
+
+
+    private void obtenerSeleccion() {
+        // Agregar un ListSelectionListener a la tabla
+        tabla_empleados.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // Obtener el número de fila y columna seleccionada
+                    int selectedRow = tabla_empleados.getSelectedRow();
+
+                    System.out.println(selectedRow);
+
+                    // Obtener la primera celda seleccionada
+                    Object selectedData = tabla_empleados.getValueAt(selectedRow, 0);
+
+                    String id = selectedData.toString();
+                    int idConsulta = Integer.parseInt(id);
+
+                    try {
+                        ArrayList<Empleado> empleado = empBo.buscarEmpleadoId(idConsulta);
+
+                        for (Empleado e : empleado) {
+                            id_empleado = e.getId_empleado();
+                            txt_carnet.setText(e.getCarnet());
+                            setIndexComboPersona(e.getId_persona());
+                            setIndexComboServicio(e.getId_servicio());
+                            Txt_contrasenna.setText(e.getContrasenna());
+                            setIndexComboEstado(e.getEstado());
+                        }
+                    } catch (Exception sql) {
+                        JOptionPane.showMessageDialog(null, sql);
+                    }
+                    //tabla_empleados.clearSelection();
+                }
+            }
+        });
+
+    }
 
     /**
      * @param args the command line arguments
@@ -264,6 +692,7 @@ public class Frm_Empleado extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPasswordField Txt_contrasenna;
     private javax.swing.JButton btn_agregar;
     private javax.swing.JButton btn_buscar;
     private javax.swing.JButton btn_editar;
@@ -280,7 +709,6 @@ public class Frm_Empleado extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPasswordField jPasswordField;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuItem menu_persona;

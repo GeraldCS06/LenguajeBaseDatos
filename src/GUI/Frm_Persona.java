@@ -98,9 +98,21 @@ public class Frm_Persona extends javax.swing.JFrame {
 
         jLabel1.setText("Nombre");
 
+        txt_nombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_nombreActionPerformed(evt);
+            }
+        });
+
         jLabel3.setText("Primer Apellido");
 
         jLabel4.setText("Segundo Apellido");
+
+        txt_primer_apellido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_primer_apellidoActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Telefono");
 
@@ -157,6 +169,11 @@ public class Frm_Persona extends javax.swing.JFrame {
         jLabel7.setText("Rol");
 
         combo_rol.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona un Rol" }));
+        combo_rol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_rolActionPerformed(evt);
+            }
+        });
 
         jMenu1.setText("Agregar");
 
@@ -337,6 +354,18 @@ public class Frm_Persona extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_buscarActionPerformed
 
+    private void txt_nombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_nombreActionPerformed
+
+    private void txt_primer_apellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_primer_apellidoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_primer_apellidoActionPerformed
+
+    private void combo_rolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_rolActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_combo_rolActionPerformed
+
     private void mostrarDatosTabla() {
         DefaultTableModel contenido = (DefaultTableModel) tabla_personas.getModel();
 
@@ -512,7 +541,9 @@ public class Frm_Persona extends javax.swing.JFrame {
                 }
             }
         });
+        
     }
+    
 
     /**
      * @param args the command line arguments
