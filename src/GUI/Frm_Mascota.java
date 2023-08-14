@@ -4,6 +4,18 @@
  */
 package GUI;
 
+import Bo.MascotaBo;
+import Entidad.Mascota;
+import conexion.Conexion;
+import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSet;
+import java.sql.Connection;
+import java.sql.CallableStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 /**
@@ -11,6 +23,12 @@ package GUI;
  * @author vrb00
  */
 public class Frm_Mascota extends javax.swing.JFrame {
+
+    private int id_mascota;
+    private DefaultTableModel tabla;
+    private Mascota mac = new Mascota();
+    private MascotaBo macBo = new MascotaBo();
+    private String mensaje = "";
 
     /**
      * Creates new form Frm_Persona
@@ -118,14 +136,29 @@ public class Frm_Mascota extends javax.swing.JFrame {
         btn_editar.setForeground(new java.awt.Color(255, 255, 255));
         btn_editar.setText("Editar");
         btn_editar.setToolTipText("Guardar cambios");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         btn_buscar.setBackground(new java.awt.Color(0, 204, 204));
         btn_buscar.setForeground(new java.awt.Color(255, 255, 255));
         btn_buscar.setText("Buscar");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscarActionPerformed(evt);
+            }
+        });
 
         btn_eliminar.setBackground(new java.awt.Color(255, 0, 0));
         btn_eliminar.setForeground(new java.awt.Color(255, 255, 255));
         btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
 
         tabla_mascotas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -300,7 +333,459 @@ public class Frm_Mascota extends javax.swing.JFrame {
 
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
         // TODO add your handling code here:
+        if (verificaDatos()) {
+            try {
+                mac.setDueño(getDueño());
+                mac.setEspecie(getEspecie());
+                mac.setEdad(txt_edad.getText());
+                mac.setGenero(getGenero());
+                mac.setNombre_mascota(txt_nombre_mascota.getText());
+                mac.setRaza(txt_raza.getText());
+                mac.setPeso(txt_peso.getText());
+                mac.setEsterilizada(getEsterilizada());
+                mensaje = macBo.agregarMascota(mac);
+                JOptionPane.showMessageDialog(this, mensaje);
+                limpiarCampos();
+                mostrarDatosTabla();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
     }//GEN-LAST:event_btn_agregarActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+        // TODO add your handling code here:
+        try {
+            mensaje = macBo.eliminarMascota(id_mascota);
+            JOptionPane.showMessageDialog(this, mensaje);
+            limpiarCampos();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, mensaje);
+        }
+        mostrarDatosTabla();
+    }//GEN-LAST:event_btn_eliminarActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        // TODO add your handling code here:
+        if (verificaDatos()) {
+            try {
+                mac.setId_mascota(id_mascota);
+                mac.setDueño(getDueño());
+                mac.setEspecie(getEspecie());
+                mac.setEdad(txt_edad.getText());
+                mac.setGenero(getGenero());
+                mac.setNombre_mascota(txt_nombre_mascota.getText());
+                mac.setRaza(txt_raza.getText());
+                mac.setPeso(txt_peso.getText());
+                mac.setEsterilizada(getEsterilizada());
+                mensaje = macBo.agregarMascota(mac);
+                tabla_mascotas.clearSelection();
+                JOptionPane.showMessageDialog(this, mensaje);
+                mostrarDatosTabla();
+                limpiarCampos();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        // TODO add your handling code here:
+        try {
+            ArrayList<Mascota> mascota = macBo.buscarMascotaNombre(txt_nombre_mascota.getText());
+
+            for (Mascota m : mascota) {
+                id_mascota = m.getId_mascota();
+                setIndexComboDueño(m.getDueño());
+                setIndexComboEspecie(m.getEspecie());
+                txt_edad.setText(m.getEdad());
+                setIndexComboGenero(m.getGenero());
+                txt_nombre_mascota.setText(m.getNombre_mascota());
+                txt_raza.setText(m.getRaza());
+                txt_peso.setText(m.getPeso());
+                setIndexComboEsterilizada(m.getEsterilizada());
+            }
+        } catch (Exception sql) {
+            JOptionPane.showMessageDialog(null, sql);
+        }
+
+
+    }//GEN-LAST:event_btn_buscarActionPerformed
+    private void mostrarDatosTabla() {
+        DefaultTableModel contenido = (DefaultTableModel) tabla_mascotas.getModel();
+
+        contenido.setRowCount(0);
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_mascota";
+            CallableStatement mstmt = conn.prepareCall(procedureCall);
+
+            mstmt.execute();
+
+            ResultSet resultSet = mstmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer mascotaID = resultSet.getInt("ID");
+                    String dueño = resultSet.getString("Dueño");
+                    String especie = resultSet.getString("Especie");
+                    Integer edad = resultSet.getInt("Edad");
+                    String genero = resultSet.getString("Genero");
+                    String nombre_mascota = resultSet.getString("Nombre Mascota");
+                    String raza = resultSet.getString("Raza");
+                    Integer peso = resultSet.getInt("Peso");
+                    String esterilizada = resultSet.getString("Esterilizada");
+
+                    // Agregar los datos a la tabla
+                    ((DefaultTableModel) tabla_mascotas.getModel()).addRow(new Object[]{mascotaID, dueño, especie, edad, genero, nombre_mascota, raza, peso, esterilizada
+                    });
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            mstmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private void mostrarDueños() {
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_dueño";
+            CallableStatement mstmt = conn.prepareCall(procedureCall);
+
+            mstmt.execute();
+
+            ResultSet resultSet = mstmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer dueñoID = resultSet.getInt("ID");
+                    String dueño = resultSet.getString("Dueño");
+
+                    // Agregar los datos al Combo Box
+                    combo_persona.addItem(dueñoID + "- " + dueño);
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            mstmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private void mostrarEspecie() {
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_especie";
+            CallableStatement mstmt = conn.prepareCall(procedureCall);
+
+            mstmt.execute();
+
+            ResultSet resultSet = mstmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer especieID = resultSet.getInt("ID");
+                    String especie = resultSet.getString("Especie");
+
+                    // Agregar los datos al Combo Box
+                    combo_persona.addItem(especieID + "- " + especie);
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            mstmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private void mostrarGenero() {
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_genero";
+            CallableStatement mstmt = conn.prepareCall(procedureCall);
+
+            mstmt.execute();
+
+            ResultSet resultSet = mstmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer generoID = resultSet.getInt("ID");
+                    String genero = resultSet.getString("Genero");
+
+                    // Agregar los datos al Combo Box
+                    combo_persona.addItem(generoID + "- " + genero);
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            mstmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private void mostrarEsterilizada() {
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_esterilizada";
+            CallableStatement mstmt = conn.prepareCall(procedureCall);
+
+            mstmt.execute();
+
+            ResultSet resultSet = mstmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer esterilizadaID = resultSet.getInt("ID");
+                    String esterilizada = resultSet.getString("Esterilizada");
+
+                    // Agregar los datos al Combo Box
+                    combo_persona.addItem(esterilizadaID + "- " + esterilizada);
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            mstmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private boolean verificaDatos() {
+        boolean verificar = false, verificarD = true;
+        String nombre_mascota = txt_nombre_mascota.getText();
+        String raza = txt_raza.getText();
+        String peso = txt_peso.getText();
+
+        int edad = 0; // Valor por defecto, podrías asignar otro valor si es adecuado
+
+        try {
+            edad = Integer.parseInt(txt_edad.getText()); // Convertir el valor del campo de texto a entero
+        } catch (NumberFormatException e) {
+            // En caso de que la conversión falle (entrada no válida), la variable 'edad' quedará en su valor por defecto (0)
+        }
+
+        if (edad == 0 && nombre_mascota.isEmpty() && raza.isEmpty() && peso.isEmpty()) {
+            verificarD = false;
+        }
+
+        boolean verificarR = combo_persona.getSelectedIndex() != 0;
+        boolean verificarEspecie = combo_especie.getSelectedIndex() != 0;
+        boolean verificarEsterilizado = combo_esterilizado.getSelectedIndex() != 0;
+        boolean verificarGenero = combo_genero.getSelectedIndex() != 0;
+
+        if (verificarD && verificarR && verificarEspecie && verificarEsterilizado && verificarGenero) {
+            verificar = true;
+        }
+
+        return verificar;
+    }
+
+    private int getDueño() {
+        String Ddueño = combo_persona.getSelectedItem().toString();
+        int id;
+        try {
+            String dueño = Ddueño.substring(0, 2);
+            id = Integer.parseInt(dueño + "");
+        } catch (Exception e) {
+            String dueño = Ddueño.substring(0, 1);
+            id = Integer.parseInt(dueño + "");
+        }
+        return id;
+    }
+
+    private int getEspecie() {
+        String Despecie = combo_especie.getSelectedItem().toString();
+        int id;
+        try {
+            String especie = Despecie.substring(0, 2);
+            id = Integer.parseInt(especie + "");
+        } catch (Exception e) {
+            String especie = Despecie.substring(0, 1);
+            id = Integer.parseInt(especie + "");
+        }
+        return id;
+    }
+
+    private int getGenero() {
+        String Dgenero = combo_genero.getSelectedItem().toString();
+        int id;
+        try {
+            String genero = Dgenero.substring(0, 2);
+            id = Integer.parseInt(genero + "");
+        } catch (Exception e) {
+            String genero = Dgenero.substring(0, 1);
+            id = Integer.parseInt(genero + "");
+        }
+        return id;
+    }
+
+    private int getEsterilizada() {
+        String Desterilizada = combo_esterilizado.getSelectedItem().toString();
+        int id;
+        try {
+            String esterilizada = Desterilizada.substring(0, 2);
+            id = Integer.parseInt(esterilizada + "");
+        } catch (Exception e) {
+            String esterilizada = Desterilizada.substring(0, 1);
+            id = Integer.parseInt(esterilizada + "");
+        }
+        return id;
+    }
+
+    private void setIndexComboDueño(int id_dueño) {
+        for (int i = 1; i < combo_persona.getItemCount(); i++) {
+
+            String item = combo_persona.getItemAt(i);
+            char dueñoc = item.charAt(0);
+            int dueño = Integer.parseInt(dueñoc + "");
+            if (dueño == id_dueño) {
+                combo_persona.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    private void setIndexComboEspecie(int id_especie) {
+        for (int i = 1; i < combo_especie.getItemCount(); i++) {
+
+            String item = combo_especie.getItemAt(i);
+            char especiec = item.charAt(0);
+            int especie = Integer.parseInt(especiec + "");
+            if (especie == id_especie) {
+                combo_especie.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    private void setIndexComboGenero(int id_genero) {
+        for (int i = 1; i < combo_genero.getItemCount(); i++) {
+
+            String item = combo_genero.getItemAt(i);
+            char generoc = item.charAt(0);
+            int genero = Integer.parseInt(generoc + "");
+            if (genero == id_genero) {
+                combo_genero.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    private void setIndexComboEsterilizada(int id_esterilizada) {
+        for (int i = 1; i < combo_esterilizado.getItemCount(); i++) {
+
+            String item = combo_esterilizado.getItemAt(i);
+            char esterilizadac = item.charAt(0);
+            int esterilizada = Integer.parseInt(esterilizadac + "");
+            if (esterilizada == id_esterilizada) {
+                combo_esterilizado.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    private void limpiarCampos() {
+        txt_edad.setText("");
+        txt_nombre_mascota.setText("");
+        txt_peso.setText("");
+        txt_raza.setText("");
+        try {
+            combo_especie.setSelectedIndex(0);
+            combo_esterilizado.setSelectedIndex(0);
+            combo_genero.setSelectedIndex(0);
+            combo_persona.setSelectedIndex(0);
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
+    }
+
+    private void obtenerSeleccion() {
+        // Agregar un ListSelectionListener a la tabla
+        tabla_mascotas.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // Obtener el número de fila y columna seleccionada
+                    int selectedRow = tabla_mascotas.getSelectedRow();
+
+                    System.out.println(selectedRow);
+
+                    // Obtener la primera celda seleccionada
+                    Object selectedData = tabla_mascotas.getValueAt(selectedRow, 0);
+
+                    String id = selectedData.toString();
+                    int idConsulta = Integer.parseInt(id);
+
+                    try {
+                        ArrayList<Mascota> mascota = macBo.buscarMascotaId(idConsulta);
+
+                        for (Mascota m : mascota) {
+                            id_mascota = m.getId_mascota();
+                            setIndexComboDueño(m.getDueño());
+                            setIndexComboEspecie(m.getEspecie());
+                            txt_edad.setText(m.getEdad());
+                            setIndexComboGenero(m.getGenero());
+                            txt_nombre_mascota.setText(m.getNombre_mascota());
+                            txt_raza.setText(m.getRaza());
+                            txt_peso.setText(m.getPeso());
+                            setIndexComboEsterilizada(m.getEsterilizada());
+                        }
+                    } catch (Exception sql) {
+                        JOptionPane.showMessageDialog(null, sql);
+                    }
+                    //tabla_personas.clearSelection();
+                }
+            }
+        });
+
+    }
 
     /**
      * @param args the command line arguments

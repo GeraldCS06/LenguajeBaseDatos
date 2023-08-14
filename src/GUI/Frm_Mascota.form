@@ -261,6 +261,9 @@
         <Property name="text" type="java.lang.String" value="Editar"/>
         <Property name="toolTipText" type="java.lang.String" value="Guardar cambios"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_editarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btn_buscar">
       <Properties>
@@ -272,6 +275,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Buscar"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_buscarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btn_eliminar">
       <Properties>
@@ -283,6 +289,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Eliminar"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_eliminarActionPerformed"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
