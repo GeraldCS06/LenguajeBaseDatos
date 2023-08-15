@@ -733,9 +733,163 @@ EXCEPTION
 END;
 end PKG_EMPLEADO;
 
+---------------------------------------------------------------------
+Para Inicio Sesion
+---------------------------------------------------------------------
+--- Paquete Inicio Sesion. CREAR
+CREATE OR REPLACE PACKAGE PKG_INICIO_SESION AS
 
+  --variables
+  TYPE refcursor IS REF CURSOR;
+  
+  --funciones
+  FUNCTION obtener_empleados_estado_1
+  RETURN refcursor;
+  
+END PKG_INICIO_SESION;
 
+-- Body del package
+CREATE OR REPLACE PACKAGE BODY PKG_INICIO_SESION AS
 
+  FUNCTION obtener_empleados_estado_1
+    RETURN refcursor
+  IS
+    ref_cur refcursor;
+  BEGIN
+    OPEN ref_cur FOR
+      SELECT id_empleado as ID,
+	  carnet as CarnetE,
+	  contrasenna as Pass
+      FROM Empleado
+      WHERE estado = 1;
+
+    RETURN ref_cur;
+  END obtener_empleados_estado_1;
+  
+END PKG_INICIO_SESION;
+
+---------------------------------------------------------------------
+Para Producto
+---------------------------------------------------------------------
+create or replace view datos_producto as
+select p.id_producto as ID, p.codigo as CodigoProducto, p.nombre as NombreProducto, c.nombre_categoria as Categoria,
+p.precio as Precio, p.cantidad as Cantidad, p.imagen as ImgProducto
+from Producto p
+inner join categoria c
+on p.id_categoria=c.id_categoria;
+
+-- Paquete Producto. CREAR
+CREATE OR REPLACE PACKAGE PKG_PRODUCTO AS
+  --variables
+
+  --funciones
+  FUNCTION calcular_precio_con_iva(precio IN NUMBER, iva IN NUMBER) RETURN NUMBER;
+
+  --procedimientos
+  PROCEDURE insertar_producto ( p_codigo IN VARCHAR2, p_id_categoria IN NUMBER, p_nombre IN VARCHAR2, p_precio IN FLOAT,
+    p_iva IN FLOAT, p_cantidad IN NUMBER, p_imagen IN VARCHAR2);
+  PROCEDURE buscar_producto_nombre (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE buscar_producto_id (P_id_producto IN NUMBER, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE actualizar_producto ( p_id_producto IN NUMBER, p_codigo IN VARCHAR2, p_id_categoria IN NUMBER,
+    p_nombre IN VARCHAR2, p_precio IN FLOAT, p_iva IN FLOAT, p_cantidad IN NUMBER, p_imagen IN VARCHAR2 );
+  PROCEDURE eliminar_producto ( p_id_producto IN NUMBER);
+  
+END PKG_PRODUCTO;
+
+  -- Body del package
+create or replace package body PKG_PRODUCTO
+as
+-- Funcion para calcular el iva del Producto
+  FUNCTION calcular_precio_con_iva(precio IN NUMBER, iva IN NUMBER)
+	RETURN NUMBER
+	IS ivaf NUMBER;
+	formula NUMBER;
+		BEGIN
+			ivaf := 1 + (iva / 100);
+			formula := (precio * ivaf) + precio;
+		RETURN formula;
+  END calcular_precio_con_iva;
+
+-- Procedimiento Agregar Producto
+    PROCEDURE insertar_producto ( p_codigo IN VARCHAR2, p_id_categoria IN NUMBER, p_nombre IN VARCHAR2, p_precio IN FLOAT,
+    p_iva IN FLOAT, p_cantidad IN NUMBER, p_imagen IN VARCHAR2)
+    AS
+        BEGIN
+        INSERT INTO Producto (codigo, id_categoria, nombre, precio, iva, cantidad, imagen)
+        VALUES (p_codigo, p_id_categoria, p_nombre, p_precio, p_iva, p_cantidad, p_imagen);
+        COMMIT;
+        EXCEPTION
+        WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+    END;
+    
+-- Procedimiento Buscar por nombre de Producto
+PROCEDURE buscar_producto_nombre (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_producto as ID,
+           codigo as CodigoProducto,
+           nombre as NombreProducto,
+           id_categoria as IDCategoria,
+           precio as Precio,
+           cantidad as Cantidad,
+           imagen as ImgProducto
+    FROM Producto
+    WHERE nombre LIKE '%' || P_nombre || '%';
+END;
+
+-- Procedimiento Buscar Producto por id
+PROCEDURE buscar_producto_id (P_id_producto IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_producto as ID,
+           codigo as CodigoProducto,
+           nombre as NombreProducto,
+           id_categoria as IDCategoria,
+           precio as Precio,
+           cantidad as Cantidad,
+           imagen as ImgProducto
+    FROM Producto
+    WHERE id_producto = P_id_producto;
+END;
+
+-- Actualizar Producto
+PROCEDURE actualizar_producto ( p_id_producto IN NUMBER, p_codigo IN VARCHAR2, p_id_categoria IN NUMBER,
+    p_nombre IN VARCHAR2, p_precio IN FLOAT, p_iva IN FLOAT, p_cantidad IN NUMBER, p_imagen IN VARCHAR2 )
+AS
+BEGIN
+    UPDATE Producto
+    SET codigo = p_codigo,
+        id_categoria = p_id_categoria,
+        nombre = p_nombre,
+        precio = p_precio,
+        iva = p_iva,
+        cantidad = p_cantidad, 
+        imagen = p_imagen
+    WHERE id_producto = p_id_producto;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-- Eliminar Producto
+PROCEDURE eliminar_producto ( p_id_producto IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Producto
+    WHERE id_producto = p_id_producto;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+end PKG_PRODUCTO;
 
 ---------------------------------------------------------------------
 Para Continuar ...

@@ -33,6 +33,13 @@ public class Empleado {
         this.estado = estado;
         this.id_servicio = id_servicio;
     }
+    
+    // ESTE LO OCUPO PARA INICIO DE SESION.
+    public Empleado(int id_empleado, String carnet, String contrasenna) {
+        this.id_empleado = id_empleado;
+        this.carnet = carnet;
+        this.contrasenna = contrasenna;
+    }
 
     public Empleado() {
     }

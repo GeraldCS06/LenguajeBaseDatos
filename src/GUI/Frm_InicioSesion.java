@@ -4,13 +4,16 @@
  */
 package GUI;
 
+import Bo.InicioSesionBo;
 import javax.swing.JOptionPane;
 
 /**
  *
- * @author 111690771
+ * @author vrb00
  */
 public class Frm_InicioSesion extends javax.swing.JFrame {
+
+    private InicioSesionBo inicioSesionBo = new InicioSesionBo();
 
     /**
      * Creates new form Frm_InicioSesion
@@ -50,7 +53,7 @@ public class Frm_InicioSesion extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Usuario");
+        jLabel2.setText("Carnet Usuario");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -81,9 +84,6 @@ public class Frm_InicioSesion extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(169, 169, 169)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(154, 154, 154)
                         .addComponent(jLabel3))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -95,7 +95,10 @@ public class Frm_InicioSesion extends javax.swing.JFrame {
                                 .addComponent(btn_ingresar))
                             .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txt_Usuario, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_password, javax.swing.GroupLayout.Alignment.LEADING))))
+                            .addComponent(txt_password, javax.swing.GroupLayout.Alignment.LEADING)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(149, 149, 149)
+                        .addComponent(jLabel2)))
                 .addContainerGap(117, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -134,22 +137,20 @@ public class Frm_InicioSesion extends javax.swing.JFrame {
 
     private void btn_ingresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ingresarActionPerformed
         // TODO add your handling code here:
-        String nombreUsuario = txt_Usuario.getText();
-        String password = String.valueOf(txt_password.getPassword());
+        if (verificarCampos()) {
+            String usr = txt_Usuario.getText();
+            String password = String.valueOf(txt_password.getPassword());
 
-        if ((nombreUsuario.length() == 0) || (password.length() == 0)) {
-            JOptionPane.showMessageDialog(null, "Debe digitar el nombre de usuario y la contraseña");
-            //Salida inmediata del método
-            return;
-        }
+            boolean iniciar = inicioSesionBo.verificarInicioSesion(usr, password);
 
-        if ((nombreUsuario.equals("admin") && (password.equals("123")))) {
-            this.dispose();
-            Frm_Menu_administrador menu = new Frm_Menu_administrador();
-            
+            if (iniciar) {
+                JOptionPane.showMessageDialog(this, "Bienvenido a Veterinaria Patitas");
+                this.dispose();
+                Frm_Menu_administrador menu = new Frm_Menu_administrador();
+            }
         } else {
-
-            JOptionPane.showMessageDialog(null, "Los credenciales no son válidos, intente nuevamente");
+            JOptionPane.showMessageDialog(null, "Debe digitar el nombre de usuario y la contraseña");
+            return;
         }
     }//GEN-LAST:event_btn_ingresarActionPerformed
 
@@ -184,6 +185,9 @@ public class Frm_InicioSesion extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Frm_InicioSesion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -191,6 +195,13 @@ public class Frm_InicioSesion extends javax.swing.JFrame {
                 new Frm_InicioSesion().setVisible(true);
             }
         });
+    }
+
+    private boolean verificarCampos() {
+        String user = txt_Usuario.getText();
+        String password = String.valueOf(txt_password.getPassword());
+
+        return !user.isEmpty() && !password.isEmpty();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

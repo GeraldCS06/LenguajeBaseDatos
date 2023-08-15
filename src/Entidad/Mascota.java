@@ -43,6 +43,10 @@ public class Mascota {
         this.peso = peso;
         this.esterilizada = esterilizada;
     }
+    
+    public Mascota(){
+        
+    }
 
     public int getId_mascota() {
         return id_mascota;

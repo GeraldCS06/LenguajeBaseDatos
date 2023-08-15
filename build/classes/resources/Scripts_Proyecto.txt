@@ -19,8 +19,21 @@ CREATE TABLE Cita (id_cita number(10) GENERATED AS IDENTITY, fecha date NOT NULL
 CREATE TABLE Empleado (id_empleado number(10) GENERATED AS IDENTITY, carnet varchar2(10) NOT NULL, contrasenna varchar2(10) NOT NULL, id_persona number(10) NOT NULL, estado number NOT NULL, id_servicio number(10) NOT NULL, PRIMARY KEY (id_empleado));
 CREATE TABLE Especie (id_especie number(10) GENERATED AS IDENTITY, nombre_especie varchar2(35) NOT NULL, PRIMARY KEY (id_especie));
 CREATE TABLE Hospitalizacion (id_hospitalizacion number(10) GENERATED AS IDENTITY, id_mascota number(10) NOT NULL, fecha_entrada date NOT NULL, descripcion varchar2(100) NOT NULL, precio float(10), PRIMARY KEY (id_hospitalizacion));
-CREATE TABLE Mascota (id_mascota number(10) GENERATED AS IDENTITY, id_persona number(10) NOT NULL, nombre_mascota varchar2(30) NOT NULL, id_especie number(10) NOT NULL, raza varchar2(50), edad number(10), peso float(10), genero varchar2(10), esterilizada number, PRIMARY KEY (id_mascota));
+
+CREATE TABLE Mascota (
+id_mascota number(10) GENERATED AS IDENTITY,
+dueño number(10) NOT NULL, 
+especie number(10) NOT NULL, 
+edad number(10),
+genero varchar2(10),
+nombre_mascota varchar2(30) NOT NULL,
+raza varchar2(50),
+peso float(10),
+esterilizada number, 
+PRIMARY KEY (id_mascota));
+
 CREATE TABLE Persona (id_persona number(10) GENERATED AS IDENTITY, nombre varchar2(20) NOT NULL, primer_apellido varchar2(25) NOT NULL, segundo_apellido varchar2(20), telefono varchar2(8), correo varchar2(20) NOT NULL, id_rol number(10) NOT NULL, PRIMARY KEY (id_persona));
+
 CREATE TABLE Producto (id_producto number(10) GENERATED AS IDENTITY, codigo varchar2(8) NOT NULL, id_categoria number(10) NOT NULL, nombre varchar2(25) NOT NULL, precio float(10) NOT NULL, cantidad number(10) NOT NULL, imagen varchar2(255), PRIMARY KEY (id_producto));
 CREATE TABLE Rol (id_rol number(10) GENERATED AS IDENTITY, nombre_rol varchar2(15) NOT NULL, PRIMARY KEY (id_rol));
 CREATE TABLE Servicio (id_servicio number(10) GENERATED AS IDENTITY, nombre_servicio varchar2(15) NOT NULL, precio float(10) NOT NULL, PRIMARY KEY (id_servicio));
@@ -542,6 +555,341 @@ EXCEPTION
 END;
 end PKG_CATEGORIA;
 
+---------------------------------------------------------------------
+Para Mascota
+---------------------------------------------------------------------
+-- Vista Mascota
+create or replace view datos_mascota as
+select id_mascota as ID, nombre_mascota as NombreMascota
+from Mascota;
+
+--- Paquete Mascota. CREAR
+CREATE OR REPLACE PACKAGE PKG_MASCOTA AS
+  --variables
+
+  --funciones
+
+  --procedimientos
+  PROCEDURE insertar_mascota ( p_nombre_mascota IN VARCHAR2);
+  PROCEDURE buscar_nombre_mascota (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE buscar_mascota_id (P_mascota_id IN NUMBER, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE actualizar_mascota ( p_id_mascota IN NUMBER, p_nombre_mascota IN VARCHAR2);
+  PROCEDURE eliminar_mascota (p_id_mascota IN NUMBER);
+  
+END PKG_MASCOTA;
+
+-- Body del package
+create or replace package body PKG_MASCOTA
+as
+-- Procedimiento Agregar Mascota
+    PROCEDURE insertar_mascota ( p_nombre_mascota IN VARCHAR2)
+    AS
+        BEGIN
+        INSERT INTO Mascota (nombre_mascota)
+        VALUES (p_nombre_mascota);
+        COMMIT;
+        EXCEPTION
+        WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+    END;
+    
+-- Procedimiento Buscar por nombre de Mascota
+PROCEDURE buscar_nombre_mascota (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_mascota AS ID,
+           nombre_mascota AS NombreMascota
+    FROM Mascota
+    WHERE nombre_mascota LIKE '%' || P_nombre || '%'; 
+END;
+
+-- Procedimiento Buscar Mascota por id
+PROCEDURE buscar_mascota_id (P_mascota_id IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_mascota AS ID,
+           nombre_mascota AS NombreMascota
+    FROM Mascota
+    WHERE id_mascota = P_mascota_id;
+END;
+
+-- Actualizar Mascota
+PROCEDURE actualizar_mascota ( p_id_mascota IN NUMBER, p_nombre_mascota IN VARCHAR2)
+AS
+BEGIN
+    UPDATE Mascota
+    SET nombre_mascota = p_nombre_mascota
+    WHERE id_mascota = p_id_mascota;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-- Eliminar Mascota
+PROCEDURE eliminar_mascota (p_id_mascota IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Mascota
+    WHERE id_mascota = p_id_mascota;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+end PKG_MASCOTA;
+
+---------------------------------------------------------------------
+Para Empleado
+---------------------------------------------------------------------
+-- Vista Empleado
+create or replace view datos_empleado as
+select id_empleado as ID, nombre_empleado as NombreEmpleado
+from Empleado;
+
+--- Paquete Empleado. CREAR
+CREATE OR REPLACE PACKAGE PKG_EMPLEADO AS
+  --variables
+
+  --funciones
+
+  --procedimientos
+  PROCEDURE insertar_empleado ( p_nombre_mempleado IN VARCHAR2);
+  PROCEDURE buscar_nombre_empleado (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE buscar_empleado_id (P_empleado_id IN NUMBER, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE actualizar_empleado ( p_id_empleado IN NUMBER, p_nombre_empleado IN VARCHAR2);
+  PROCEDURE eliminar_empleado (p_id_empleado IN NUMBER);
+  
+END PKG_EMPLEADO;
+
+-- Body del package
+create or replace package body PKG_EMPLEADO
+as
+-- Procedimiento Agregar Empleado
+    PROCEDURE insertar_empleado ( p_nombre_empleado IN VARCHAR2)
+    AS
+        BEGIN
+        INSERT INTO Empleado (nombre_empleado)
+        VALUES (p_nombre_empleado);
+        COMMIT;
+        EXCEPTION
+        WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+    END;
+    
+-- Procedimiento Buscar por nombre de Emeplado
+PROCEDURE buscar_nombre_empleado (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_empleado AS ID,
+           nombre_empleado AS NombreEmpleado
+    FROM Empleado
+    WHERE nombre_empleado LIKE '%' || P_nombre || '%'; 
+END;
+
+-- Procedimiento Buscar Empleado por id
+PROCEDURE buscar_empleado_id (P_empleado_id IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_empleado AS ID,
+           nombre_empleado AS NombreEmpleado
+    FROM Empleado
+    WHERE id_empleado = P_empleado_id;
+END;
+
+-- Actualizar Empleado
+PROCEDURE actualizar_empleado ( p_id_empleado IN NUMBER, p_nombre_empleado IN VARCHAR2)
+AS
+BEGIN
+    UPDATE Mascota
+    SET nombre_empleado = p_nombre_empleado
+    WHERE id_empleado = p_id_mempleado;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-- Eliminar Mascota
+PROCEDURE eliminar_empleado (p_id_empleado IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Empleado
+    WHERE id_empleado = p_id_empleado;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+end PKG_EMPLEADO;
+
+---------------------------------------------------------------------
+Para Inicio Sesion
+---------------------------------------------------------------------
+--- Paquete Inicio Sesion. CREAR
+CREATE OR REPLACE PACKAGE PKG_INICIO_SESION AS
+
+  --variables
+  TYPE refcursor IS REF CURSOR;
+  
+  --funciones
+  FUNCTION obtener_empleados_estado_1
+  RETURN refcursor;
+  
+END PKG_INICIO_SESION;
+
+-- Body del package
+CREATE OR REPLACE PACKAGE BODY PKG_INICIO_SESION AS
+
+  FUNCTION obtener_empleados_estado_1
+    RETURN refcursor
+  IS
+    ref_cur refcursor;
+  BEGIN
+    OPEN ref_cur FOR
+      SELECT id_empleado as ID,
+	  carnet as CarnetE,
+	  contrasenna as Pass
+      FROM Empleado
+      WHERE estado = 1;
+
+    RETURN ref_cur;
+  END obtener_empleados_estado_1;
+  
+END PKG_INICIO_SESION;
+
+---------------------------------------------------------------------
+Para Producto
+---------------------------------------------------------------------
+create or replace view datos_producto as
+select p.id_producto as ID, p.codigo as CodigoProducto, p.nombre as NombreProducto, c.nombre_categoria as Categoria,
+p.precio as Precio, p.cantidad as Cantidad, p.imagen as ImgProducto
+from Producto p
+inner join categoria c
+on p.id_categoria=c.id_categoria;
+
+-- Paquete Producto. CREAR
+CREATE OR REPLACE PACKAGE PKG_PRODUCTO AS
+  --variables
+
+  --funciones
+  FUNCTION calcular_precio_con_iva(precio IN NUMBER, iva IN NUMBER) RETURN NUMBER;
+
+  --procedimientos
+  PROCEDURE insertar_producto ( p_codigo IN VARCHAR2, p_id_categoria IN NUMBER, p_nombre IN VARCHAR2, p_precio IN FLOAT,
+    p_iva IN FLOAT, p_cantidad IN NUMBER, p_imagen IN VARCHAR2);
+  PROCEDURE buscar_producto_nombre (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE buscar_producto_id (P_id_producto IN NUMBER, P_resultados OUT SYS_REFCURSOR);
+  PROCEDURE actualizar_producto ( p_id_producto IN NUMBER, p_codigo IN VARCHAR2, p_id_categoria IN NUMBER,
+    p_nombre IN VARCHAR2, p_precio IN FLOAT, p_iva IN FLOAT, p_cantidad IN NUMBER, p_imagen IN VARCHAR2 );
+  PROCEDURE eliminar_producto ( p_id_producto IN NUMBER);
+  
+END PKG_PRODUCTO;
+
+  -- Body del package
+create or replace package body PKG_PRODUCTO
+as
+-- Funcion para calcular el iva del Producto
+  FUNCTION calcular_precio_con_iva(precio IN NUMBER, iva IN NUMBER)
+	RETURN NUMBER
+	IS ivaf NUMBER;
+	formula NUMBER;
+		BEGIN
+			ivaf := 1 + (iva / 100);
+			formula := (precio * ivaf) + precio;
+		RETURN formula;
+  END calcular_precio_con_iva;
+
+-- Procedimiento Agregar Producto
+    PROCEDURE insertar_producto ( p_codigo IN VARCHAR2, p_id_categoria IN NUMBER, p_nombre IN VARCHAR2, p_precio IN FLOAT,
+    p_iva IN FLOAT, p_cantidad IN NUMBER, p_imagen IN VARCHAR2)
+    AS
+        BEGIN
+        INSERT INTO Producto (codigo, id_categoria, nombre, precio, iva, cantidad, imagen)
+        VALUES (p_codigo, p_id_categoria, p_nombre, p_precio, p_iva, p_cantidad, p_imagen);
+        COMMIT;
+        EXCEPTION
+        WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+    END;
+    
+-- Procedimiento Buscar por nombre de Producto
+PROCEDURE buscar_producto_nombre (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_producto as ID,
+           codigo as CodigoProducto,
+           nombre as NombreProducto,
+           id_categoria as IDCategoria,
+           precio as Precio,
+           cantidad as Cantidad,
+           imagen as ImgProducto
+    FROM Producto
+    WHERE nombre LIKE '%' || P_nombre || '%';
+END;
+
+-- Procedimiento Buscar Producto por id
+PROCEDURE buscar_producto_id (P_id_producto IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN P_resultados FOR
+    SELECT id_producto as ID,
+           codigo as CodigoProducto,
+           nombre as NombreProducto,
+           id_categoria as IDCategoria,
+           precio as Precio,
+           cantidad as Cantidad,
+           imagen as ImgProducto
+    FROM Producto
+    WHERE id_producto = P_id_producto;
+END;
+
+-- Actualizar Producto
+PROCEDURE actualizar_producto ( p_id_producto IN NUMBER, p_codigo IN VARCHAR2, p_id_categoria IN NUMBER,
+    p_nombre IN VARCHAR2, p_precio IN FLOAT, p_iva IN FLOAT, p_cantidad IN NUMBER, p_imagen IN VARCHAR2 )
+AS
+BEGIN
+    UPDATE Producto
+    SET codigo = p_codigo,
+        id_categoria = p_id_categoria,
+        nombre = p_nombre,
+        precio = p_precio,
+        iva = p_iva,
+        cantidad = p_cantidad, 
+        imagen = p_imagen
+    WHERE id_producto = p_id_producto;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-- Eliminar Producto
+PROCEDURE eliminar_producto ( p_id_producto IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Producto
+    WHERE id_producto = p_id_producto;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+end PKG_PRODUCTO;
 
 ---------------------------------------------------------------------
 Para Continuar ...
