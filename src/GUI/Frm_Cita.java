@@ -1,23 +1,31 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package GUI;
 
-/**
- *
- * @author vrb00
- */
+import Bo.CitaBo;
+import Entidad.Cita;
+import conexion.Conexion;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class Frm_Cita extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Frm_Persona
-     */
+    private int id_cita;
+    private DefaultTableModel tabla;
+    private Cita cita = new Cita();
+    private CitaBo citaBo = new CitaBo();
+    private String mensaje = "";
+
     public Frm_Cita() {
         initComponents();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        //mostrarDatosTabla();
+        //mostrarRoles();
+        //obtenerSeleccion();
     }
 
     /**
@@ -76,30 +84,56 @@ public class Frm_Cita extends javax.swing.JFrame {
                 .addContainerGap(35, Short.MAX_VALUE))
         );
 
-        jLabel1.setText("Fecha");
+        jLabel1.setText("Fecha:");
 
-        jLabel3.setText("Hora");
+        txt_fecha.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_fechaActionPerformed(evt);
+            }
+        });
 
-        jLabel4.setText("Escoge al Empleado");
+        jLabel3.setText("Hora:");
 
-        jLabel5.setText("Escoge a la mascota");
+        jLabel4.setText("Persona:");
+
+        jLabel5.setText("Mascota:");
 
         btn_agregar.setBackground(new java.awt.Color(1, 186, 59));
         btn_agregar.setForeground(new java.awt.Color(255, 255, 255));
         btn_agregar.setText("Agregar");
+        btn_agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_agregarActionPerformed(evt);
+            }
+        });
 
         btn_editar.setBackground(new java.awt.Color(49, 66, 82));
         btn_editar.setForeground(new java.awt.Color(255, 255, 255));
         btn_editar.setText("Editar");
         btn_editar.setToolTipText("Guardar cambios");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         btn_buscar.setBackground(new java.awt.Color(0, 204, 204));
         btn_buscar.setForeground(new java.awt.Color(255, 255, 255));
         btn_buscar.setText("Buscar");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscarActionPerformed(evt);
+            }
+        });
 
         btn_eliminar.setBackground(new java.awt.Color(255, 0, 0));
         btn_eliminar.setForeground(new java.awt.Color(255, 255, 255));
         btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
 
         tabla_citas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -109,12 +143,25 @@ public class Frm_Cita extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Fecha", "Hora", "Persona", "Mascota"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tabla_citas);
 
         combo_empleado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_empleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_empleadoActionPerformed(evt);
+            }
+        });
 
         combo_mascota.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -208,13 +255,97 @@ public class Frm_Cita extends javax.swing.JFrame {
 
     private void menu_personaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_personaActionPerformed
         // TODO add your handling code here:
-        Frm_Empleado vista_empleado= new Frm_Empleado();
+        Frm_Empleado vista_empleado = new Frm_Empleado();
     }//GEN-LAST:event_menu_personaActionPerformed
 
     private void menu_servicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_servicioActionPerformed
         // TODO add your handling code here:
-        Frm_Mascota vista_mascota= new Frm_Mascota();
+        Frm_Mascota vista_mascota = new Frm_Mascota();
     }//GEN-LAST:event_menu_servicioActionPerformed
+
+    private void txt_fechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_fechaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_fechaActionPerformed
+
+    private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
+        // TODO add your handling code here:
+        if (verificaDatos()) {
+            try {
+                cita.setFecha(HEIGHT);
+                cita.setHora(ABORT);
+                cita.setPersona(ERROR);
+                cita.setMascota(id_cita);
+
+                mensaje = citaBo.agregarCita(cita);
+                JOptionPane.showMessageDialog(this, mensaje);
+                limpiarCampos();
+                mostrarDatosTabla();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_agregarActionPerformed
+
+    private void combo_empleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_empleadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_combo_empleadoActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        // TODO add your handling code here:
+        if (verificaDatos()) {
+            try {
+                cita.setId_cita(id_cita);
+                cita.setFecha(HEIGHT);
+                cita.setHora(ABORT);
+                cita.setPersona(ERROR);
+                cita.setMascota(id_cita);
+                mensaje = citaBo.actualizarCita(cita);
+                tabla_citas.clearSelection();
+                JOptionPane.showMessageDialog(this, mensaje);
+                mostrarDatosTabla();
+                limpiarCampos();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        if (verificaDatos()) {
+            try {
+                cita.setId_cita(id_cita);
+                cita.setFecha(HEIGHT);
+                cita.setHora(ABORT);
+                cita.setPersona(ERROR);
+                cita.setMascota(id_cita);
+                mensaje = citaBo.actualizarCita(cita);
+                tabla_citas.clearSelection();
+                JOptionPane.showMessageDialog(this, mensaje);
+                mostrarDatosTabla();
+                limpiarCampos();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_buscarActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+        try {
+            mensaje = citaBo.eliminarCita(id_cita);
+            JOptionPane.showMessageDialog(this, mensaje);
+            limpiarCampos();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, mensaje);
+        }
+        mostrarDatosTabla();
+    }//GEN-LAST:event_btn_eliminarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -277,4 +408,195 @@ public class Frm_Cita extends javax.swing.JFrame {
     private javax.swing.JTextField txt_fecha;
     private javax.swing.JTextField txt_hora;
     // End of variables declaration//GEN-END:variables
+
+    private boolean verificaDatos() {
+        boolean verificar = false, verificarD = true;
+        String fecha = txt_fecha.getText();
+        String hora = txt_hora.getText();
+
+        if (fecha == "" && hora == "") {
+            verificarD = false;
+        }
+
+        boolean verificarR = false;
+        if (combo_empleado.getSelectedIndex() != 0) {
+            if (combo_mascota.getSelectedIndex() != 0) {
+                verificarR = true;
+            }
+        }
+
+        if (verificarD && verificarR) {
+            verificar = true;
+        }
+        return verificar;
+    }
+
+    private void limpiarCampos() {
+        txt_fecha.setText("");
+        txt_hora.setText("");
+        try {
+            combo_empleado.setSelectedIndex(0);
+            combo_mascota.setSelectedIndex(0);
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
+    }
+
+    private void mostrarDatosTabla() {
+        DefaultTableModel contenido = (DefaultTableModel) tabla_citas.getModel();
+
+        contenido.setRowCount(0);
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_cita";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer citaID = resultSet.getInt("ID");
+                    Integer fecha = resultSet.getInt("Fecha");
+                    Integer hora = resultSet.getInt("Hora");
+                    Integer persona = resultSet.getInt("Persona");
+                    Integer mascota = resultSet.getInt("Mascota");
+
+                    // Agregar los datos a la tabla
+                    ((DefaultTableModel) tabla_citas.getModel()).addRow(new Object[]{citaID, fecha, hora,
+                        persona, mascota});
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private void mostrarPersona() {
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_nombre";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    String persona = resultSet.getString("Nombre");
+
+                    // Agregar los datos al Combo Box
+                    combo_empleado.addItem(persona);
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private void mostrarMascota() {
+
+        try {
+            Connection conn = Conexion.Conectar();
+
+            //Vista
+            String procedureCall = "Select * from datos_nombre_mascota";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    String mascota = resultSet.getString("Mascota");
+
+                    // Agregar los datos al Combo Box
+                    combo_mascota.addItem(mascota);
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+
+    private int getId_persona() {
+        String Dpersona = combo_empleado.getSelectedItem().toString();
+        int id;
+        try {
+            String persona = Dpersona.substring(0, 2);
+            id = Integer.parseInt(persona + "");
+        } catch (Exception e) {
+            String persona = Dpersona.substring(0, 1);
+            id = Integer.parseInt(persona + "");
+        }
+        return id;
+    }
+
+    private int getInt_Mascota() {
+        String Dcliente = combo_mascota.getSelectedItem().toString();
+        int Mascota;
+        try {
+            String masc = Dcliente.substring(0, 2);
+            Mascota = Integer.parseInt(masc + "");
+        } catch (Exception e) {
+            String masc = Dcliente.substring(0, 1);
+            Mascota = Integer.parseInt(masc + "");
+        }
+        return Mascota;
+    }
+
+    private void setIndexComboCliente(int cliente) {
+        for (int i = 1; i < combo_empleado.getItemCount(); i++) {
+
+            String item = combo_empleado.getItemAt(i);
+            char clien = item.charAt(0);
+            int persona = Integer.parseInt(clien + "");
+            if (persona == cliente) {
+                combo_empleado.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    private void setIndexComboProducto(int producto) {
+        for (int i = 1; i < combo_mascota.getItemCount(); i++) {
+
+            String item = combo_mascota.getItemAt(i);
+            char masco = item.charAt(0);
+            int masc = Integer.parseInt(masco + "");
+            if (masc == producto) {
+                combo_mascota.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
 }
