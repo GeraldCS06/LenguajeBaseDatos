@@ -556,184 +556,6 @@ END;
 end PKG_CATEGORIA;
 
 ---------------------------------------------------------------------
-Para Mascota
----------------------------------------------------------------------
--- Vista Mascota
-create or replace view datos_mascota as
-select id_mascota as ID, nombre_mascota as NombreMascota
-from Mascota;
-
---- Paquete Mascota. CREAR
-CREATE OR REPLACE PACKAGE PKG_MASCOTA AS
-  --variables
-
-  --funciones
-
-  --procedimientos
-  PROCEDURE insertar_mascota ( p_nombre_mascota IN VARCHAR2);
-  PROCEDURE buscar_nombre_mascota (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
-  PROCEDURE buscar_mascota_id (P_mascota_id IN NUMBER, P_resultados OUT SYS_REFCURSOR);
-  PROCEDURE actualizar_mascota ( p_id_mascota IN NUMBER, p_nombre_mascota IN VARCHAR2);
-  PROCEDURE eliminar_mascota (p_id_mascota IN NUMBER);
-  
-END PKG_MASCOTA;
-
--- Body del package
-create or replace package body PKG_MASCOTA
-as
--- Procedimiento Agregar Mascota
-    PROCEDURE insertar_mascota ( p_nombre_mascota IN VARCHAR2)
-    AS
-        BEGIN
-        INSERT INTO Mascota (nombre_mascota)
-        VALUES (p_nombre_mascota);
-        COMMIT;
-        EXCEPTION
-        WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-    END;
-    
--- Procedimiento Buscar por nombre de Mascota
-PROCEDURE buscar_nombre_mascota (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
-BEGIN
-    OPEN P_resultados FOR
-    SELECT id_mascota AS ID,
-           nombre_mascota AS NombreMascota
-    FROM Mascota
-    WHERE nombre_mascota LIKE '%' || P_nombre || '%'; 
-END;
-
--- Procedimiento Buscar Mascota por id
-PROCEDURE buscar_mascota_id (P_mascota_id IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
-BEGIN
-    OPEN P_resultados FOR
-    SELECT id_mascota AS ID,
-           nombre_mascota AS NombreMascota
-    FROM Mascota
-    WHERE id_mascota = P_mascota_id;
-END;
-
--- Actualizar Mascota
-PROCEDURE actualizar_mascota ( p_id_mascota IN NUMBER, p_nombre_mascota IN VARCHAR2)
-AS
-BEGIN
-    UPDATE Mascota
-    SET nombre_mascota = p_nombre_mascota
-    WHERE id_mascota = p_id_mascota;
-
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-
--- Eliminar Mascota
-PROCEDURE eliminar_mascota (p_id_mascota IN NUMBER)
-AS
-BEGIN
-    DELETE FROM Mascota
-    WHERE id_mascota = p_id_mascota;
-
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-end PKG_MASCOTA;
-
----------------------------------------------------------------------
-Para Empleado
----------------------------------------------------------------------
--- Vista Empleado
-create or replace view datos_empleado as
-select id_empleado as ID, nombre_empleado as NombreEmpleado
-from Empleado;
-
---- Paquete Empleado. CREAR
-CREATE OR REPLACE PACKAGE PKG_EMPLEADO AS
-  --variables
-
-  --funciones
-
-  --procedimientos
-  PROCEDURE insertar_empleado ( p_nombre_mempleado IN VARCHAR2);
-  PROCEDURE buscar_nombre_empleado (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
-  PROCEDURE buscar_empleado_id (P_empleado_id IN NUMBER, P_resultados OUT SYS_REFCURSOR);
-  PROCEDURE actualizar_empleado ( p_id_empleado IN NUMBER, p_nombre_empleado IN VARCHAR2);
-  PROCEDURE eliminar_empleado (p_id_empleado IN NUMBER);
-  
-END PKG_EMPLEADO;
-
--- Body del package
-create or replace package body PKG_EMPLEADO
-as
--- Procedimiento Agregar Empleado
-    PROCEDURE insertar_empleado ( p_nombre_empleado IN VARCHAR2)
-    AS
-        BEGIN
-        INSERT INTO Empleado (nombre_empleado)
-        VALUES (p_nombre_empleado);
-        COMMIT;
-        EXCEPTION
-        WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-    END;
-    
--- Procedimiento Buscar por nombre de Emeplado
-PROCEDURE buscar_nombre_empleado (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR) AS
-BEGIN
-    OPEN P_resultados FOR
-    SELECT id_empleado AS ID,
-           nombre_empleado AS NombreEmpleado
-    FROM Empleado
-    WHERE nombre_empleado LIKE '%' || P_nombre || '%'; 
-END;
-
--- Procedimiento Buscar Empleado por id
-PROCEDURE buscar_empleado_id (P_empleado_id IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
-BEGIN
-    OPEN P_resultados FOR
-    SELECT id_empleado AS ID,
-           nombre_empleado AS NombreEmpleado
-    FROM Empleado
-    WHERE id_empleado = P_empleado_id;
-END;
-
--- Actualizar Empleado
-PROCEDURE actualizar_empleado ( p_id_empleado IN NUMBER, p_nombre_empleado IN VARCHAR2)
-AS
-BEGIN
-    UPDATE Mascota
-    SET nombre_empleado = p_nombre_empleado
-    WHERE id_empleado = p_id_mempleado;
-
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-
--- Eliminar Mascota
-PROCEDURE eliminar_empleado (p_id_empleado IN NUMBER)
-AS
-BEGIN
-    DELETE FROM Empleado
-    WHERE id_empleado = p_id_empleado;
-
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-end PKG_EMPLEADO;
-
----------------------------------------------------------------------
 Para Inicio Sesion
 ---------------------------------------------------------------------
 --- Paquete Inicio Sesion. CREAR
@@ -890,6 +712,364 @@ EXCEPTION
         RAISE;
 END;
 end PKG_PRODUCTO;
+
+---------------------------------------------------------------------
+Para Empleado
+---------------------------------------------------------------------
+-- Vista Empleado
+create or replace view datos_empleado as
+select e.id_empleado as ID, e.id_persona as IDPersona, e.carnet as Carnet, p.nombre||' '||p.primer_apellido||' '||p.segundo_apellido as Nombre,
+e.estado as Estado, e.id_servicio as IDServicio, s.nombre_servicio as Servicio
+from Empleado e
+inner join Persona p
+on e.id_persona = p.id_persona
+inner join Servicio s
+on e.id_servicio = s.id_servicio;
+
+---Vista Persona V2 datos_persona_emp
+create or replace view datos_persona_emp as
+select id_persona as IDPersona, nombre||' '|| primer_apellido||' '|| segundo_apellido as Nombre
+from Persona;
+
+--- Paquete Empleado. CREAR
+CREATE OR REPLACE PACKAGE PKG_EMPLEADO AS
+  --variables
+  TYPE refcursor IS REF CURSOR;
+
+  --funciones
+  FUNCTION buscar_empleado_carnet (P_empleado_carnet IN VARCHAR2)
+  RETURN refcursor;
+  FUNCTION buscar_nombre_empleado (P_nombre IN VARCHAR2)
+  RETURN refcursor;
+
+  --procedimientos
+  PROCEDURE insertar_empleado ( p_carnet IN VARCHAR2, p_pass IN VARCHAR2, p_id_per IN NUMBER,
+  p_id_estado IN NUMBER, p_id_ser IN NUMBER);
+  PROCEDURE actualizar_empleado ( p_id_emp in NUMBER, p_carnet IN VARCHAR2, p_pass IN VARCHAR2, p_id_per IN NUMBER,
+  p_id_estado IN NUMBER, p_id_ser IN NUMBER);
+  PROCEDURE eliminar_empleado (p_id_empleado IN NUMBER);
+END PKG_EMPLEADO;
+
+-- Body del package
+create or replace package body PKG_EMPLEADO
+as
+-- Procedimiento Agregar Empleado
+    PROCEDURE insertar_empleado ( p_carnet IN VARCHAR2, p_pass IN VARCHAR2, p_id_per IN NUMBER, p_id_estado IN NUMBER, p_id_ser IN NUMBER)
+    AS
+        BEGIN
+        INSERT INTO Empleado (carnet, contrasenna, id_persona, estado, id_Servicio)
+        VALUES (p_carnet, p_pass, p_id_per, p_id_estado, p_id_ser);
+        COMMIT;
+        EXCEPTION
+        WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+    END;
+    
+-- Procedimiento Buscar por nombre de Empleado
+FUNCTION buscar_nombre_empleado (P_nombre IN VARCHAR2)
+RETURN refcursor
+IS
+    ref_cur refcursor;
+BEGIN
+    OPEN ref_cur FOR
+    SELECT e.id_empleado AS ID, e.id_persona AS IDPersona, e.carnet AS Carnet, 
+           p.nombre || ' ' || p.primer_apellido || ' ' || p.segundo_apellido AS Nombre, e.contrasenna AS Pass,
+           e.estado AS Estado, e.id_servicio AS IDServicio, s.nombre_servicio AS Servicio
+    FROM Empleado e
+    INNER JOIN Persona p ON e.id_persona = p.id_persona
+    INNER JOIN Servicio s ON e.id_servicio = s.id_servicio
+    WHERE EXISTS (
+        SELECT 1
+        FROM Persona p_sub
+        WHERE e.id_persona = p_sub.id_persona
+          AND (p_sub.nombre LIKE '%' || P_nombre || '%' OR 
+               p_sub.primer_apellido LIKE '%' || P_nombre || '%' OR
+               p_sub.segundo_apellido LIKE '%' || P_nombre || '%')
+    );
+    RETURN ref_cur;
+END buscar_nombre_empleado;
+
+-- Funcion Buscar Empleado por Carnet
+FUNCTION buscar_empleado_carnet (P_empleado_carnet IN VARCHAR2)
+RETURN refcursor
+IS
+    ref_cur refcursor;
+  BEGIN
+    OPEN ref_cur FOR
+      select e.id_empleado as ID, e.id_persona as IDPersona, e.carnet as Carnet, 
+        p.nombre||' '||p.primer_apellido||' '||p.segundo_apellido as Nombre, e.contrasenna as Pass,
+        e.estado as Estado, e.id_servicio as IDServicio, s.nombre_servicio as Servicio
+        from Empleado e
+        inner join Persona p
+        on e.id_persona = p.id_persona
+        inner join Servicio s
+        on e.id_servicio = s.id_servicio
+    WHERE e.carnet LIKE '%' || P_empleado_carnet || '%';
+    RETURN ref_cur;
+END buscar_empleado_carnet;
+
+-- Actualizar Empleado
+PROCEDURE actualizar_empleado ( p_id_emp in NUMBER, p_carnet IN VARCHAR2, p_pass IN VARCHAR2, p_id_per IN NUMBER,
+  p_id_estado IN NUMBER, p_id_ser IN NUMBER)
+AS
+BEGIN
+    UPDATE Empleado
+    SET carnet = p_carnet,
+    contrasenna= p_pass,
+    id_persona = p_id_per,
+    estado = p_id_estado,
+    id_servicio = p_id_ser
+    WHERE id_empleado = p_id_emp;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-- Eliminar Empleado
+PROCEDURE eliminar_empleado (p_id_empleado IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Empleado
+    WHERE id_empleado = p_id_empleado;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+end PKG_EMPLEADO;
+
+---------------------------------------------------------------------
+Para Mascota
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+Para Mascotas
+---------------------------------------------------------------------
+-- Vista Mascota
+create or replace view datos_mascota as
+select p.nombre||' '||p.primer_apellido||' '||p.segundo_apellido as NombrePersona,
+m.nombre_mascota as NombreMascota, e.nombre_especie as NombreEspecie, m.raza as Raza, m.edad as Edad,
+m.peso as Peso, m.genero as Genero, m.esterilizada as Esterilizada
+from Mascota m
+inner join Persona p
+on m.id_persona= p.id_persona
+inner join Especie e
+on m.id_especie=e.id_especie;
+
+--- Paquete Mascota. CREAR
+CREATE OR REPLACE PACKAGE PKG_MASCOTA AS
+  --variables
+  TYPE refcursor IS REF CURSOR;
+
+  --funciones
+  FUNCTION buscar_nombre_mascota (P_nombre IN VARCHAR2)
+    RETURN refcursor;
+
+  --procedimientos
+  PROCEDURE insertar_mascota ( p_id_persona in NUMBER, p_nombre_mascota IN VARCHAR2, p_id_especie in NUMBER, p_raza in VARCHAR2,
+    p_edad in NUMBER, p_peso in FLOAT, p_genero in VARCHAR2, p_esterilizada in NUMBER);
+  PROCEDURE actualizar_mascota ( p_id_mascota IN NUMBER, p_id_persona in NUMBER, p_nombre_mascota IN VARCHAR2, p_id_especie in NUMBER,
+  p_raza in VARCHAR2, p_edad in NUMBER, p_peso in FLOAT, p_genero in VARCHAR2, p_esterilizada in NUMBER);
+  PROCEDURE eliminar_mascota (p_id_mascota IN NUMBER);
+  
+END PKG_MASCOTA;
+
+-- Body del package
+create or replace package body PKG_MASCOTA
+as
+
+-- Procedimiento Agregar Mascota
+    PROCEDURE insertar_mascota ( p_id_persona in NUMBER, p_nombre_mascota IN VARCHAR2, p_id_especie in NUMBER, p_raza in VARCHAR2,
+    p_edad in NUMBER, p_peso in FLOAT, p_genero in VARCHAR2, p_esterilizada in NUMBER)
+    AS
+        BEGIN
+        INSERT INTO Mascota ( id_persona, nombre_mascota, id_especie, raza, edad, peso, genero, esterilizada)
+        VALUES (p_id_persona, p_nombre_mascota, p_id_especie, p_raza, p_edad, p_peso, p_genero, p_esterilizada);
+        COMMIT;
+        EXCEPTION
+        WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+    END;
+    
+-- Funcion Buscar por nombre de Mascota
+FUNCTION buscar_nombre_mascota (P_nombre IN VARCHAR2)
+RETURN refcursor
+IS
+    ref_cur refcursor;
+  BEGIN
+    OPEN ref_cur FOR
+    select m.id_mascota as ID, m.id_persona as IDPersona , p.nombre||' '||p.primer_apellido||' '||p.segundo_apellido as NombrePersona,
+    m.nombre_mascota as NombreMascota, m.id_especie as IDEspecie, e.nombre_especie as NombreEspecie, m.raza as Raza, m.edad as Edad,
+    m.peso as Peso, m.genero as Genero, m.esterilizada as Esterilizada
+    from Mascota m
+    inner join Persona p
+    on m.id_persona= p.id_persona
+    inner join Especie e
+    on m.id_especie=e.id_especie
+    WHERE nombre_mascota LIKE '%' || P_nombre || '%'; 
+    RETURN ref_cur;
+END buscar_nombre_mascota;
+
+-- Actualizar Mascota
+PROCEDURE actualizar_mascota ( p_id_mascota IN NUMBER, p_id_persona in NUMBER, p_nombre_mascota IN VARCHAR2, p_id_especie in NUMBER,
+p_raza in VARCHAR2, p_edad in NUMBER, p_peso in FLOAT, p_genero in VARCHAR2, p_esterilizada in NUMBER)
+AS
+BEGIN
+    UPDATE Mascota
+    SET id_persona = p_id_persona,
+    nombre_mascota = p_nombre_mascota,
+    id_especie= p_id_especie,
+    raza= p_raza,
+    edad= p_edad,
+    peso = p_peso,
+    genero = p_genero,
+    esterilizada = p_esterilizada
+    WHERE id_mascota = p_id_mascota;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+-- Eliminar Mascota
+PROCEDURE eliminar_mascota (p_id_mascota IN NUMBER)
+AS
+BEGIN
+    DELETE FROM Mascota
+    WHERE id_mascota = p_id_mascota;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+end PKG_MASCOTA;
+
+---------------------------------------------------------------------
+Para Cita
+---------------------------------------------------------------------
+-- VISTA CITA
+CREATE OR REPLACE VIEW DATOS_CITA AS
+SELECT C.id_cita as ID, C.FECHA AS Fecha, C.HORA AS Hora,
+s.nombre_servicio as NombreServicio, m.nombre_mascota as NombreMascota,
+p.nombre || ' '|| p.primer_apellido || ' '|| p.segundo_apellido as NombrePersona,
+c.estado as Estado
+FROM CITA C
+inner join Mascota m
+on c.id_mascota=m.id_mascota
+inner join Servicio s
+on c.id_servicio=s.id_servicio
+inner join Persona p
+on m.id_persona=p.id_persona;
+
+CREATE OR REPLACE VIEW DATOS_MASCOTA_CITA AS
+SELECT id_mascota as IDMascota, nombre_mascota as NombreMascota
+FROM Mascota;
+
+--- Paquete Cita. Crear
+CREATE OR REPLACE PACKAGE PKG_CITA AS
+  --variables
+  TYPE refcursor IS REF CURSOR;
+
+  --funciones
+  FUNCTION buscar_cita_mascota(P_mascota IN VARCHAR2)
+  RETURN refcursor;
+  FUNCTION actualizar_cita (p_id_cita IN NUMBER,C_FECHA IN DATE,C_HORA IN VARCHAR2,C_ID_MASCOTA IN NUMBER,C_ID_SERVICIO IN NUMBER,C_ESTADO IN VARCHAR2)
+  RETURN VARCHAR2;
+  FUNCTION eliminar_cita (p_id_cita IN NUMBER)
+  RETURN VARCHAR2;
+
+  --procedimientos
+  PROCEDURE INSERTAR_CITA( C_FECHA IN DATE, C_HORA IN VARCHAR2, C_ID_MASCOTA IN NUMBER, C_ID_SERVICIO IN NUMBER, C_ESTADO IN VARCHAR2);
+  
+END PKG_CITA;
+
+ -- Body del package
+create or replace package body PKG_CITA
+as
+-- Procedimiento Agregar Cita
+    PROCEDURE INSERTAR_CITA( C_FECHA IN DATE, C_HORA IN VARCHAR2, C_ID_MASCOTA IN NUMBER, C_ID_SERVICIO IN NUMBER, C_ESTADO IN VARCHAR2)
+    AS
+        BEGIN
+        INSERT INTO CITA (FECHA, HORA, ID_MASCOTA, ID_SERVICIO, ESTADO)
+        VALUES (C_FECHA, C_HORA, C_ID_MASCOTA, C_ID_SERVICIO, C_ESTADO);
+        COMMIT;
+        EXCEPTION
+            WHEN OTHERS THEN
+            ROLLBACK;
+            RAISE;
+        END;
+        
+        -- Funcion Buscar Cita por nombre mascota
+FUNCTION buscar_cita_mascota(P_mascota IN VARCHAR2)
+RETURN refcursor
+IS
+    ref_cur refcursor;
+BEGIN
+    OPEN ref_cur FOR
+        SELECT 
+            c.ID_CITA AS ID,
+            c.FECHA AS Fecha,
+            c.HORA AS Hora,
+            c.id_mascota AS IDMascota,
+            c.id_servicio AS IDServicio,
+            c.estado AS Estado,
+            m.nombre_mascota AS NombreMascota
+        FROM CITA c
+        JOIN MASCOTA m ON c.id_mascota = m.id_mascota
+        WHERE m.nombre_mascota LIKE '%' || P_mascota || '%' AND c.estado != 'Completada';
+
+    RETURN ref_cur;
+END buscar_cita_mascota;
+
+-- Funcion actualizar cita
+FUNCTION actualizar_cita (
+    p_id_cita IN NUMBER,
+    C_FECHA IN DATE,
+    C_HORA IN VARCHAR2,
+    C_ID_MASCOTA IN NUMBER,
+    C_ID_SERVICIO IN NUMBER,
+    C_ESTADO IN VARCHAR2)
+RETURN VARCHAR2
+IS
+BEGIN
+    UPDATE CITA
+    SET fecha = C_FECHA,
+        hora = C_HORA,
+        id_mascota = C_ID_MASCOTA,
+        id_servicio = C_ID_SERVICIO,
+        estado = C_ESTADO
+    WHERE id_cita = p_id_cita;
+
+    RETURN 'Cita actualizada exitosamente';
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
+END actualizar_cita;
+
+-- Funcion actualizar cita
+FUNCTION eliminar_cita (
+    p_id_cita IN NUMBER)
+RETURN VARCHAR2
+IS
+BEGIN
+     DELETE FROM Cita
+    WHERE id_cita = p_id_cita;
+    COMMIT;
+    RETURN 'Cita eliminada exitosamente';
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END eliminar_cita;
+end PKG_CITA;
 
 ---------------------------------------------------------------------
 Para Continuar ...

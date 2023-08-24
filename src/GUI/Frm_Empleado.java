@@ -24,6 +24,8 @@ import javax.swing.event.ListSelectionListener;
 public class Frm_Empleado extends javax.swing.JFrame {
 
     private int id_empleado;
+    private int id_persona;
+    private int id_servicio;
     private DefaultTableModel tabla;
     private Empleado emp = new Empleado();
     private EmpleadoBo empBo = new EmpleadoBo();
@@ -38,7 +40,8 @@ public class Frm_Empleado extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         mostrarDatosTabla();
-        obtenerSeleccion();
+        mostrarPersonaComboBox();
+        mostrarServicioComboBox();
     }
 
     /**
@@ -68,6 +71,8 @@ public class Frm_Empleado extends javax.swing.JFrame {
         combo_servicio = new javax.swing.JComboBox<>();
         combo_estado = new javax.swing.JComboBox<>();
         Txt_contrasenna = new javax.swing.JPasswordField();
+        txt_buscar = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menu_persona = new javax.swing.JMenuItem();
@@ -148,27 +153,23 @@ public class Frm_Empleado extends javax.swing.JFrame {
 
         tabla_empleados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Carnet", "Nombre Completo", "Estado", "Servicio"
             }
         ));
         jScrollPane1.setViewportView(tabla_empleados);
 
-        combo_persona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        combo_persona.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                combo_personaActionPerformed(evt);
-            }
-        });
+        combo_persona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona una Persona" }));
 
-        combo_servicio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_servicio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona un Servicio" }));
 
-        combo_estado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_estado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona un Estado", "Activo", "No Activo" }));
+
+        txt_buscar.setToolTipText("Busca el nombre de un empleado");
+
+        jLabel7.setText("Buscar nombre");
 
         jMenu1.setText("Agregar");
 
@@ -198,37 +199,41 @@ public class Frm_Empleado extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(81, 81, 81)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txt_carnet, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-                    .addComponent(combo_persona, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(combo_servicio, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(62, 62, 62)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(combo_estado, 0, 115, Short.MAX_VALUE)
-                    .addComponent(Txt_contrasenna))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jScrollPane1)
             .addGroup(layout.createSequentialGroup()
                 .addGap(56, 56, 56)
-                .addComponent(btn_agregar)
-                .addGap(84, 84, 84)
-                .addComponent(btn_editar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btn_buscar)
-                .addGap(84, 84, 84)
-                .addComponent(btn_eliminar)
-                .addGap(78, 78, 78))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btn_agregar)
+                        .addGap(84, 84, 84)
+                        .addComponent(btn_editar)
+                        .addGap(82, 82, 82)
+                        .addComponent(btn_eliminar)
+                        .addGap(37, 37, 37))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txt_carnet)
+                            .addComponent(combo_persona, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(combo_servicio, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(42, 42, 42)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel7))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(combo_estado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Txt_contrasenna)
+                    .addComponent(txt_buscar)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(btn_buscar)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -249,13 +254,15 @@ public class Frm_Empleado extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(combo_servicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(combo_servicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_agregar)
                     .addComponent(btn_editar)
-                    .addComponent(btn_buscar)
-                    .addComponent(btn_eliminar))
+                    .addComponent(btn_eliminar)
+                    .addComponent(btn_buscar))
                 .addGap(33, 33, 33)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -290,10 +297,10 @@ public class Frm_Empleado extends javax.swing.JFrame {
         if (verificaDatos()) {
             try {
                 emp.setCarnet(txt_carnet.getText());
-                //emp.setId_persona(getId_persona());
-                //emp.setId_servicio(getId_servicio());
-                emp.setContrasenna(Txt_contrasenna.getText());
-                //emp.setEstado(getEstado());
+                emp.setContrasenna(String.valueOf(Txt_contrasenna.getPassword()));
+                emp.setId_persona(getId_persona());
+                emp.setId_servicio(getId_servicio());
+                emp.setEstado(getId_Estado());
                 mensaje = empBo.agregarEmpleado(emp);
                 JOptionPane.showMessageDialog(this, mensaje);
                 limpiarCampos();
@@ -306,24 +313,20 @@ public class Frm_Empleado extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_agregarActionPerformed
 
-    private void combo_personaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_personaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_combo_personaActionPerformed
-
     private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
         // TODO add your handling code here:
         if (verificaDatos()) {
             try {
+                emp.setId_empleado(id_empleado);
                 emp.setCarnet(txt_carnet.getText());
-                //emp.setId_persona(getId_persona());
-                //emp.setId_servicio(getId_servicio());
-                emp.setContrasenna(Txt_contrasenna.getText());
-                //emp.setEstado(getEstado());
+                emp.setContrasenna(String.valueOf(Txt_contrasenna.getPassword()));
+                emp.setId_persona(getId_persona());
+                emp.setId_servicio(getId_servicio());
+                emp.setEstado(getId_Estado());
                 mensaje = empBo.actualizarEmpleado(emp);
-                tabla_empleados.clearSelection();
                 JOptionPane.showMessageDialog(this, mensaje);
-                mostrarDatosTabla();
                 limpiarCampos();
+                mostrarDatosTabla();
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(this, mensaje);
             }
@@ -333,22 +336,47 @@ public class Frm_Empleado extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_editarActionPerformed
 
     private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
-        // TODO add your handling code here:
-        try {
-            ArrayList<Empleado> empleado = empBo.buscarPersonaNombre(txt_carnet.getText());
+        if (txt_carnet.getText() != "") {
+            try {
+                ArrayList<Empleado> empleado = empBo.buscarEmpleadoCarnet(txt_carnet.getText());
 
-            for (Empleado e : empleado) {
-                id_empleado = e.getId_empleado();
-                txt_carnet.setText(e.getCarnet());
-                setIndexComboPersona(e.getId_persona());
-                setIndexComboServicio(e.getId_servicio());
-                Txt_contrasenna.setText(e.getContrasenna());
-                setIndexComboEstado(e.getEstado());
+                for (Empleado e : empleado) {
+                    id_empleado = e.getId_empleado();
+                    id_persona = e.getId_persona();
+                    id_servicio = e.getId_servicio();
+                    txt_carnet.setText(e.getCarnet());
+                    Txt_contrasenna.setText(e.getContrasenna());
+                    setIndexComboPersona(e.getId_persona());
+                    setIndexComboServicio(e.getId_servicio());
+                    setIndexComboEstado(e.getEstado());
+                }
+            } catch (Exception sql) {
+                JOptionPane.showMessageDialog(null, sql);
             }
-        } catch (Exception sql) {
-            JOptionPane.showMessageDialog(null, sql);
-        }
+        } else {
+            if (txt_carnet != null) {
+                if (txt_buscar.getText() != "") {
+                    try {
+                        ArrayList<Empleado> empleado = empBo.buscarEmpleadoNombre(txt_buscar.getText());
 
+                        for (Empleado e : empleado) {
+                            id_empleado = e.getId_empleado();
+                            id_persona = e.getId_persona();
+                            id_servicio = e.getId_servicio();
+                            txt_carnet.setText(e.getCarnet());
+                            Txt_contrasenna.setText(e.getContrasenna());
+                            setIndexComboPersona(e.getId_persona());
+                            setIndexComboServicio(e.getId_servicio());
+                            setIndexComboEstado(e.getEstado());
+                        }
+                    } catch (Exception sql) {
+                        JOptionPane.showMessageDialog(null, sql);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Debes ingresar un carnet o nombre a buscar");
+                }
+            }
+        }
     }//GEN-LAST:event_btn_buscarActionPerformed
 
     private void mostrarDatosTabla() {
@@ -371,14 +399,19 @@ public class Frm_Empleado extends javax.swing.JFrame {
 
                     Integer empleadoID = resultSet.getInt("ID");
                     String carnet = resultSet.getString("Carnet");
-                    String contrasenna = resultSet.getString("contraseña");
-                    Integer id_persona = resultSet.getInt("Id_persona");
-                    String estado = resultSet.getString("Estado");
-                    Integer id_servicio = resultSet.getInt("Id_servicio");
+                    String nombre_per = resultSet.getString("Nombre");
+                    Integer estado = resultSet.getInt("Estado");
+                    String servicio = resultSet.getString("Servicio");
+                    String estado_detalle;
+                    if (estado == 1) {
+                        estado_detalle = "Activo";
+                    } else {
+                        estado_detalle = "No activo";
+                    }
 
                     // Agregar los datos a la tabla
-                    ((DefaultTableModel) tabla_empleados.getModel()).addRow(new Object[]{empleadoID, carnet, contrasenna,
-                        id_persona, estado, id_servicio});
+                    ((DefaultTableModel) tabla_empleados.getModel()).addRow(new Object[]{empleadoID, carnet, nombre_per,
+                        estado_detalle, servicio});
                 }
             }
 
@@ -393,13 +426,13 @@ public class Frm_Empleado extends javax.swing.JFrame {
         }
     }
 
-    private void mostrarPersona() {
+    private void mostrarPersonaComboBox() {
 
         try {
             Connection conn = Conexion.Conectar();
 
             //Vista
-            String procedureCall = "Select * from datos_id_empleado";
+            String procedureCall = "Select * from datos_persona_emp";
             CallableStatement stmt = conn.prepareCall(procedureCall);
 
             stmt.execute();
@@ -408,11 +441,11 @@ public class Frm_Empleado extends javax.swing.JFrame {
             if (resultSet != null) {
                 while (resultSet.next()) {
 
-                    Integer personaID = resultSet.getInt("ID");
-                    String persona = resultSet.getString("Persona");
+                    Integer personaID = resultSet.getInt("IDPersona");
+                    String nombre_persona = resultSet.getString("Nombre");
 
                     // Agregar los datos al Combo Box
-                    combo_persona.addItem(personaID + "- " + persona);
+                    combo_persona.addItem(personaID + "- " + nombre_persona);
                 }
             }
 
@@ -427,13 +460,13 @@ public class Frm_Empleado extends javax.swing.JFrame {
         }
     }
 
-    private void mostrarServicio() {
+    private void mostrarServicioComboBox() {
 
         try {
             Connection conn = Conexion.Conectar();
 
             //Vista
-            String procedureCall = "Select * from datos_id_servicio";
+            String procedureCall = "Select * from datos_servicio";
             CallableStatement stmt = conn.prepareCall(procedureCall);
 
             stmt.execute();
@@ -443,7 +476,7 @@ public class Frm_Empleado extends javax.swing.JFrame {
                 while (resultSet.next()) {
 
                     Integer servicioID = resultSet.getInt("ID");
-                    String servicio = resultSet.getString("Servicio");
+                    String servicio = resultSet.getString("NombreServicio");
 
                     // Agregar los datos al Combo Box
                     combo_servicio.addItem(servicioID + "- " + servicio);
@@ -461,60 +494,27 @@ public class Frm_Empleado extends javax.swing.JFrame {
         }
     }
 
-    private void mostrarEstado() {
-
-        try {
-            Connection conn = Conexion.Conectar();
-
-            //Vista
-            String procedureCall = "Select * from datos_estado";
-            CallableStatement stmt = conn.prepareCall(procedureCall);
-
-            stmt.execute();
-
-            ResultSet resultSet = stmt.getResultSet();
-            if (resultSet != null) {
-                while (resultSet.next()) {
-
-                    String estado = resultSet.getString("Estado");
-
-                    // Agregar los datos al Combo Box
-                    combo_servicio.addItem("- " + estado);
-                }
-            }
-
-            if (resultSet != null) {
-                resultSet.close();
-            }
-            stmt.close();
-            conn.close();
-
-        } catch (Exception e) {
-            System.out.println("Error al conectar: " + e);
-        }
-    }
-
     private boolean verificaDatos() {
         boolean verificar = false, verificarD = true;
+        boolean verificarComboPer = false, verificarComboSer = false, verificarComboEst = false;
         String carnet = txt_carnet.getText();
-        String contrasenna = Txt_contrasenna.getText();
+        String contrasenna = String.valueOf(Txt_contrasenna.getPassword());
 
-        if (carnet == "" && contrasenna == "") {
+        if (carnet.isEmpty() && contrasenna.isEmpty()) {
             verificarD = false;
         }
 
-        boolean verificarR = false;
         if (combo_persona.getSelectedIndex() != 0) {
-            verificarR = true;
+            verificarComboPer = true;
         }
         if (combo_servicio.getSelectedIndex() != 0) {
-            verificarR = true;
+            verificarComboSer = true;
         }
         if (combo_estado.getSelectedIndex() != 0) {
-            verificarR = true;
+            verificarComboEst = true;
         }
 
-        if (verificarD && verificarR) {
+        if (verificarD && verificarComboPer && verificarComboSer && verificarComboEst) {
             verificar = true;
         }
         return verificar;
@@ -546,13 +546,14 @@ public class Frm_Empleado extends javax.swing.JFrame {
         return id;
     }
 
-    private String getEstado() {
+    private int getId_Estado() {
         String Destado = combo_estado.getSelectedItem().toString();
-        String estado;
-        try {
-            estado = Destado.substring(0, 2);
-        } catch (Exception e) {
-            estado = Destado.substring(0, 1);
+        int estado;
+
+        if (Destado == "Activo") {
+            estado = 1;
+        } else {
+            estado = 0;
         }
         return estado;
     }
@@ -569,7 +570,7 @@ public class Frm_Empleado extends javax.swing.JFrame {
             }
         }
     }
-    
+
     private void setIndexComboServicio(int id_servicio) {
         for (int i = 1; i < combo_servicio.getItemCount(); i++) {
 
@@ -582,77 +583,25 @@ public class Frm_Empleado extends javax.swing.JFrame {
             }
         }
     }
-    
-    private void setIndexComboEstado(String estado) {
-    for (int i = 1; i < combo_estado.getItemCount(); i++) {
-        String item = combo_estado.getItemAt(i);
-        char estadoc = item.charAt(0);
-        String estadoStr = String.valueOf(estadoc);
-        if (estadoStr.equals(estado)) {
-            combo_estado.setSelectedIndex(i);
-            break;
+
+    private void setIndexComboEstado(int estado) {
+        if (estado == 1) {
+            combo_estado.setSelectedIndex(1);
+        } else {
+            combo_estado.setSelectedIndex(2);
         }
     }
-}
-
 
     private void limpiarCampos() {
-    txt_carnet.setText("");
-    Txt_contrasenna.setText("");
-    try {
-        combo_persona.setSelectedIndex(0);
-        combo_servicio.setSelectedIndex(0);
-        
-        String estadoDeseado = "ValorDeseado"; // Reemplaza "ValorDeseado" con el estado que deseas seleccionar
-        for (int i = 0; i < combo_estado.getItemCount(); i++) {
-            if (estadoDeseado.equals(combo_estado.getItemAt(i))) {
-                combo_estado.setSelectedIndex(i);
-                break;
-            }
+        txt_carnet.setText("");
+        Txt_contrasenna.setText("");
+        try {
+            combo_persona.setSelectedIndex(0);
+            combo_servicio.setSelectedIndex(0);
+            combo_estado.setSelectedIndex(0);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // Manejo de excepciones si es necesario
         }
-    } catch (ArrayIndexOutOfBoundsException e) {
-        // Manejo de excepciones si es necesario
-    }
-}
-
-
-    private void obtenerSeleccion() {
-        // Agregar un ListSelectionListener a la tabla
-        tabla_empleados.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    // Obtener el número de fila y columna seleccionada
-                    int selectedRow = tabla_empleados.getSelectedRow();
-
-                    System.out.println(selectedRow);
-
-                    // Obtener la primera celda seleccionada
-                    Object selectedData = tabla_empleados.getValueAt(selectedRow, 0);
-
-                    String id = selectedData.toString();
-                    int idConsulta = Integer.parseInt(id);
-
-                    try {
-                        ArrayList<Empleado> empleado = empBo.buscarEmpleadoId(idConsulta);
-
-                        for (Empleado es : empleado) {
-                            id_empleado = es.getId_empleado();
-                            txt_carnet.setText(es.getCarnet());
-                            setIndexComboPersona(es.getId_persona());
-                            setIndexComboServicio(es.getId_servicio());
-                            Txt_contrasenna.setText(es.getContrasenna());
-                            setIndexComboEstado(es.getEstado());
-                        }
-                    } catch (Exception sql) {
-                        JOptionPane.showMessageDialog(null, sql);
-                    }
-                    //tabla_empleados.clearSelection();
-                }
-            }
-        });
-
     }
 
     /**
@@ -682,6 +631,8 @@ public class Frm_Empleado extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -706,6 +657,7 @@ public class Frm_Empleado extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel2;
@@ -714,6 +666,7 @@ public class Frm_Empleado extends javax.swing.JFrame {
     private javax.swing.JMenuItem menu_persona;
     private javax.swing.JMenuItem menu_servicio;
     private javax.swing.JTable tabla_empleados;
+    private javax.swing.JTextField txt_buscar;
     private javax.swing.JTextField txt_carnet;
     // End of variables declaration//GEN-END:variables
 }

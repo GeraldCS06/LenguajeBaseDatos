@@ -24,6 +24,8 @@ import javax.swing.event.ListSelectionListener;
 public class Frm_Mascota extends javax.swing.JFrame {
 
     private int id_mascota;
+    private int id_persona;
+    private int id_especie;
     private DefaultTableModel tabla;
     private Mascota mac = new Mascota();
     private MascotaBo macBo = new MascotaBo();
@@ -37,6 +39,9 @@ public class Frm_Mascota extends javax.swing.JFrame {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        mostrarDatosTabla();
+        mostrarPersonas();
+        mostrarEspecies();
     }
 
     /**
@@ -108,12 +113,6 @@ public class Frm_Mascota extends javax.swing.JFrame {
 
         jLabel3.setText("Nombre mascota");
 
-        txt_nombre_mascota.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_nombre_mascotaActionPerformed(evt);
-            }
-        });
-
         jLabel4.setText("Escoge la especie");
 
         jLabel5.setText("Raza");
@@ -161,40 +160,25 @@ public class Frm_Mascota extends javax.swing.JFrame {
 
         tabla_mascotas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Dueno", "Mascota", "Especie", "Raza", "Edad", "Peso", "Genero", "Esterilizada"
             }
         ));
         jScrollPane1.setViewportView(tabla_mascotas);
 
-        combo_persona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        combo_persona.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                combo_personaActionPerformed(evt);
-            }
-        });
+        combo_persona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona el dueño" }));
 
-        combo_especie.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        combo_especie.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                combo_especieActionPerformed(evt);
-            }
-        });
-
-        txt_peso.setText("jTextField1");
+        combo_especie.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Escoge la especie" }));
 
         jLabel8.setText("Genero");
 
-        combo_genero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_genero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Escoge el Genero", "Femenino", "Masculino" }));
 
         jLabel9.setText("Esterilizada");
 
-        combo_esterilizado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_esterilizado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Escoge el estado", "Si", "No" }));
 
         menu_dueno.setText("Agregar");
         menu_dueno.add(jSeparator1);
@@ -231,6 +215,8 @@ public class Frm_Mascota extends javax.swing.JFrame {
                 .addComponent(btn_agregar)
                 .addGap(84, 84, 84)
                 .addComponent(btn_editar)
+                .addGap(92, 92, 92)
+                .addComponent(btn_buscar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_eliminar)
                 .addGap(76, 76, 76))
@@ -243,21 +229,20 @@ public class Frm_Mascota extends javax.swing.JFrame {
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txt_edad, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                    .addComponent(txt_edad)
                     .addComponent(combo_persona, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(combo_especie, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(combo_genero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(17, 17, 17)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel7)
                             .addComponent(jLabel5)
-                            .addComponent(jLabel9)
-                            .addComponent(btn_buscar))
+                            .addComponent(jLabel9))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txt_raza, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                            .addComponent(txt_raza)
                             .addComponent(txt_peso)
                             .addComponent(combo_esterilizado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
@@ -265,7 +250,7 @@ public class Frm_Mascota extends javax.swing.JFrame {
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txt_nombre_mascota, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addContainerGap(86, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,30 +303,17 @@ public class Frm_Mascota extends javax.swing.JFrame {
         Frm_Especie vista_especie = new Frm_Especie();
     }//GEN-LAST:event_menu_especieActionPerformed
 
-    private void combo_personaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_personaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_combo_personaActionPerformed
-
-    private void combo_especieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_especieActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_combo_especieActionPerformed
-
-    private void txt_nombre_mascotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nombre_mascotaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_nombre_mascotaActionPerformed
-
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
-        // TODO add your handling code here:
         if (verificaDatos()) {
             try {
-                //mac.setDueño(getDueño());
-                //mac.setEspecie(getEspecie());
-                mac.setEdad(Integer.parseInt(txt_edad.getText())); // Convertir cadena a int
-                //mac.setGenero(getGenero());
+                mac.setId_persona(getPersona());
                 mac.setNombre_mascota(txt_nombre_mascota.getText());
+                mac.setId_especie(getEspecie());
                 mac.setRaza(txt_raza.getText());
-                mac.setPeso((int) Double.parseDouble(txt_peso.getText())); // Convertir cadena a double
-                //mac.setEsterilizada(getEsterilizada());
+                mac.setEdad(Integer.parseInt(txt_edad.getText()));
+                mac.setPeso(Float.parseFloat(txt_peso.getText()));
+                mac.setGenero(getGenero());
+                mac.setEsterilizada(getEsterilizada());
                 mensaje = macBo.agregarMascota(mac);
                 JOptionPane.showMessageDialog(this, mensaje);
                 limpiarCampos();
@@ -354,8 +326,60 @@ public class Frm_Mascota extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_agregarActionPerformed
 
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        String nombre_m= txt_nombre_mascota.getText();
+        if(nombre_m != ""){
+            try {
+            ArrayList<Mascota> mascotas = macBo.buscarNombreMascota(nombre_m);
+
+            for (Mascota m : mascotas) {
+                id_mascota=m.getId_mascota();
+                id_persona=m.getId_persona();
+                setIndexComboPersona(m.getId_persona());
+                txt_nombre_mascota.setText(m.getNombre_mascota());
+                id_especie=m.getId_especie();
+                setIndexComboEspecie(m.getId_especie());
+                txt_raza.setText(m.getRaza());
+                txt_edad.setText(String.valueOf(m.getEdad()));
+                txt_peso.setText(String.valueOf(m.getPeso()));
+                setIndexComboGenero(m.getGenero());
+                setIndexComboEsterilizada(m.getEsterilizada());
+            }
+        } catch (Exception sql) {
+            JOptionPane.showMessageDialog(null, sql);
+        }
+        } else {
+            JOptionPane.showMessageDialog(this, "Ingresa un nombre de mascota a buscar.");
+        }
+    }//GEN-LAST:event_btn_buscarActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        if (verificaDatos()) {
+            try {
+                mac.setId_mascota(id_mascota);
+                mac.setId_especie(getEspecie());
+                mac.setId_persona(getPersona());
+                mac.setNombre_mascota(txt_nombre_mascota.getText());
+                mac.setId_especie(getEspecie());
+                mac.setRaza(txt_raza.getText());
+                mac.setEdad(Integer.parseInt(txt_edad.getText()));
+                mac.setPeso(Float.parseFloat(txt_peso.getText()));
+                mac.setGenero(getGenero());
+                mac.setEsterilizada(getEsterilizada());
+                
+                mensaje = macBo.actualizarMascota(mac);
+                JOptionPane.showMessageDialog(this, mensaje);
+                limpiarCampos();
+                mostrarDatosTabla();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_editarActionPerformed
+
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
-        // TODO add your handling code here:
         try {
             mensaje = macBo.eliminarMascota(id_mascota);
             JOptionPane.showMessageDialog(this, mensaje);
@@ -366,55 +390,6 @@ public class Frm_Mascota extends javax.swing.JFrame {
         }
         mostrarDatosTabla();
     }//GEN-LAST:event_btn_eliminarActionPerformed
-
-    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
-        // TODO add your handling code here:
-        if (verificaDatos()) {
-            try {
-                //mac.setDueño(getDueño());
-                //mac.setEspecie(getEspecie());
-                mac.setEdad(Integer.parseInt(txt_edad.getText())); // Convertir cadena a int
-                //mac.setGenero(getGenero());
-                mac.setNombre_mascota(txt_nombre_mascota.getText());
-                mac.setRaza(txt_raza.getText());
-                mac.setPeso((int) Double.parseDouble(txt_peso.getText())); // Convertir cadena a double
-                //mac.setEsterilizada(getEsterilizada());
-
-                mensaje = macBo.agregarMascota(mac);
-                tabla_mascotas.clearSelection();
-                JOptionPane.showMessageDialog(this, mensaje);
-                mostrarDatosTabla();
-                limpiarCampos();
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, mensaje);
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
-        }
-    }//GEN-LAST:event_btn_editarActionPerformed
-
-    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
-        // TODO add your handling code here:
-        try {
-            ArrayList<Mascota> mascota = macBo.buscarMascotaNombre(txt_nombre_mascota.getText());
-
-            for (Mascota m : mascota) {
-                id_mascota = m.getId_mascota();
-                setIndexComboDueño(m.getDueño());
-                setIndexComboEspecie(m.getEspecie());
-                txt_edad.setText(Integer.toString(m.getEdad()));
-                setIndexComboGenero(m.getGenero());
-                txt_nombre_mascota.setText(m.getNombre_mascota());
-                txt_raza.setText(m.getRaza());
-                txt_peso.setText(Double.toString(m.getPeso()));
-                setIndexComboEsterilizada(m.getEsterilizada());
-            }
-        } catch (Exception sql) {
-            JOptionPane.showMessageDialog(null, sql);
-        }
-
-
-    }//GEN-LAST:event_btn_buscarActionPerformed
     private void mostrarDatosTabla() {
         DefaultTableModel contenido = (DefaultTableModel) tabla_mascotas.getModel();
 
@@ -433,18 +408,24 @@ public class Frm_Mascota extends javax.swing.JFrame {
             if (resultSet != null) {
                 while (resultSet.next()) {
 
-                    Integer mascotaID = resultSet.getInt("ID");
-                    String dueño = resultSet.getString("Dueño");
-                    String especie = resultSet.getString("Especie");
+                    String nombrePersona = resultSet.getString("NombrePersona");
+                    String nombre_mascota = resultSet.getString("NombreMascota");
+                    String nombre_especie = resultSet.getString("NombreEspecie");
+                    String nombre_raza = resultSet.getString("Raza");
                     Integer edad = resultSet.getInt("Edad");
+                    float peso = resultSet.getFloat("Peso");
                     String genero = resultSet.getString("Genero");
-                    String nombre_mascota = resultSet.getString("Nombre Mascota");
-                    String raza = resultSet.getString("Raza");
-                    Integer peso = resultSet.getInt("Peso");
-                    String esterilizada = resultSet.getString("Esterilizada");
+                    int este = resultSet.getInt("Esterilizada");
+                    String esterilizada;
 
-                    // Agregar los datos a la tabla
-                    ((DefaultTableModel) tabla_mascotas.getModel()).addRow(new Object[]{mascotaID, dueño, especie, edad, genero, nombre_mascota, raza, peso, esterilizada
+                    if (este == 1) {
+                        esterilizada = "Si";
+                    } else {
+                        esterilizada = "No";
+                    }
+
+                    ((DefaultTableModel) tabla_mascotas.getModel()).addRow(new Object[]{nombrePersona, nombre_mascota,
+                        nombre_especie, nombre_raza, edad, peso, genero, esterilizada
                     });
                 }
             }
@@ -460,13 +441,13 @@ public class Frm_Mascota extends javax.swing.JFrame {
         }
     }
 
-    private void mostrarDueños() {
+    private void mostrarPersonas() {
 
         try {
             Connection conn = Conexion.Conectar();
 
             //Vista
-            String procedureCall = "Select * from datos_dueño";
+            String procedureCall = "Select * from datos_persona_emp";
             CallableStatement mstmt = conn.prepareCall(procedureCall);
 
             mstmt.execute();
@@ -475,11 +456,11 @@ public class Frm_Mascota extends javax.swing.JFrame {
             if (resultSet != null) {
                 while (resultSet.next()) {
 
-                    Integer dueñoID = resultSet.getInt("ID");
-                    String dueño = resultSet.getString("Dueño");
+                    Integer idPersona = resultSet.getInt("IDPersona");
+                    String persona = resultSet.getString("Nombre");
 
                     // Agregar los datos al Combo Box
-                    combo_persona.addItem(dueñoID + "- " + dueño);
+                    combo_persona.addItem(idPersona + "- " + persona);
                 }
             }
 
@@ -494,7 +475,7 @@ public class Frm_Mascota extends javax.swing.JFrame {
         }
     }
 
-    private void mostrarEspecie() {
+    private void mostrarEspecies() {
 
         try {
             Connection conn = Conexion.Conectar();
@@ -509,79 +490,11 @@ public class Frm_Mascota extends javax.swing.JFrame {
             if (resultSet != null) {
                 while (resultSet.next()) {
 
-                    Integer especieID = resultSet.getInt("ID");
-                    String especie = resultSet.getString("Especie");
+                    Integer idespecie = resultSet.getInt("ID");
+                    String nombreEspecie = resultSet.getString("NombreEspecie");
 
                     // Agregar los datos al Combo Box
-                    combo_persona.addItem(especieID + "- " + especie);
-                }
-            }
-
-            if (resultSet != null) {
-                resultSet.close();
-            }
-            mstmt.close();
-            conn.close();
-
-        } catch (Exception e) {
-            System.out.println("Error al conectar: " + e);
-        }
-    }
-
-    private void mostrarGenero() {
-
-        try {
-            Connection conn = Conexion.Conectar();
-
-            //Vista
-            String procedureCall = "Select * from datos_genero";
-            CallableStatement mstmt = conn.prepareCall(procedureCall);
-
-            mstmt.execute();
-
-            ResultSet resultSet = mstmt.getResultSet();
-            if (resultSet != null) {
-                while (resultSet.next()) {
-
-                    Integer generoID = resultSet.getInt("ID");
-                    String genero = resultSet.getString("Genero");
-
-                    // Agregar los datos al Combo Box
-                    combo_persona.addItem(generoID + "- " + genero);
-                }
-            }
-
-            if (resultSet != null) {
-                resultSet.close();
-            }
-            mstmt.close();
-            conn.close();
-
-        } catch (Exception e) {
-            System.out.println("Error al conectar: " + e);
-        }
-    }
-
-    private void mostrarEsterilizada() {
-
-        try {
-            Connection conn = Conexion.Conectar();
-
-            //Vista
-            String procedureCall = "Select * from datos_esterilizada";
-            CallableStatement mstmt = conn.prepareCall(procedureCall);
-
-            mstmt.execute();
-
-            ResultSet resultSet = mstmt.getResultSet();
-            if (resultSet != null) {
-                while (resultSet.next()) {
-
-                    Integer esterilizadaID = resultSet.getInt("ID");
-                    String esterilizada = resultSet.getString("Esterilizada");
-
-                    // Agregar los datos al Combo Box
-                    combo_persona.addItem(esterilizadaID + "- " + esterilizada);
+                    combo_especie.addItem(idespecie + "- " + nombreEspecie);
                 }
             }
 
@@ -600,9 +513,9 @@ public class Frm_Mascota extends javax.swing.JFrame {
         boolean verificar = false, verificarD = true;
         String nombre_mascota = txt_nombre_mascota.getText();
         String raza = txt_raza.getText();
-        String peso = txt_peso.getText();
 
         int edad = 0; // Valor por defecto, podrías asignar otro valor si es adecuado
+        float peso = 0.0f;
 
         try {
             edad = Integer.parseInt(txt_edad.getText()); // Convertir el valor del campo de texto a entero
@@ -610,7 +523,12 @@ public class Frm_Mascota extends javax.swing.JFrame {
             // En caso de que la conversión falle (entrada no válida), la variable 'edad' quedará en su valor por defecto (0)
         }
 
-        if (edad == 0 && nombre_mascota.isEmpty() && raza.isEmpty() && peso.isEmpty()) {
+        try {
+            peso = Float.parseFloat(txt_peso.getText());
+        } catch (NumberFormatException e) {
+        }
+
+        if (edad == 0 && nombre_mascota.isEmpty() && raza.isEmpty() && peso == 0.0f) {
             verificarD = false;
         }
 
@@ -626,15 +544,15 @@ public class Frm_Mascota extends javax.swing.JFrame {
         return verificar;
     }
 
-    private int getDueño() {
+    private int getPersona() {
         String Ddueño = combo_persona.getSelectedItem().toString();
         int id;
         try {
-            String dueño1 = Ddueño.substring(0, 2);
-            id = Integer.parseInt(dueño1 + "");
+            String p2 = Ddueño.substring(0, 2);
+            id = Integer.parseInt(p2 + "");
         } catch (Exception e) {
-            String dueño1 = Ddueño.substring(0, 1);
-            id = Integer.parseInt(dueño1 + "");
+            String p1 = Ddueño.substring(0, 1);
+            id = Integer.parseInt(p1 + "");
         }
         return id;
     }
@@ -652,46 +570,35 @@ public class Frm_Mascota extends javax.swing.JFrame {
         return id;
     }
 
-    private int getGenero() {
-        String Dgenero = combo_genero.getSelectedItem().toString();
-        int id;
-        try {
-            String genero = Dgenero.substring(0, 2);
-            id = Integer.parseInt(genero + "");
-        } catch (Exception e) {
-            String genero = Dgenero.substring(0, 1);
-            id = Integer.parseInt(genero + "");
-        }
-        return id;
+    private String getGenero() {
+        return combo_genero.getSelectedItem().toString();
     }
 
     private int getEsterilizada() {
-        String Desterilizada = combo_esterilizado.getSelectedItem().toString();
-        int id;
-        try {
-            String esterilizada = Desterilizada.substring(0, 2);
-            id = Integer.parseInt(esterilizada + "");
-        } catch (Exception e) {
-            String esterilizada = Desterilizada.substring(0, 1);
-            id = Integer.parseInt(esterilizada + "");
+        String est = combo_esterilizado.getSelectedItem().toString();
+        int estirilizada;
+        if (est == "Si") {
+            estirilizada = 1;
+        } else {
+            estirilizada = 0;
         }
-        return id;
+        return estirilizada;
     }
 
-    private void setIndexComboDueño(String dueño) {
+    private void setIndexComboPersona(int persona) {
         for (int i = 1; i < combo_persona.getItemCount(); i++) {
 
             String item = combo_persona.getItemAt(i);
-            char dueñoc = item.charAt(0);
-            String dueñoStr = String.valueOf(dueñoc);
-            if (dueñoStr.equals(dueño)) {
+            char personac = item.charAt(0);
+            int personaO = Integer.parseInt(personac + "");
+            if (personaO == persona) {
                 combo_persona.setSelectedIndex(i);
                 break;
             }
         }
     }
 
-    private void setIndexComboEspecie(String especie) {
+    private void setIndexComboEspecie(int especie) {
         for (int i = 1; i < combo_especie.getItemCount(); i++) {
 
             String item = combo_especie.getItemAt(i);
@@ -706,7 +613,6 @@ public class Frm_Mascota extends javax.swing.JFrame {
 
     private void setIndexComboGenero(String genero) {
         for (int i = 1; i < combo_genero.getItemCount(); i++) {
-
             String item = combo_genero.getItemAt(i);
             char generoc = item.charAt(0);
             String generoStr = String.valueOf(generoc);
@@ -717,16 +623,11 @@ public class Frm_Mascota extends javax.swing.JFrame {
         }
     }
 
-    private void setIndexComboEsterilizada(String esterilizada) {
-        for (int i = 1; i < combo_esterilizado.getItemCount(); i++) {
-
-            String item = combo_esterilizado.getItemAt(i);
-            char esterilizadac = item.charAt(0);
-            String esterilizadaStr = String.valueOf(esterilizadac);
-            if (esterilizadaStr.equals(esterilizada)) {
-                combo_esterilizado.setSelectedIndex(i);
-                break;
-            }
+    private void setIndexComboEsterilizada(int esterilizada) {
+        if(esterilizada ==1){
+            combo_esterilizado.setSelectedIndex(1);
+        } else {
+            combo_esterilizado.setSelectedIndex(2);
         }
     }
 
@@ -742,48 +643,6 @@ public class Frm_Mascota extends javax.swing.JFrame {
             combo_persona.setSelectedIndex(0);
         } catch (ArrayIndexOutOfBoundsException e) {
         }
-    }
-
-    private void obtenerSeleccion() {
-        // Agregar un ListSelectionListener a la tabla
-        tabla_mascotas.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    // Obtener el número de fila y columna seleccionada
-                    int selectedRow = tabla_mascotas.getSelectedRow();
-
-                    System.out.println(selectedRow);
-
-                    // Obtener la primera celda seleccionada
-                    Object selectedData = tabla_mascotas.getValueAt(selectedRow, 0);
-
-                    String id = selectedData.toString();
-                    int idConsulta = Integer.parseInt(id);
-
-                    try {
-                        ArrayList<Mascota> mascota = macBo.buscarMascotaId(idConsulta);
-
-                        for (Mascota m : mascota) {
-                            id_mascota = m.getId_mascota();
-                            setIndexComboDueño(m.getDueño());
-                            setIndexComboEspecie(m.getEspecie());
-                            txt_edad.setText(Integer.toString(m.getEdad()));
-                            setIndexComboGenero(m.getGenero());
-                            txt_nombre_mascota.setText(m.getNombre_mascota());
-                            txt_raza.setText(m.getRaza());
-                            txt_peso.setText(Double.toString(m.getPeso()));
-                            setIndexComboEsterilizada(m.getEsterilizada());
-                        }
-                    } catch (Exception sql) {
-                        JOptionPane.showMessageDialog(null, sql);
-                    }
-                    //tabla_personas.clearSelection();
-                }
-            }
-        });
-
     }
 
     /**
@@ -811,6 +670,8 @@ public class Frm_Mascota extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Frm_Mascota.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 

@@ -5,7 +5,6 @@
 package GUI;
 
 import Bo.FacturacionBo;
-import CRUDS.BD;
 import Entidad.Facturacion;
 import Entidad.Persona;
 import conexion.Conexion;
@@ -338,23 +337,23 @@ public class Frm_Facturacion extends javax.swing.JFrame {
     private void Combo_clienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Combo_clienteActionPerformed
         //Revisar si esta bien el llenado de el combo box
         /*Crear instancia para consultas a la BD*/
-        BD base_datos = new BD();
+        /*Connection conn = Conexion.Conectar();
         try {
-            base_datos.LlenarCliente("Persona", "Nombre", Combo_cliente);
+            conn.LlenarCliente("Persona", "Nombre", Combo_cliente);
         } catch (SQLException ex) {
             Logger.getLogger(Frm_Facturacion.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
 
 
     }//GEN-LAST:event_Combo_clienteActionPerformed
 
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
-        if (verificaDatos()) {
+        /*if (verificaDatos()) {
             try {
-                /*Crear instancia para consultas a la BD*/
+                Crear instancia para consultas a la BD
                 BD base_datos = new BD();
 
-                /*Obtener la fecha actual*/
+                /*Obtener la fecha actual
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 Date date = new Date();
 
@@ -378,7 +377,7 @@ public class Frm_Facturacion extends javax.swing.JFrame {
             }
         } else {
             JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
-        }
+        }*/
     }//GEN-LAST:event_btn_agregarActionPerformed
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed

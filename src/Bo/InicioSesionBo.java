@@ -35,7 +35,7 @@ public class InicioSesionBo {
         return correcto;
     }
 
-    public boolean verificarCarnet(String carnet) {
+    private boolean verificarCarnet(String carnet) {
         boolean verificar = false;
         try {
             Connection con = Conexion.Conectar();

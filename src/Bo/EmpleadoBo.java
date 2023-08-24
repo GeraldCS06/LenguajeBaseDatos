@@ -25,7 +25,7 @@ public class EmpleadoBo {
 
     public String agregarEmpleado(Empleado emp) throws SQLException {
 
-        String sql = "{CALL PKG_EMPLEADO.insertar_empleado(?, ?, ?, ?, ?, ?)}";
+        String sql = "{CALL PKG_EMPLEADO.insertar_empleado(?, ?, ?, ?, ?)}";
 
         Connection con = Conexion.Conectar();
 
@@ -36,7 +36,7 @@ public class EmpleadoBo {
             pstmt.setString(1, emp.getCarnet());
             pstmt.setString(2, emp.getContrasenna());
             pstmt.setInt(3, emp.getId_persona());
-            pstmt.setString(4, emp.getEstado());
+            pstmt.setInt(4, emp.getEstado());
             pstmt.setInt(5, emp.getId_servicio());
 
             mensaje = "Empleado agregado de manera correcta";
@@ -53,42 +53,38 @@ public class EmpleadoBo {
         return mensaje;
     }
 
-    public ArrayList buscarEmpleadoId(int idConsulta) {
+    public ArrayList buscarEmpleadoCarnet(String carnetC) {
 
         ArrayList<Empleado> empleados = new ArrayList<>();
 
         try {
             Connection con = Conexion.Conectar();
 
-            String callProcedure = "{call PKG_EMPLEADO.buscar_empleado_id(?, ?)}";
-            CallableStatement stmt = con.prepareCall(callProcedure);
+            String callFunction = "{ ? = call PKG_EMPLEADO.buscar_empleado_carnet(?) }";
+            CallableStatement stmt = con.prepareCall(callFunction);
 
-            // Establecer el parámetro de entrada del procedimiento
-            stmt.setInt(1, idConsulta);
+            stmt.registerOutParameter(1, OracleTypes.CURSOR);
 
-            // Establecer el parámetro de salida del procedimiento
-            stmt.registerOutParameter(2, OracleTypes.CURSOR);
+            stmt.setString(2, carnetC);
 
-            // Ejecutar el procedimiento
             stmt.execute();
 
-            // Obtener el cursor como un ResultSet
-            ResultSet rs = (ResultSet) stmt.getObject(2);
+            ResultSet rs = (ResultSet) stmt.getObject(1);
 
             if (rs != null && rs.next()) {
                 do {
-                    int id_e = rs.getInt("ID");
+                    int id_em = rs.getInt("ID");
+                    int id_per = rs.getInt("IDPersona");
                     String carnet = rs.getString("Carnet");
-                    String contrasenna = rs.getString("Contraseña");
-                    int id_persona = rs.getInt("Id_Persona");
-                    String estado = rs.getString("estado");
-                    int id_servicio = rs.getInt("Servicio");
+                    String nombre_per = rs.getString("Nombre");
+                    String cont = rs.getString("Pass");
+                    int estado = rs.getInt("Estado");
+                    int servicio = rs.getInt("IDServicio");
+                    String nom_servicio = rs.getString("Servicio");
 
-                    // Agregar los datos a la lista de personas
-                    empleados.add(new Empleado(id_e, carnet, contrasenna, id_persona, estado,id_servicio));
+                    empleados.add(new Empleado(id_em, id_per, carnet, cont, nombre_per, estado, servicio, nom_servicio));
+
                 } while (rs.next());
-            } else {
-                JOptionPane.showMessageDialog(null, "No se encontraron coincidencias.");
             }
 
             rs.close();
@@ -96,47 +92,43 @@ public class EmpleadoBo {
             con.close();
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Ocurrio un error al obtener el id del empleado: " + e);
+            JOptionPane.showMessageDialog(null, "No se encontraron coincidencias" + e);
+            System.out.println("Error: " + e);
         }
-
         return empleados;
     }
 
-    public ArrayList buscarPersonaNombre(String p_carnet) {
+    public ArrayList buscarEmpleadoNombre(String p_nombre) {
         ArrayList<Empleado> empleados = new ArrayList<>();
 
         try {
             Connection con = Conexion.Conectar();
 
-            String callProcedure = "{call PKG_EMPLEADO.buscar_empleado_nombre(?, ?)}";
-            CallableStatement stmt = con.prepareCall(callProcedure);
+            String callFunction = "{ ? = call PKG_EMPLEADO.buscar_nombre_empleado(?) }";
+            CallableStatement stmt = con.prepareCall(callFunction);
 
-            // Establecer el parámetro de entrada del procedimiento
-            stmt.setString(1, p_carnet);
+            stmt.registerOutParameter(1, OracleTypes.CURSOR);
 
-            // Establecer el parámetro de salida del procedimiento
-            stmt.registerOutParameter(2, OracleTypes.CURSOR);
+            stmt.setString(2, p_nombre);
 
-            // Ejecutar el procedimiento
             stmt.execute();
 
-            // Obtener el cursor como un ResultSet
-            ResultSet rs = (ResultSet) stmt.getObject(2);
-
+            ResultSet rs = (ResultSet) stmt.getObject(1);
+            
             if (rs != null && rs.next()) {
                 do {
-                    int id_e = rs.getInt("ID");
-                    String carnet = rs.getString("carnet");
-                    String contrasenna = rs.getString("Contraseña");
-                    int id_persona = rs.getInt("Id_Persona");
-                    String estado = rs.getString("estado");
-                    int id_servicio = rs.getInt("Servicio");
+                    int id_em = rs.getInt("ID");
+                    int id_per = rs.getInt("IDPersona");
+                    String carnet = rs.getString("Carnet");
+                    String nombre_per = rs.getString("Nombre");
+                    String cont = rs.getString("Pass");
+                    int estado = rs.getInt("Estado");
+                    int servicio = rs.getInt("IDServicio");
+                    String nom_servicio = rs.getString("Servicio");
 
-                    // Agregar los datos a la lista de personas
-                    empleados.add(new Empleado(id_e, carnet, contrasenna, id_persona, estado,id_servicio));
+                    empleados.add(new Empleado(id_em, id_per, carnet, cont, nombre_per, estado, servicio, nom_servicio));
+
                 } while (rs.next());
-            } else {
-                JOptionPane.showMessageDialog(null, "No se encontraron coincidencias.");
             }
 
             rs.close();
@@ -144,15 +136,15 @@ public class EmpleadoBo {
             con.close();
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Ocurrio un error al obtener el nombre del empleado: " + e);
+            JOptionPane.showMessageDialog(null, "No se encontraron coincidencias" + e);
+            System.out.println("Error: " + e);
         }
-
         return empleados;
     }
 
     public String actualizarEmpleado(Empleado emp) throws SQLException {
 
-        String sql = "{CALL PKG_EMPLEADO.actualizar_empleado(?, ?, ?, ?, ?, ?, ?)}";
+        String sql = "{CALL PKG_EMPLEADO.actualizar_empleado(?, ?, ?, ?, ?, ?)}";
         Connection con = Conexion.Conectar();
         PreparedStatement pstmt = con.prepareCall(sql);
 
@@ -161,7 +153,7 @@ public class EmpleadoBo {
             pstmt.setString(2, emp.getCarnet());
             pstmt.setString(3, emp.getContrasenna());
             pstmt.setInt(4, emp.getId_persona());
-            pstmt.setString(5, emp.getEstado());
+            pstmt.setInt(5, emp.getEstado());
             pstmt.setInt(6, emp.getId_servicio());
 
             mensaje = "Empleado actualizado exitosamente";

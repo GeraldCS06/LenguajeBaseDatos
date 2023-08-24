@@ -7,12 +7,17 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class Frm_Cita extends javax.swing.JFrame {
 
     private int id_cita;
+    private int id_mascota;
+    private int id_servicio;
     private DefaultTableModel tabla;
     private Cita cita = new Cita();
     private CitaBo citaBo = new CitaBo();
@@ -23,8 +28,9 @@ public class Frm_Cita extends javax.swing.JFrame {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
-        //mostrarDatosTabla();
-        //mostrarRoles();
+        mostrarDatosTabla();
+        mostrarPersonaComboBox();
+        mostrarMascotaComboBox();
         //obtenerSeleccion();
     }
 
@@ -40,7 +46,6 @@ public class Frm_Cita extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        txt_fecha = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -50,9 +55,14 @@ public class Frm_Cita extends javax.swing.JFrame {
         btn_eliminar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla_citas = new javax.swing.JTable();
-        combo_empleado = new javax.swing.JComboBox<>();
+        combo_servicio = new javax.swing.JComboBox<>();
         combo_mascota = new javax.swing.JComboBox<>();
+        fecha = new com.toedter.calendar.JDateChooser();
         txt_hora = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        combo_estado = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
+        txt_buscar_mascota = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menu_persona = new javax.swing.JMenuItem();
@@ -86,15 +96,9 @@ public class Frm_Cita extends javax.swing.JFrame {
 
         jLabel1.setText("Fecha:");
 
-        txt_fecha.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_fechaActionPerformed(evt);
-            }
-        });
-
         jLabel3.setText("Hora:");
 
-        jLabel4.setText("Persona:");
+        jLabel4.setText("Servicio");
 
         jLabel5.setText("Mascota:");
 
@@ -137,33 +141,28 @@ public class Frm_Cita extends javax.swing.JFrame {
 
         tabla_citas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Fecha", "Hora", "Persona", "Mascota"
+                "ID", "Fecha", "Hora", "Servicio", "Mascota", "Dueño", "Estado"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
+        ));
         jScrollPane1.setViewportView(tabla_citas);
 
-        combo_empleado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        combo_empleado.addActionListener(new java.awt.event.ActionListener() {
+        combo_servicio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona" }));
+        combo_servicio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                combo_empleadoActionPerformed(evt);
+                combo_servicioActionPerformed(evt);
             }
         });
 
-        combo_mascota.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combo_mascota.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona" }));
+
+        jLabel6.setText("Estado");
+
+        combo_estado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona", "Completada", "Activa", "Cancelada" }));
+
+        jLabel7.setText("Buscar Mascota");
 
         jMenu1.setText("Agregar");
 
@@ -195,59 +194,83 @@ public class Frm_Cita extends javax.swing.JFrame {
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jScrollPane1)
             .addGroup(layout.createSequentialGroup()
-                .addGap(67, 67, 67)
+                .addGap(101, 101, 101)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btn_agregar)
-                        .addGap(84, 84, 84)
-                        .addComponent(btn_editar)
-                        .addGap(100, 100, 100)
-                        .addComponent(btn_buscar)
-                        .addGap(72, 72, 72)
-                        .addComponent(btn_eliminar))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txt_fecha, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-                            .addComponent(combo_empleado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(62, 62, 62)
+                            .addComponent(fecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(combo_servicio, 0, 193, Short.MAX_VALUE))
+                        .addGap(61, 61, 61)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel3))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(txt_hora, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(combo_mascota, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(combo_mascota, 0, 115, Short.MAX_VALUE)
-                            .addComponent(txt_hora))))
-                .addContainerGap(81, Short.MAX_VALUE))
+                        .addComponent(txt_buscar_mascota, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(3, 3, 3)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(64, 64, 64)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_agregar))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(combo_estado, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(99, 99, 99)
+                        .addComponent(btn_editar)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+                .addComponent(btn_buscar)
+                .addGap(76, 76, 76)
+                .addComponent(btn_eliminar)
+                .addGap(77, 77, 77))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txt_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(txt_hora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39)
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(txt_hora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(fecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1))
+                .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
-                    .addComponent(combo_empleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_servicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(combo_mascota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(49, 49, 49)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(combo_estado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7)
+                    .addComponent(txt_buscar_mascota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_agregar)
                     .addComponent(btn_editar)
                     .addComponent(btn_buscar)
                     .addComponent(btn_eliminar))
-                .addGap(29, 29, 29)
+                .addGap(55, 55, 55)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(16, 16, 16))
         );
 
         pack();
@@ -263,18 +286,14 @@ public class Frm_Cita extends javax.swing.JFrame {
         Frm_Mascota vista_mascota = new Frm_Mascota();
     }//GEN-LAST:event_menu_servicioActionPerformed
 
-    private void txt_fechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_fechaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_fechaActionPerformed
-
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
-        // TODO add your handling code here:
         if (verificaDatos()) {
             try {
-                cita.setFecha(HEIGHT);
-                cita.setHora(ABORT);
-                cita.setPersona(ERROR);
-                cita.setMascota(id_cita);
+                cita.setFecha(getFecha());
+                cita.setHora(txt_hora.getText());
+                cita.setId_mascota(getId_mascota());
+                cita.setId_servicio(getId_servicio());
+                cita.setEstado(getEstado());
 
                 mensaje = citaBo.agregarCita(cita);
                 JOptionPane.showMessageDialog(this, mensaje);
@@ -288,24 +307,25 @@ public class Frm_Cita extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_agregarActionPerformed
 
-    private void combo_empleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_empleadoActionPerformed
+    private void combo_servicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_servicioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_combo_empleadoActionPerformed
+    }//GEN-LAST:event_combo_servicioActionPerformed
 
     private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
         // TODO add your handling code here:
         if (verificaDatos()) {
             try {
                 cita.setId_cita(id_cita);
-                cita.setFecha(HEIGHT);
-                cita.setHora(ABORT);
-                cita.setPersona(ERROR);
-                cita.setMascota(id_cita);
+                cita.setFecha(getFecha());
+                cita.setHora(txt_hora.getText());
+                cita.setId_mascota(getId_mascota());
+                cita.setId_servicio(getId_servicio());
+                cita.setEstado(getEstado());
+                
                 mensaje = citaBo.actualizarCita(cita);
-                tabla_citas.clearSelection();
                 JOptionPane.showMessageDialog(this, mensaje);
-                mostrarDatosTabla();
                 limpiarCampos();
+                mostrarDatosTabla();
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(this, mensaje);
             }
@@ -315,23 +335,23 @@ public class Frm_Cita extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_editarActionPerformed
 
     private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
-        if (verificaDatos()) {
+        if (txt_buscar_mascota.getText() != "") {
             try {
-                cita.setId_cita(id_cita);
-                cita.setFecha(HEIGHT);
-                cita.setHora(ABORT);
-                cita.setPersona(ERROR);
-                cita.setMascota(id_cita);
-                mensaje = citaBo.actualizarCita(cita);
-                tabla_citas.clearSelection();
-                JOptionPane.showMessageDialog(this, mensaje);
-                mostrarDatosTabla();
-                limpiarCampos();
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, mensaje);
+                ArrayList<Cita> citas = citaBo.buscarCitaMascota(txt_buscar_mascota.getText());
+
+                for (Cita c : citas) {
+                    id_cita = c.getId_cita();
+                    fecha.setDate(c.getFecha());
+                    txt_hora.setText(c.getHora());
+                    setIndexComboMascota(c.getId_mascota());
+                    setIndexComboServicio(c.getId_servicio());
+                    setIndexComboEstado(c.getEstado());
+                }
+            } catch (Exception sql) {
+                JOptionPane.showMessageDialog(null, sql);
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+            JOptionPane.showMessageDialog(this, "Tienes ingresar el nombre de una mascota");
         }
     }//GEN-LAST:event_btn_buscarActionPerformed
 
@@ -385,62 +405,6 @@ public class Frm_Cita extends javax.swing.JFrame {
         });
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_agregar;
-    private javax.swing.JButton btn_buscar;
-    private javax.swing.JButton btn_editar;
-    private javax.swing.JButton btn_eliminar;
-    private javax.swing.JComboBox<String> combo_empleado;
-    private javax.swing.JComboBox<String> combo_mascota;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JMenuItem menu_persona;
-    private javax.swing.JMenuItem menu_servicio;
-    private javax.swing.JTable tabla_citas;
-    private javax.swing.JTextField txt_fecha;
-    private javax.swing.JTextField txt_hora;
-    // End of variables declaration//GEN-END:variables
-
-    private boolean verificaDatos() {
-        boolean verificar = false, verificarD = true;
-        String fecha = txt_fecha.getText();
-        String hora = txt_hora.getText();
-
-        if (fecha == "" && hora == "") {
-            verificarD = false;
-        }
-
-        boolean verificarR = false;
-        if (combo_empleado.getSelectedIndex() != 0) {
-            if (combo_mascota.getSelectedIndex() != 0) {
-                verificarR = true;
-            }
-        }
-
-        if (verificarD && verificarR) {
-            verificar = true;
-        }
-        return verificar;
-    }
-
-    private void limpiarCampos() {
-        txt_fecha.setText("");
-        txt_hora.setText("");
-        try {
-            combo_empleado.setSelectedIndex(0);
-            combo_mascota.setSelectedIndex(0);
-        } catch (ArrayIndexOutOfBoundsException e) {
-        }
-    }
-
     private void mostrarDatosTabla() {
         DefaultTableModel contenido = (DefaultTableModel) tabla_citas.getModel();
 
@@ -459,15 +423,17 @@ public class Frm_Cita extends javax.swing.JFrame {
             if (resultSet != null) {
                 while (resultSet.next()) {
 
-                    Integer citaID = resultSet.getInt("ID");
-                    Integer fecha = resultSet.getInt("Fecha");
-                    Integer hora = resultSet.getInt("Hora");
-                    Integer persona = resultSet.getInt("Persona");
-                    Integer mascota = resultSet.getInt("Mascota");
+                    Integer id = resultSet.getInt("ID");
+                    String fecha = resultSet.getString("Fecha");
+                    String hora = resultSet.getString("Hora");
+                    String nombre_servicio = resultSet.getString("NombreServicio");
+                    String nombre_mascota = resultSet.getString("NombreMascota");
+                    String nombre_p = resultSet.getString("NombrePersona");
+                    String estado = resultSet.getString("Estado");
 
-                    // Agregar los datos a la tabla
-                    ((DefaultTableModel) tabla_citas.getModel()).addRow(new Object[]{citaID, fecha, hora,
-                        persona, mascota});
+                    ((DefaultTableModel) tabla_citas.getModel()).addRow(new Object[]{id, fecha, hora,
+                        nombre_servicio, nombre_mascota, nombre_p, estado
+                    });
                 }
             }
 
@@ -482,13 +448,121 @@ public class Frm_Cita extends javax.swing.JFrame {
         }
     }
 
-    private void mostrarPersona() {
+    private boolean verificaDatos() {
+        boolean verificar = false, verificarD = false;
+        String hora = txt_hora.getText();
+        String fecha_cita = "";
+
+        try {
+            Date selectedDate = fecha.getDate();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            fecha_cita = dateFormat.format(selectedDate);
+        } catch (Exception e) {
+        }
+
+        if (fecha_cita != "" && hora != "") {
+            verificarD = true;
+        }
+
+        boolean verificarR = false;
+        if (combo_servicio.getSelectedIndex() != 0) {
+            if (combo_mascota.getSelectedIndex() != 0) {
+                if (combo_estado.getSelectedIndex() != 0) {
+                    verificarR = true;
+                }
+            }
+        }
+
+        if (verificarD && verificarR) {
+            verificar = true;
+        }
+        return verificar;
+    }
+
+    private String getEstado() {
+        return combo_estado.getSelectedItem().toString();
+    }
+
+    private int getId_mascota() {
+        String Dpersona = combo_mascota.getSelectedItem().toString();
+        int id;
+        try {
+            String persona = Dpersona.substring(0, 2);
+            id = Integer.parseInt(persona + "");
+        } catch (Exception e) {
+            String persona = Dpersona.substring(0, 1);
+            id = Integer.parseInt(persona + "");
+        }
+        return id;
+    }
+
+    private int getId_servicio() {
+        String Dpersona = combo_servicio.getSelectedItem().toString();
+        int id;
+        try {
+            String persona = Dpersona.substring(0, 2);
+            id = Integer.parseInt(persona + "");
+        } catch (Exception e) {
+            String persona = Dpersona.substring(0, 1);
+            id = Integer.parseInt(persona + "");
+        }
+        return id;
+    }
+
+    private Date getFecha() {
+        Date selectedDate = null;
+        try {
+            selectedDate = fecha.getDate();
+
+        } catch (Exception e) {
+        }
+        return selectedDate;
+    }
+
+    private void setIndexComboMascota(int id_m) {
+        for (int i = 1; i < combo_mascota.getItemCount(); i++) {
+
+            String item = combo_mascota.getItemAt(i);
+            char personac = item.charAt(0);
+            int persona = Integer.parseInt(personac + "");
+            if (persona == id_m) {
+                combo_mascota.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    private void setIndexComboServicio(int id_s) {
+        for (int i = 1; i < combo_servicio.getItemCount(); i++) {
+
+            String item = combo_servicio.getItemAt(i);
+            char personac = item.charAt(0);
+            int persona = Integer.parseInt(personac + "");
+            if (persona == id_s) {
+                combo_servicio.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    private void setIndexComboEstado(String estado) {
+        for (int i = 0; i < combo_estado.getItemCount(); i++) {
+            String item = (String) combo_estado.getItemAt(i); // Cambio aquí
+            if (item.equals(estado)) {
+                combo_estado.setSelectedIndex(i);
+                break;
+            }
+        }
+
+    }
+
+    private void mostrarPersonaComboBox() {
 
         try {
             Connection conn = Conexion.Conectar();
 
             //Vista
-            String procedureCall = "Select * from datos_nombre";
+            String procedureCall = "Select * from datos_servicio";
             CallableStatement stmt = conn.prepareCall(procedureCall);
 
             stmt.execute();
@@ -497,10 +571,10 @@ public class Frm_Cita extends javax.swing.JFrame {
             if (resultSet != null) {
                 while (resultSet.next()) {
 
-                    String persona = resultSet.getString("Nombre");
+                    Integer serID = resultSet.getInt("ID");
+                    String nombre_ser = resultSet.getString("NombreServicio");
 
-                    // Agregar los datos al Combo Box
-                    combo_empleado.addItem(persona);
+                    combo_servicio.addItem(serID + "- " + nombre_ser);
                 }
             }
 
@@ -515,13 +589,12 @@ public class Frm_Cita extends javax.swing.JFrame {
         }
     }
 
-    private void mostrarMascota() {
-
+    private void mostrarMascotaComboBox() {
         try {
             Connection conn = Conexion.Conectar();
 
             //Vista
-            String procedureCall = "Select * from datos_nombre_mascota";
+            String procedureCall = "Select * from DATOS_MASCOTA_CITA";
             CallableStatement stmt = conn.prepareCall(procedureCall);
 
             stmt.execute();
@@ -530,10 +603,10 @@ public class Frm_Cita extends javax.swing.JFrame {
             if (resultSet != null) {
                 while (resultSet.next()) {
 
-                    String mascota = resultSet.getString("Mascota");
+                    Integer mascotaId = resultSet.getInt("IDMascota");
+                    String nombreMas = resultSet.getString("NombreMascota");
 
-                    // Agregar los datos al Combo Box
-                    combo_mascota.addItem(mascota);
+                    combo_mascota.addItem(mascotaId + "- " + nombreMas);
                 }
             }
 
@@ -548,6 +621,19 @@ public class Frm_Cita extends javax.swing.JFrame {
         }
     }
 
+    private void limpiarCampos() {
+        fecha.setSelectableDateRange(null, null);
+        fecha.setDate(null);
+
+        txt_hora.setText("");
+        try {
+            combo_mascota.setSelectedIndex(0);
+            combo_servicio.setSelectedIndex(0);
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
+    }
+
+    /*
     private int getId_persona() {
         String Dpersona = combo_empleado.getSelectedItem().toString();
         int id;
@@ -599,4 +685,34 @@ public class Frm_Cita extends javax.swing.JFrame {
             }
         }
     }
+}
+     */
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_agregar;
+    private javax.swing.JButton btn_buscar;
+    private javax.swing.JButton btn_editar;
+    private javax.swing.JButton btn_eliminar;
+    private javax.swing.JComboBox<String> combo_estado;
+    private javax.swing.JComboBox<String> combo_mascota;
+    private javax.swing.JComboBox<String> combo_servicio;
+    private com.toedter.calendar.JDateChooser fecha;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JMenuItem menu_persona;
+    private javax.swing.JMenuItem menu_servicio;
+    private javax.swing.JTable tabla_citas;
+    private javax.swing.JTextField txt_buscar_mascota;
+    private javax.swing.JTextField txt_hora;
+    // End of variables declaration//GEN-END:variables
 }

@@ -14,10 +14,12 @@ public class Empleado {
     String carnet;
     String contrasenna;
     int id_persona;
-    String estado;
+    String nombre_per;
+    int estado;
     int id_servicio;
+    String nombre_ser;
 
-    public Empleado(String carnet, String contrasenna, int id_persona, String estado, int id_servicio) {
+    public Empleado(String carnet, String contrasenna, int id_persona, int estado, int id_servicio) {
         this.carnet = carnet;
         this.contrasenna = contrasenna;
         this.id_persona = id_persona;
@@ -25,7 +27,7 @@ public class Empleado {
         this.id_servicio = id_servicio;
     }
 
-    public Empleado(int id_empleado, String carnet, String contrasenna, int id_persona, String estado, int id_servicio) {
+    public Empleado(int id_empleado, String carnet, String contrasenna, int id_persona, int estado, int id_servicio) {
         this.id_empleado = id_empleado;
         this.carnet = carnet;
         this.contrasenna = contrasenna;
@@ -33,7 +35,18 @@ public class Empleado {
         this.estado = estado;
         this.id_servicio = id_servicio;
     }
-    
+
+    public Empleado(int id_empleado,  int id_persona, String carnet, String contrasenna, String nombre_per, int estado, int id_servicio, String nombre_ser) {
+        this.id_empleado = id_empleado;
+        this.carnet = carnet;
+        this.contrasenna = contrasenna;
+        this.id_persona = id_persona;
+        this.nombre_per = nombre_per;
+        this.estado = estado;
+        this.id_servicio = id_servicio;
+        this.nombre_ser = nombre_ser;
+    }
+
     // ESTE LO OCUPO PARA INICIO DE SESION.
     public Empleado(int id_empleado, String carnet, String contrasenna) {
         this.id_empleado = id_empleado;
@@ -76,11 +89,11 @@ public class Empleado {
         this.id_persona = id_persona;
     }
 
-    public String getEstado() {
+    public int getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(int estado) {
         this.estado = estado;
     }
 
@@ -90,11 +103,18 @@ public class Empleado {
 
     public void setId_servicio(int id_servicio) {
         this.id_servicio = id_servicio;
+    }   
+
+    public String getNombre_per() {
+        return nombre_per;
+    }
+
+    public String getNombre_ser() {
+        return nombre_ser;
     }
 
     @Override
     public String toString() {
         return "Empleado{" + "carnet=" + carnet + ", id_persona=" + id_persona + ", estado=" + estado + ", id_servicio=" + id_servicio + '}';
     }
-
 }

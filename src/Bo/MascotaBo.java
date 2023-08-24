@@ -1,4 +1,3 @@
-
 package Bo;
 
 import Entidad.Mascota;
@@ -17,6 +16,7 @@ import oracle.jdbc.OracleTypes;
  * @author kyran
  */
 public class MascotaBo {
+
     private String mensaje = "";
 
     public String agregarMascota(Mascota mac) throws SQLException {
@@ -25,133 +25,72 @@ public class MascotaBo {
 
         Connection con = Conexion.Conectar();
 
-        PreparedStatement mstmt = con.prepareCall(sql);
+        PreparedStatement pstmt = con.prepareCall(sql);
 
         try {
-
-            mstmt.setString(1, mac.getDueño());
-            mstmt.setString(2, mac.getEspecie());
-            mstmt.setInt(3, mac.getEdad());
-            mstmt.setString(4, mac.getGenero());
-            mstmt.setString(5, mac.getNombre_mascota());
-            mstmt.setString(6, mac.getRaza());
-            mstmt.setInt(7, mac.getPeso());
-            mstmt.setString(8, mac.getEsterilizada());
+            pstmt.setInt(1, mac.getId_persona());
+            pstmt.setString(2, mac.getNombre_mascota());
+            pstmt.setInt(3, mac.getId_especie());
+            pstmt.setString(4, mac.getRaza());
+            pstmt.setInt(5, mac.getEdad());
+            pstmt.setFloat(6, mac.getPeso());
+            pstmt.setString(7, mac.getGenero());
+            pstmt.setInt(8, mac.getEsterilizada());
 
             mensaje = "Mascota agregada de manera correcta";
-            mstmt.execute();
-            mstmt.close();
+            pstmt.execute();
+            pstmt.close();
             con.close();
 
         } catch (SQLException e) {
-
             mensaje = "No se pudo agregar la mascota \n" + e.getMessage();
-
         }
-
         return mensaje;
     }
 
-    public ArrayList buscarMascotaId(int idConsulta) {
-
+    public ArrayList buscarNombreMascota(String p_nombre) {
         ArrayList<Mascota> mascotas = new ArrayList<>();
 
         try {
             Connection con = Conexion.Conectar();
 
-            String callProcedure = "{call PKG_MASCOTA.buscar_mascota_id(?, ?)}";
-            CallableStatement mstmt = con.prepareCall(callProcedure);
+            String callFunction = "{ ? = call PKG_MASCOTA.buscar_nombre_mascota(?) }";
+            CallableStatement stmt = con.prepareCall(callFunction);
 
-            // Establecer el parámetro de entrada del procedimiento
-            mstmt.setInt(1, idConsulta);
+            stmt.registerOutParameter(1, OracleTypes.CURSOR);
 
-            // Establecer el parámetro de salida del procedimiento
-            mstmt.registerOutParameter(2, OracleTypes.CURSOR);
+            stmt.setString(2, p_nombre);
 
-            // Ejecutar el procedimiento
-            mstmt.execute();
+            stmt.execute();
 
-            // Obtener el cursor como un ResultSet
-            ResultSet rs = (ResultSet) mstmt.getObject(2);
+            ResultSet rs = (ResultSet) stmt.getObject(1);
 
             if (rs != null && rs.next()) {
                 do {
-                    int id_m = rs.getInt("ID");
-                    String dueño = rs.getString("Dueño");
-                    String especie = rs.getString("Especie");
-                    int edad = rs.getInt("Edad");
-                    String genero = rs.getString("Genero");
-                    String nombre_mascota = rs.getString("Nombre Mascota");
+                    int id_mas = rs.getInt("ID");
+                    int id_per = rs.getInt("IDPersona");
+                    String nombre_per = rs.getString("NombrePersona");
+                    String nombre_mas = rs.getString("NombreMascota");
+                    int id_especie = rs.getInt("IDEspecie");
+                    String nom_espe = rs.getString("NombreEspecie");
                     String raza = rs.getString("Raza");
-                    int peso = rs.getInt("Peso");
-                    String esterilizada = rs.getString("Esterilizada");
+                    int edad = rs.getInt("Edad");
+                    float peso = rs.getFloat("Peso");
+                    String genero = rs.getString("Genero");
+                    int esterilizada = rs.getInt("Esterilizada");
 
-                    // Agregar los datos a la lista de personas
-                    mascotas.add(new Mascota(id_m, dueño,especie,edad,genero,nombre_mascota,raza,peso,esterilizada));
+                    mascotas.add(new Mascota(id_mas, id_per, nombre_per, nombre_mas,
+                            id_especie, nom_espe, raza, edad, peso, genero, esterilizada));
                 } while (rs.next());
-            } else {
-                JOptionPane.showMessageDialog(null, "No se encontraron coincidencias.");
             }
-
             rs.close();
-            mstmt.close();
+            stmt.close();
             con.close();
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Ocurrio un error al obtener el id de la mascota: " + e);
+            JOptionPane.showMessageDialog(null, "No se encontraron coincidencias" + e);
+            System.out.println("Error: " + e);
         }
-
-        return mascotas;
-    }
-
-    public ArrayList buscarMascotaNombre(String p_nombre) {
-        ArrayList<Mascota> mascotas = new ArrayList<>();
-
-        try {
-            Connection con = Conexion.Conectar();
-
-            String callProcedure = "{call PKG_MASCOTA.buscar_mascota_nombre(?, ?)}";
-            CallableStatement mstmt = con.prepareCall(callProcedure);
-
-            // Establecer el parámetro de entrada del procedimiento
-            mstmt.setString(1, p_nombre);
-
-            // Establecer el parámetro de salida del procedimiento
-            mstmt.registerOutParameter(2, OracleTypes.CURSOR);
-
-            // Ejecutar el procedimiento
-            mstmt.execute();
-
-            // Obtener el cursor como un ResultSet
-            ResultSet rs = (ResultSet) mstmt.getObject(2);
-
-            if (rs != null && rs.next()) {
-                do {
-                    int id_m = rs.getInt("ID");
-                    String dueño = rs.getString("Dueño");
-                    String especie = rs.getString("Especie");
-                    int edad = rs.getInt("Edad");
-                    String genero = rs.getString("Genero");
-                    String nombre_mascota = rs.getString("Nombre Mascota");
-                    String raza = rs.getString("Raza");
-                    int peso = rs.getInt("Peso");
-                    String esterilizada = rs.getString("Esterilizada");
-
-                    // Agregar los datos a la lista de personas
-                    mascotas.add(new Mascota(id_m, dueño, especie, edad, genero, nombre_mascota, raza, peso,esterilizada));
-                } while (rs.next());
-            } else {
-                JOptionPane.showMessageDialog(null, "No se encontraron coincidencias.");
-            }
-
-            rs.close();
-            mstmt.close();
-            con.close();
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Ocurrio un error al obtener el nombre de la mascota: " + e);
-        }
-
         return mascotas;
     }
 
@@ -159,22 +98,22 @@ public class MascotaBo {
 
         String sql = "{CALL PKG_MASCOTA.actualizar_mascota(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
         Connection con = Conexion.Conectar();
-        PreparedStatement mstmt = con.prepareCall(sql);
+        PreparedStatement pstmt = con.prepareCall(sql);
 
         try {
-            mstmt.setInt(1, mac.getId_mascota());
-            mstmt.setString(2, mac.getDueño());
-            mstmt.setString(3, mac.getEspecie());
-            mstmt.setInt(4, mac.getEdad());
-            mstmt.setString(5, mac.getGenero());
-            mstmt.setString(6, mac.getNombre_mascota());
-            mstmt.setString(7, mac.getRaza());
-            mstmt.setInt(8, mac.getPeso());
-            mstmt.setString(9, mac.getEsterilizada());
+            pstmt.setInt(1, mac.getId_mascota());
+            pstmt.setInt(2, mac.getId_persona());
+            pstmt.setString(3, mac.getNombre_mascota());
+            pstmt.setInt(4, mac.getId_especie());
+            pstmt.setString(5, mac.getRaza());
+            pstmt.setInt(6, mac.getEdad());
+            pstmt.setFloat(7, mac.getPeso());
+            pstmt.setString(8, mac.getGenero());
+            pstmt.setInt(9, mac.getEsterilizada());
 
             mensaje = "Mascota actualizada exitosamente";
-            mstmt.execute();
-            mstmt.close();
+            pstmt.execute();
+            pstmt.close();
             con.close();
         } catch (SQLException e) {
             mensaje = "No se pudo realizar la actualizacion de la Mascota: \n" + e.getMessage();
