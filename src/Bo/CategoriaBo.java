@@ -17,7 +17,7 @@ import oracle.jdbc.OracleTypes;
  */
 public class CategoriaBo {
 
-    private String mensaje = "";
+    private String mensaje = ""; 
 
     public String agregarCategoria(Categoria categoria) throws SQLException {
 
