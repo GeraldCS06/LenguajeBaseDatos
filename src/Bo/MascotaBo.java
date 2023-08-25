@@ -122,25 +122,27 @@ public class MascotaBo {
     }
 
     public String eliminarMascota(int id_mascota) throws SQLException {
-        Connection con = Conexion.Conectar();
-        String procedureCall = "{ call PKG_MASCOTA.eliminar_mascota(?) }";
+        try {
+            Connection con = Conexion.Conectar();
+            String callFunction = "{ ? = call PKG_MASCOTA.eliminar_mascota(?) }";
+            CallableStatement stmt = con.prepareCall(callFunction);
 
-        try (CallableStatement cs = con.prepareCall(procedureCall)) {
-            cs.setInt(1, id_mascota);
-            cs.execute();
-            mensaje = "Mascota eliminada exitosamente.";
+            stmt.registerOutParameter(1, OracleTypes.VARCHAR);
+
+            stmt.setInt(2, id_mascota);
+
+            stmt.execute();
+
+            mensaje = stmt.getString(1);
+
+            stmt.close();
+            con.close();
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            mensaje = "Ocurrio un error.";
-        } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception e) {
-                mensaje = mensaje + " Ocurrio un error al cerrar la conexion" + e.getMessage();
-            }
+            JOptionPane.showMessageDialog(null, "No se encontraron coincidencias" + e);
+            System.out.println("Error: " + e);
         }
+
         return mensaje;
     }
 }

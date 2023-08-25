@@ -17,7 +17,7 @@ import oracle.jdbc.OracleTypes;
  */
 public class CategoriaBo {
 
-    private String mensaje = ""; 
+    private String mensaje = "";
 
     public String agregarCategoria(Categoria categoria) throws SQLException {
 
@@ -143,25 +143,27 @@ public class CategoriaBo {
     }
 
     public String eliminarCategoria(int id_categoria) throws SQLException {
-        Connection con = Conexion.Conectar();
-        String procedureCall = "{call PKG_CATEGORIA.eliminar_categoria(?)}";
+        try {
+            Connection con = Conexion.Conectar();
+            String callFunction = "{ ? = call PKG_CATEGORIA.eliminar_categoria(?) }";
+            CallableStatement stmt = con.prepareCall(callFunction);
 
-        try (CallableStatement cs = con.prepareCall(procedureCall)) {
-            cs.setInt(1, id_categoria);
-            cs.execute();
-            mensaje = "Categoria eliminada exitosamente.";
+            stmt.registerOutParameter(1, OracleTypes.VARCHAR);
+
+            stmt.setInt(2, id_categoria);
+
+            stmt.execute();
+
+            mensaje = stmt.getString(1);
+
+            stmt.close();
+            con.close();
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            mensaje = "Ocurrio un error al eliminar la categoria. " + e;
-        } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception e) {
-                mensaje = mensaje + " Ocurrio un error al cerrar la conexion" + e.getMessage();
-            }
+            JOptionPane.showMessageDialog(null, "No se encontraron coincidencias" + e);
+            System.out.println("Error: " + e);
         }
+
         return mensaje;
     }
 }

@@ -114,7 +114,7 @@ public class EmpleadoBo {
             stmt.execute();
 
             ResultSet rs = (ResultSet) stmt.getObject(1);
-            
+
             if (rs != null && rs.next()) {
                 do {
                     int id_em = rs.getInt("ID");
@@ -167,25 +167,27 @@ public class EmpleadoBo {
     }
 
     public String eliminarEmpleado(int id_empleado) throws SQLException {
-        Connection con = Conexion.Conectar();
-        String procedureCall = "{ call PKG_EMPLEADO.eliminar_empleado(?) }";
+        try {
+            Connection con = Conexion.Conectar();
+            String callFunction = "{ ? = call PKG_EMPLEADO.eliminar_empleado(?) }";
+            CallableStatement stmt = con.prepareCall(callFunction);
 
-        try (CallableStatement cs = con.prepareCall(procedureCall)) {
-            cs.setInt(1, id_empleado);
-            cs.execute();
-            mensaje = "Empleado eliminado exitosamente.";
+            stmt.registerOutParameter(1, OracleTypes.VARCHAR);
+
+            stmt.setInt(2, id_empleado);
+
+            stmt.execute();
+
+            mensaje = stmt.getString(1);
+
+            stmt.close();
+            con.close();
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            mensaje = "Ocurrio un error.";
-        } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception e) {
-                mensaje = mensaje + " Ocurrio un error al cerrar la conexion" + e.getMessage();
-            }
+            JOptionPane.showMessageDialog(null, "No se encontraron coincidencias" + e);
+            System.out.println("Error: " + e);
         }
+
         return mensaje;
     }
 }

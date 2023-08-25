@@ -1,100 +1,107 @@
 package Entidad;
 
+import java.util.Date;
+
 public class Facturacion {
-private int Num_Factura;
-private String Fecha;
-private int Cliente;
-private int Producto;
-private String Cedula;
-private String Cantida;
-private String SubTotal;
-private String Impuesto;
-private String MontoTotal;
+
+    private int id_factura;
+    private int id_p;
+    private Date Fecha;
+    private String Cliente;
+    private String Producto;
+    private int Cantida;
+    private float SubTotal;
+    private float Impuesto;
+    private float MontoTotal;
+
+    public Facturacion(int id_p, Date Fecha, String Cliente, String Producto, int Cantida, float SubTotal, float Impuesto, float MontoTotal) {
+        this.id_p = id_p;
+        this.Fecha = Fecha;
+        this.Cliente = Cliente;
+        this.Producto = Producto;
+        this.Cantida = Cantida;
+        this.SubTotal = SubTotal;
+        this.Impuesto = Impuesto;
+        this.MontoTotal = MontoTotal;
+    }
 
     public Facturacion() {
     }
 
-    public Facturacion(int Num_Factura, String Fecha, int Cliente, int Producto, String Cedula, String Cantida, String SubTotal, String Impuesto, String MontoTotal) {
-        this.Num_Factura = Num_Factura;
-        this.Fecha = Fecha;
-        this.Cliente = Cliente;
-        this.Producto = Producto;
-        this.Cedula = Cedula;
-        this.Cantida = Cantida;
-        this.SubTotal = SubTotal;
-        this.Impuesto = Impuesto;
-        this.MontoTotal = MontoTotal;
+    public int getId_factura() {
+        return id_factura;
     }
 
-    public int getNum_Factura() {
-        return Num_Factura;
+    public void setId_factura(int id_factura) {
+        this.id_factura = id_factura;
     }
 
-    public void setNum_Factura(int Num_Factura) {
-        this.Num_Factura = Num_Factura;
-    }
-
-    public String getFecha() {
+    public Date getFecha() {
         return Fecha;
     }
 
-    public void setFecha(String Fecha) {
+    public void setFecha(Date Fecha) {
         this.Fecha = Fecha;
     }
 
-    public int getCliente() {
+    public String getCliente() {
         return Cliente;
     }
 
-    public void setCliente(int Cliente) {
+    public void setCliente(String Cliente) {
         this.Cliente = Cliente;
     }
 
-    public int getProducto() {
+    public String getProducto() {
         return Producto;
     }
 
-    public void setProducto(int Producto) {
+    public void setProducto(String Producto) {
         this.Producto = Producto;
     }
 
-    public String getCedula() {
-        return Cedula;
-    }
-
-    public void setCedula(String Cedula) {
-        this.Cedula = Cedula;
-    }
-
-    public String getCantida() {
+    public int getCantida() {
         return Cantida;
     }
 
-    public void setCantida(String Cantida) {
+    public void setCantida(int Cantida) {
         this.Cantida = Cantida;
     }
 
-    public String getSubTotal() {
+    public float getSubTotal() {
         return SubTotal;
     }
 
-    public void setSubTotal(String SubTotal) {
+    public void setSubTotal(float SubTotal) {
         this.SubTotal = SubTotal;
     }
 
-    public String getImpuesto() {
+    public float getImpuesto() {
         return Impuesto;
     }
 
-    public void setImpuesto(String Impuesto) {
+    public void setImpuesto(float Impuesto) {
         this.Impuesto = Impuesto;
     }
 
-    public String getMontoTotal() {
+    public float getMontoTotal() {
         return MontoTotal;
     }
 
-    public void setMontoTotal(String MontoTotal) {
+    public void setMontoTotal(float MontoTotal) {
         this.MontoTotal = MontoTotal;
+    }
+
+    public int getId_p() {
+        return id_p;
+    }
+
+    public void setId_p(int id_p) {
+        this.id_p = id_p;
+    }
+
+    @Override
+    public String toString() {
+        return "Facturacion{" + "id_factura=" + id_factura + ", Fecha=" + Fecha + ", Cliente=" + Cliente + ", Producto=" + Producto + ", Cantida=" + Cantida + ", SubTotal=" + SubTotal + ", Impuesto=" + Impuesto + ", MontoTotal=" + MontoTotal + '}';
     }
 }

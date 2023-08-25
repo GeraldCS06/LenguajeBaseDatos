@@ -160,30 +160,33 @@ public class ProductoBo {
             mensaje = "Producto actualizado exitosamente";
         } catch (SQLException e) {
             mensaje = "No se pudo realizar la actualizacion de la Persona: \n" + e.getMessage();
+            System.out.println(e.getMessage());
         }
         return mensaje;
     }
 
     public String eliminarProducto(int id_producto) throws SQLException {
-        Connection con = Conexion.Conectar();
-        String procedureCall = "{ call PKG_PRODUCTO.eliminar_producto(?) }";
+        try {
+            Connection con = Conexion.Conectar();
+            String callFunction = "{ ? = call PKG_CITA.eliminar_cita(?) }";
+            CallableStatement stmt = con.prepareCall(callFunction);
 
-        try (CallableStatement cs = con.prepareCall(procedureCall)) {
-            cs.setInt(1, id_producto);
-            cs.execute();
-            mensaje = "Producto eliminado exitosamente.";
+            stmt.registerOutParameter(1, OracleTypes.VARCHAR);
+
+            stmt.setInt(2, id_producto);
+
+            stmt.execute();
+
+            mensaje = stmt.getString(1);
+
+            stmt.close();
+            con.close();
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            mensaje = "Ocurrio un error.";
-        } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception e) {
-                mensaje = mensaje + " Ocurrio un error al cerrar la conexion" + e.getMessage();
-            }
+            JOptionPane.showMessageDialog(null, "No se encontraron coincidencias" + e);
+            System.out.println("Error: " + e);
         }
+
         return mensaje;
     }
 }

@@ -46,6 +46,13 @@ public class Producto {
         this.imagen = imagen;
     }
 
+    public Producto(int id_producto, String nombre_producto, float precio, float iva) {
+        this.id_producto = id_producto;
+        this.nombre_producto = nombre_producto;
+        this.precio = precio;
+        this.iva = iva;
+    }
+
     public Producto() {
     }
 

@@ -15,30 +15,19 @@ CONNECT PROYECTO/12345;
 
 /* Creamos las tablas */
 CREATE TABLE Categoria (id_categoria number(10) GENERATED AS IDENTITY, nombre_categoria varchar2(30) NOT NULL, PRIMARY KEY (id_categoria));
-CREATE TABLE Cita (id_cita number(10) GENERATED AS IDENTITY, fecha date NOT NULL, hora varchar2(20) NOT NULL, id_empleado number(10) NOT NULL, id_mascota number(10) NOT NULL, PRIMARY KEY (id_cita));
+CREATE TABLE Cita (id_cita number(10) GENERATED AS IDENTITY, fecha date NOT NULL, hora varchar2(20) NOT NULL, id_mascota number(10) NOT NULL, id_servicio number(10) NOT NULL, estado varchar2(20) NOT NULL, PRIMARY KEY (id_cita));
+CREATE TABLE Cita (id_cita number(10) GENERATED AS IDENTITY, fecha date NOT NULL, hora varchar2(20) NOT NULL, id_mascota number(10) NOT NULL, id_servicio number(10) NOT NULL, estado varchar2(20) NOT NULL, PRIMARY KEY (id_cita));
 CREATE TABLE Empleado (id_empleado number(10) GENERATED AS IDENTITY, carnet varchar2(10) NOT NULL, contrasenna varchar2(10) NOT NULL, id_persona number(10) NOT NULL, estado number NOT NULL, id_servicio number(10) NOT NULL, PRIMARY KEY (id_empleado));
 CREATE TABLE Especie (id_especie number(10) GENERATED AS IDENTITY, nombre_especie varchar2(35) NOT NULL, PRIMARY KEY (id_especie));
 CREATE TABLE Hospitalizacion (id_hospitalizacion number(10) GENERATED AS IDENTITY, id_mascota number(10) NOT NULL, fecha_entrada date NOT NULL, descripcion varchar2(100) NOT NULL, precio float(10), PRIMARY KEY (id_hospitalizacion));
-
-CREATE TABLE Mascota (
-id_mascota number(10) GENERATED AS IDENTITY,
-dueño number(10) NOT NULL, 
-especie number(10) NOT NULL, 
-edad number(10),
-genero varchar2(10),
-nombre_mascota varchar2(30) NOT NULL,
-raza varchar2(50),
-peso float(10),
-esterilizada number, 
-PRIMARY KEY (id_mascota));
-
+CREATE TABLE Mascota (id_mascota number(10) GENERATED AS IDENTITY, id_persona number(10) NOT NULL, nombre_mascota varchar2(30) NOT NULL, id_especie number(10) NOT NULL, raza varchar2(50), edad number(10), peso float(10), genero varchar2(10), esterilizada number, PRIMARY KEY (id_mascota));
 CREATE TABLE Persona (id_persona number(10) GENERATED AS IDENTITY, nombre varchar2(20) NOT NULL, primer_apellido varchar2(25) NOT NULL, segundo_apellido varchar2(20), telefono varchar2(8), correo varchar2(20) NOT NULL, id_rol number(10) NOT NULL, PRIMARY KEY (id_persona));
-
-CREATE TABLE Producto (id_producto number(10) GENERATED AS IDENTITY, codigo varchar2(8) NOT NULL, id_categoria number(10) NOT NULL, nombre varchar2(25) NOT NULL, precio float(10) NOT NULL, cantidad number(10) NOT NULL, imagen varchar2(255), PRIMARY KEY (id_producto));
+CREATE TABLE Producto (id_producto number(10) GENERATED AS IDENTITY, codigo varchar2(8) NOT NULL, id_categoria number(10) NOT NULL, nombre varchar2(35) NOT NULL, precio float(10) NOT NULL, iva float(10) NOT NULL, cantidad number(10) NOT NULL, imagen varchar2(255), PRIMARY KEY (id_producto));
 CREATE TABLE Rol (id_rol number(10) GENERATED AS IDENTITY, nombre_rol varchar2(15) NOT NULL, PRIMARY KEY (id_rol));
 CREATE TABLE Servicio (id_servicio number(10) GENERATED AS IDENTITY, nombre_servicio varchar2(15) NOT NULL, precio float(10) NOT NULL, PRIMARY KEY (id_servicio));
+CREATE TABLE Factura (id_factura number(10) GENERATED AS IDENTITY, fecha date NOT NULL, cliente varchar2(20) NOT NULL, producto varchar2(10) NOT NULL, cantidad number(10) NOT NULL, subtotal float(10) NOT NULL, impuesto float(10) NOT NULL, montoTotal float(10) NOT NULL, PRIMARY KEY (id_factura));
+ALTER TABLE Cita ADD CONSTRAINT "FK-Servicio_cita" FOREIGN KEY (id_servicio) REFERENCES Servicio (id_servicio);
 ALTER TABLE Producto ADD CONSTRAINT FK_categoria FOREIGN KEY (id_categoria) REFERENCES Categoria (id_categoria);
-ALTER TABLE Cita ADD CONSTRAINT FK_empleado FOREIGN KEY (id_empleado) REFERENCES Empleado (id_empleado);
 ALTER TABLE Mascota ADD CONSTRAINT FK_especie FOREIGN KEY (id_especie) REFERENCES Especie (id_especie);
 ALTER TABLE Cita ADD CONSTRAINT FK_mascota_cita FOREIGN KEY (id_mascota) REFERENCES Mascota (id_mascota);
 ALTER TABLE Hospitalizacion ADD CONSTRAINT FK_mascota_hospitalizacion FOREIGN KEY (id_mascota) REFERENCES Mascota (id_mascota);
@@ -46,6 +35,13 @@ ALTER TABLE Empleado ADD CONSTRAINT FK_persona FOREIGN KEY (id_persona) REFERENC
 ALTER TABLE Mascota ADD CONSTRAINT FK_persona_mascota FOREIGN KEY (id_persona) REFERENCES Persona (id_persona);
 ALTER TABLE Persona ADD CONSTRAINT FK_rol FOREIGN KEY (id_rol) REFERENCES Rol (id_rol);
 ALTER TABLE Empleado ADD CONSTRAINT FK_servicio FOREIGN KEY (id_servicio) REFERENCES Servicio (id_servicio);
+
+CREATE TABLE AuditoriaEmpleado (id_auditoria_empleado number(10) GENERATED AS IDENTITY, carnet varchar2(10) NOT NULL, estado number(10) NOT NULL, id_servicio number(10) NOT NULL, PRIMARY KEY (id_auditoria_empleado));
+CREATE TABLE AuditoriaProducto (id_auditoria_producto number(10) GENERATED AS IDENTITY, nombre_producto varchar2(35) NOT NULL, precio_anterior float(10), precio_nuevo float(10), PRIMARY KEY (id_auditoria_producto));
+CREATE TABLE AuditoriaServicio (id_auditoria number(10) GENERATED AS IDENTITY, nombre_servicio varchar2(15) NOT NULL, precio_anterior float(10), precio_actual float(10), PRIMARY KEY (id_auditoria));
+ALTER TABLE AuditoriaEmpleado ADD CONSTRAINT FK_auditoria FOREIGN KEY (id_servicio) REFERENCES Servicio (id_servicio);
+
+
 
 
 /* !!!!!!!!!!!!!!!!!! PARA DROPS  !!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -59,6 +55,14 @@ DROP TABLE Persona CASCADE CONSTRAINTS;
 DROP TABLE Producto CASCADE CONSTRAINTS;
 DROP TABLE Rol CASCADE CONSTRAINTS;
 DROP TABLE Servicio CASCADE CONSTRAINTS;
+DROP TABLE Factura CASCADE CONSTRAINTS;
+
+DROP TABLE AuditoriaEmpleado CASCADE CONSTRAINTS;
+DROP TABLE AuditoriaProducto CASCADE CONSTRAINTS;
+DROP TABLE AuditoriaServicio CASCADE CONSTRAINTS;
+
+
+
 /*
 DROP USER PROYECTO;
 
@@ -83,13 +87,14 @@ CREATE OR REPLACE PACKAGE PKG_ROL AS
   --variables
 
   --funciones
+  FUNCTION eliminar_rol (p_id_rol IN NUMBER)
+  RETURN VARCHAR2;
 
   --procedimientos
   PROCEDURE insertar_rol (p_nombre_rol IN VARCHAR2);
   PROCEDURE buscar_nombre_rol (P_nombre_rol IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
   PROCEDURE buscar_rol_id (P_id_rol IN NUMBER, P_resultados OUT SYS_REFCURSOR);
   PROCEDURE actualizar_rol (p_id_rol IN NUMBER, p_nombre_rol IN VARCHAR2);
-  PROCEDURE eliminar_rol (p_id_rol IN NUMBER);  
 END PKG_ROL;
 
  -- Body del package
@@ -146,15 +151,14 @@ EXCEPTION
 END;
 
 -- Eliminar Rol
-PROCEDURE eliminar_rol (
-    p_id_rol IN NUMBER
-)
-AS
+FUNCTION eliminar_rol (p_id_rol IN NUMBER)
+RETURN VARCHAR2
+IS
 BEGIN
     DELETE FROM Rol
     WHERE id_rol = p_id_rol;
-
     COMMIT;
+	RETURN 'Rol eliminada exitosamente';
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
@@ -390,13 +394,14 @@ CREATE OR REPLACE PACKAGE PKG_ESPECIE AS
   --variables
 
   --funciones
+  FUNCTION eliminar_especie (p_id_especie IN NUMBER)
+  RETURN VARCHAR2;
 
   --procedimientos
   PROCEDURE insertar_especie ( p_nombre_especie IN VARCHAR2);
   PROCEDURE buscar_nombre_especie (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
   PROCEDURE buscar_especie_id (P_especie_id IN NUMBER, P_resultados OUT SYS_REFCURSOR);
   PROCEDURE actualizar_especie ( p_id_especie IN NUMBER, p_nombre_especie IN VARCHAR2);
-  PROCEDURE eliminar_especie (p_id_especie IN NUMBER);
   
 END PKG_ESPECIE;
 
@@ -452,13 +457,14 @@ EXCEPTION
 END;
 
 -- Eliminar Especie
-PROCEDURE eliminar_especie (p_id_especie IN NUMBER)
-AS
+FUNCTION eliminar_especie (p_id_especie IN NUMBER)
+RETURN VARCHAR2
+IS
 BEGIN
     DELETE FROM Especie
     WHERE id_especie = p_id_especie;
-
     COMMIT;
+	RETURN 'Especie eliminada exitosamente';
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
@@ -479,13 +485,14 @@ CREATE OR REPLACE PACKAGE PKG_CATEGORIA AS
   --variables
 
   --funciones
+  FUNCTION eliminar_categoria (p_id_categoria IN NUMBER)
+  RETURN VARCHAR2;
 
   --procedimientos
   PROCEDURE insertar_categoria ( p_nombre_categoria IN VARCHAR2);
   PROCEDURE buscar_nombre_categoria (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
   PROCEDURE buscar_categoria_id (P_categoria_id IN NUMBER, P_resultados OUT SYS_REFCURSOR);
   PROCEDURE actualizar_categoria ( p_id_categoria IN NUMBER, p_nombre_categoria IN VARCHAR2);
-  PROCEDURE eliminar_categoria (p_id_categoria IN NUMBER);
   
 END PKG_CATEGORIA;
 
@@ -541,13 +548,14 @@ EXCEPTION
 END;
 
 -- Eliminar Categoria
-PROCEDURE eliminar_categoria (p_id_categoria IN NUMBER)
-AS
+FUNCTION eliminar_categoria (p_id_categoria IN NUMBER)
+RETURN VARCHAR2
+IS
 BEGIN
     DELETE FROM Categoria
     WHERE id_categoria = p_id_categoria;
-
     COMMIT;
+	RETURN 'Categoria eliminada exitosamente';
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
@@ -555,9 +563,11 @@ EXCEPTION
 END;
 end PKG_CATEGORIA;
 
+
 ---------------------------------------------------------------------
-Para Inicio Sesion
+Para InicioSesion
 ---------------------------------------------------------------------
+
 --- Paquete Inicio Sesion. CREAR
 CREATE OR REPLACE PACKAGE PKG_INICIO_SESION AS
 
@@ -603,18 +613,20 @@ on p.id_categoria=c.id_categoria;
 -- Paquete Producto. CREAR
 CREATE OR REPLACE PACKAGE PKG_PRODUCTO AS
   --variables
+  TYPE refcursor IS REF CURSOR;
 
   --funciones
   FUNCTION calcular_precio_con_iva(precio IN NUMBER, iva IN NUMBER) RETURN NUMBER;
+  FUNCTION eliminar_producto ( p_id_p IN NUMBER) RETURN VARCHAR2;
+  FUNCTION buscar_producto_id(P_id_producto IN NUMBER)
+  RETURN refcursor;
 
   --procedimientos
   PROCEDURE insertar_producto ( p_codigo IN VARCHAR2, p_id_categoria IN NUMBER, p_nombre IN VARCHAR2, p_precio IN FLOAT,
     p_iva IN FLOAT, p_cantidad IN NUMBER, p_imagen IN VARCHAR2);
   PROCEDURE buscar_producto_nombre (P_nombre IN VARCHAR2, P_resultados OUT SYS_REFCURSOR);
-  PROCEDURE buscar_producto_id (P_id_producto IN NUMBER, P_resultados OUT SYS_REFCURSOR);
   PROCEDURE actualizar_producto ( p_id_producto IN NUMBER, p_codigo IN VARCHAR2, p_id_categoria IN NUMBER,
     p_nombre IN VARCHAR2, p_precio IN FLOAT, p_iva IN FLOAT, p_cantidad IN NUMBER, p_imagen IN VARCHAR2 );
-  PROCEDURE eliminar_producto ( p_id_producto IN NUMBER);
   
 END PKG_PRODUCTO;
 
@@ -662,9 +674,12 @@ BEGIN
 END;
 
 -- Procedimiento Buscar Producto por id
-PROCEDURE buscar_producto_id (P_id_producto IN NUMBER, P_resultados OUT SYS_REFCURSOR) AS
+FUNCTION buscar_producto_id (P_id_producto IN NUMBER)
+RETURN refcursor
+IS
+    ref_cur refcursor;
 BEGIN
-    OPEN P_resultados FOR
+    OPEN ref_cur FOR
     SELECT id_producto as ID,
            codigo as CodigoProducto,
            nombre as NombreProducto,
@@ -674,6 +689,7 @@ BEGIN
            imagen as ImgProducto
     FROM Producto
     WHERE id_producto = P_id_producto;
+RETURN ref_cur;
 END;
 
 -- Actualizar Producto
@@ -698,19 +714,20 @@ EXCEPTION
         RAISE;
 END;
 
--- Eliminar Producto
-PROCEDURE eliminar_producto ( p_id_producto IN NUMBER)
-AS
+-- Funcion eliminar Producto
+FUNCTION eliminar_producto ( p_id_p IN NUMBER)
+RETURN VARCHAR2
+IS
 BEGIN
-    DELETE FROM Producto
-    WHERE id_producto = p_id_producto;
-
+     DELETE FROM Producto
+    WHERE id_producto = p_id_p;
     COMMIT;
+    RETURN 'Producto eliminada exitosamente';
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
         RAISE;
-END;
+END eliminar_producto;
 end PKG_PRODUCTO;
 
 ---------------------------------------------------------------------
@@ -741,13 +758,14 @@ CREATE OR REPLACE PACKAGE PKG_EMPLEADO AS
   RETURN refcursor;
   FUNCTION buscar_nombre_empleado (P_nombre IN VARCHAR2)
   RETURN refcursor;
+  FUNCTION eliminar_empleado (p_id_empleado IN NUMBER)
+  RETURN VARCHAR2;
 
   --procedimientos
   PROCEDURE insertar_empleado ( p_carnet IN VARCHAR2, p_pass IN VARCHAR2, p_id_per IN NUMBER,
   p_id_estado IN NUMBER, p_id_ser IN NUMBER);
   PROCEDURE actualizar_empleado ( p_id_emp in NUMBER, p_carnet IN VARCHAR2, p_pass IN VARCHAR2, p_id_per IN NUMBER,
   p_id_estado IN NUMBER, p_id_ser IN NUMBER);
-  PROCEDURE eliminar_empleado (p_id_empleado IN NUMBER);
 END PKG_EMPLEADO;
 
 -- Body del package
@@ -830,13 +848,14 @@ EXCEPTION
 END;
 
 -- Eliminar Empleado
-PROCEDURE eliminar_empleado (p_id_empleado IN NUMBER)
-AS
+FUNCTION eliminar_empleado (p_id_empleado IN NUMBER)
+RETURN VARCHAR2
+IS
 BEGIN
     DELETE FROM Empleado
     WHERE id_empleado = p_id_empleado;
-
     COMMIT;
+	RETURN 'Empleado eliminado exitosamente';
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
@@ -869,13 +888,14 @@ CREATE OR REPLACE PACKAGE PKG_MASCOTA AS
   --funciones
   FUNCTION buscar_nombre_mascota (P_nombre IN VARCHAR2)
     RETURN refcursor;
+  FUNCTION eliminar_mascota (p_id_mascota IN NUMBER)
+    RETURN VARCHAR2;
 
   --procedimientos
   PROCEDURE insertar_mascota ( p_id_persona in NUMBER, p_nombre_mascota IN VARCHAR2, p_id_especie in NUMBER, p_raza in VARCHAR2,
     p_edad in NUMBER, p_peso in FLOAT, p_genero in VARCHAR2, p_esterilizada in NUMBER);
   PROCEDURE actualizar_mascota ( p_id_mascota IN NUMBER, p_id_persona in NUMBER, p_nombre_mascota IN VARCHAR2, p_id_especie in NUMBER,
   p_raza in VARCHAR2, p_edad in NUMBER, p_peso in FLOAT, p_genero in VARCHAR2, p_esterilizada in NUMBER);
-  PROCEDURE eliminar_mascota (p_id_mascota IN NUMBER);
   
 END PKG_MASCOTA;
 
@@ -939,12 +959,14 @@ EXCEPTION
 END;
 
 -- Eliminar Mascota
-PROCEDURE eliminar_mascota (p_id_mascota IN NUMBER)
-AS
+FUNCTION eliminar_mascota (p_id_mascota IN NUMBER)
+RETURN VARCHAR2
+IS
 BEGIN
     DELETE FROM Mascota
     WHERE id_mascota = p_id_mascota;
     COMMIT;
+	RETURN 'MASCOTA eliminada exitosamente';
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
@@ -1070,6 +1092,239 @@ EXCEPTION
         RAISE;
 END eliminar_cita;
 end PKG_CITA;
+
+---------------------------------------------------------------------
+Para Factura
+---------------------------------------------------------------------
+--Creacion de Vista cita x persona
+CREATE OR REPLACE VIEW datos_nombre AS
+SELECT nombre || ' ' || primer_apellido || ' '|| segundo_apellido as Persona
+FROM Persona;
+
+-- Creacion de vista cita x producto
+CREATE OR REPLACE VIEW datos_nombre_producto AS
+SELECT id_producto as ID, nombre as Producto, Precio as Precio, Iva as Iva
+FROM Producto;
+
+--- Paquete Cita. Crear
+CREATE OR REPLACE PACKAGE PKG_Factura AS
+  --variables
+  TYPE refcursor IS REF CURSOR;
+
+  --funciones
+  FUNCTION eliminar_factura (p_id_fact IN NUMBER)
+  RETURN VARCHAR2;
+  FUNCTION buscar_id_factura(P_id IN VARCHAR2)
+  RETURN refcursor;
+
+  --procedimientos
+  PROCEDURE INSERTAR_FACTURA(
+    F_idProducto in NUMBER,
+    F_FECHA IN DATE,
+    F_CLIENTE IN VARCHAR2,
+    F_PRODUCTO IN VARCHAR2,
+    F_CANTIDAD IN NUMBER,
+    F_SUBTOTAL OUT FLOAT,
+    F_IMPUESTO OUT FLOAT,
+    F_MONTOTOTAL OUT FLOAT
+  );
+END PKG_Factura;
+
+ -- Body del package
+create or replace package body PKG_Factura
+as
+
+FUNCTION actualizar_cantidad_producto(
+    p_producto_id IN NUMBER,
+    p_cantidad IN NUMBER
+) RETURN BOOLEAN
+AS
+BEGIN
+    UPDATE Producto
+    SET cantidad = cantidad - p_cantidad
+    WHERE id_producto = p_producto_id;
+
+    RETURN TRUE;
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN FALSE;
+END;
+
+ FUNCTION obtener_precio_iva_producto(p_idProducto IN NUMBER)
+RETURN SYS_REFCURSOR
+AS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+        SELECT precio, iva
+        FROM Producto
+        WHERE id_producto = p_idProducto;
+    RETURN v_cursor;
+EXCEPTION
+    WHEN OTHERS THEN
+        CLOSE v_cursor; -- Agregar el cierre del cursor en caso de excepción
+        NULL;
+END;
+
+FUNCTION obtener_precio_producto(p_idProducto IN NUMBER)
+RETURN FLOAT
+AS
+    v_precio FLOAT;
+BEGIN
+    SELECT precio INTO v_precio
+    FROM Producto
+    WHERE id_producto = p_idProducto;
+
+    RETURN v_precio;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN NULL;
+    WHEN OTHERS THEN
+        RAISE;
+END;
+
+-- Procedimiento para insertar una factura
+PROCEDURE INSERTAR_FACTURA(
+    F_idProducto in NUMBER,
+    F_FECHA IN DATE,
+    F_CLIENTE IN VARCHAR2,
+    F_PRODUCTO IN VARCHAR2,
+    F_CANTIDAD IN NUMBER,
+    F_SUBTOTAL OUT FLOAT,
+    F_IMPUESTO OUT FLOAT,
+    F_MONTOTOTAL OUT FLOAT
+)
+AS
+    v_precio_producto FLOAT;
+    v_iva_producto Producto.iva%TYPE;
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    -- Actualizar la cantidad del producto
+    IF actualizar_cantidad_producto(F_idProducto, F_CANTIDAD) THEN
+        -- Llamar a la función para obtener precio del producto
+        v_cursor := obtener_precio_iva_producto(F_idProducto);
+        FETCH v_cursor INTO v_precio_producto, v_iva_producto;
+        CLOSE v_cursor;
+
+        -- Calcular los valores para la factura
+        F_SUBTOTAL := F_CANTIDAD * v_precio_producto;
+        F_IMPUESTO := F_SUBTOTAL * v_iva_producto;
+        F_MONTOTOTAL := F_SUBTOTAL + F_IMPUESTO;
+
+        -- Insertar en la tabla Factura
+        INSERT INTO Factura (FECHA, CLIENTE, PRODUCTO, CANTIDAD, SUBTOTAL, IMPUESTO, MONTOTOTAL)
+        VALUES (F_FECHA, F_CLIENTE, F_PRODUCTO, F_CANTIDAD, F_SUBTOTAL, F_IMPUESTO, F_MONTOTOTAL);
+
+        COMMIT;
+    ELSE
+        ROLLBACK;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
+        -- Funcion Buscar Factura por id
+FUNCTION buscar_id_factura(P_id IN VARCHAR2)
+RETURN refcursor
+IS
+    ref_cur refcursor;
+BEGIN
+    OPEN ref_cur FOR
+        SELECT ID_FACTURA AS ID_FACTURA, FECHA AS FECHA, CLIENTE AS CLIENTE,
+        PRODUCTO AS PRODUCTO, CANTIDAD AS CANTIDAD, SUBTOTAL AS SUBTOTAL, 
+        IMPUESTO AS IMPUESTO, MONTOTOTAL AS MONTOFINAL
+        FROM Factura
+        WHERE id_factura=P_id;
+
+    RETURN ref_cur;
+END buscar_id_factura;
+
+-- Funcion eliminar cita
+FUNCTION eliminar_factura (
+    p_id_fact IN NUMBER)
+RETURN VARCHAR2
+IS
+BEGIN
+     DELETE FROM Factura
+    WHERE id_factura = p_id_fact;
+    COMMIT;
+    RETURN 'Factura eliminada exitosamente';
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END eliminar_factura;
+end PKG_Factura;
+
+
+---------------------------------------------------------------------
+		TRIGGERS
+---------------------------------------------------------------------
+
+-- Trigger de Insert Producto
+CREATE OR REPLACE TRIGGER trg_auditar_insercion_producto
+AFTER INSERT ON Producto
+FOR EACH ROW
+BEGIN
+    -- Insertar una nueva fila en la tabla AuditoriaProducto
+    INSERT INTO AuditoriaProducto (nombre_producto, precio_anterior)
+    VALUES (:NEW.nombre, :NEW.precio);
+END;
+    
+--- Trigger Update Producto
+CREATE OR REPLACE TRIGGER trg_auditar_actualizacion_producto
+AFTER UPDATE ON Producto FOR EACH ROW
+DECLARE
+    v_precio_anterior FLOAT;
+BEGIN
+    -- Obtener el precio anterior almacenado en la tabla AuditoriaProducto
+    SELECT precio_anterior INTO v_precio_anterior
+    FROM AuditoriaProducto
+    WHERE nombre_producto = :NEW.nombre;
+
+    -- Insertar una nueva fila en la tabla AuditoriaProducto
+    INSERT INTO AuditoriaProducto (nombre_producto, precio_anterior, precio_nuevo)
+    VALUES (:NEW.nombre, v_precio_anterior, :NEW.precio);
+END;
+
+-- Trigger de Insert Servicio
+CREATE OR REPLACE TRIGGER trg_auditar_insercion_servicio
+AFTER INSERT ON Servicio
+FOR EACH ROW
+BEGIN
+    -- Insertar una nueva fila en la tabla AuditoriaServicio
+    INSERT INTO AuditoriaServicio (nombre_servicio, precio_anterior, precio_actual)
+    VALUES (:NEW.nombre_servicio, :NEW.precio, :NEW.precio);
+END;
+
+--- Trigger Update Servicio
+CREATE OR REPLACE TRIGGER trg_auditar_actualizacion_servicio
+AFTER UPDATE ON Servicio
+FOR EACH ROW
+DECLARE
+    v_precio_anterior FLOAT;
+BEGIN
+    -- Obtener el precio anterior almacenado en la tabla AuditoriaServicio
+    SELECT precio_anterior INTO v_precio_anterior
+    FROM AuditoriaServicio
+    WHERE nombre_servicio = :OLD.nombre_servicio;
+
+    -- Insertar una nueva fila en la tabla AuditoriaServicio
+    INSERT INTO AuditoriaServicio (nombre_servicio, precio_anterior, precio_actual)
+    VALUES (:NEW.nombre_servicio, v_precio_anterior, :NEW.precio);
+END;
+
+--- Trigger de Eliminacion en empleado
+CREATE OR REPLACE TRIGGER trg_auditar_eliminar_empleado
+BEFORE DELETE ON Empleado
+FOR EACH ROW
+BEGIN
+    -- Insertar una nueva fila en la tabla AuditoriaEmpleado
+    INSERT INTO AuditoriaEmpleado (carnet, estado, id_servicio)
+    VALUES (:OLD.carnet, :OLD.estado, :OLD.id_servicio);
+END;
 
 ---------------------------------------------------------------------
 Para Continuar ...

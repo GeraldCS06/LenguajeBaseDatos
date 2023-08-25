@@ -149,25 +149,27 @@ public class RolBo {
     }
 
     public String eliminarRol(int id_rol) throws SQLException {
-        Connection con = Conexion.Conectar();
-        String procedureCall = "{call PKG_ROL.eliminar_rol(?)}";
+        try {
+            Connection con = Conexion.Conectar();
+            String callFunction = "{ ? = call PKG_ROL.eliminar_rol(?) }";
+            CallableStatement stmt = con.prepareCall(callFunction);
 
-        try (CallableStatement cs = con.prepareCall(procedureCall)) {
-            cs.setInt(1, id_rol);
-            cs.execute();
-            mensaje = "Rol eliminada exitosamente.";
+            stmt.registerOutParameter(1, OracleTypes.VARCHAR);
+
+            stmt.setInt(2, id_rol);
+
+            stmt.execute();
+
+            mensaje = stmt.getString(1);
+
+            stmt.close();
+            con.close();
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            mensaje = "Ocurrio un error al eliminar el Rol. " + e;
-        } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception e) {
-                mensaje = mensaje + " Ocurrio un error al cerrar la conexion" + e.getMessage();
-            }
+            JOptionPane.showMessageDialog(null, "No se encontraron coincidencias" + e);
+            System.out.println("Error: " + e);
         }
+
         return mensaje;
     }
 }

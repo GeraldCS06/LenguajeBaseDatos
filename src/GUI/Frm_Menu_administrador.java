@@ -270,6 +270,7 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
 
     private void btn_facturas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_facturas1ActionPerformed
         // TODO add your handling code here:
+        Frm_Facturacion f= new Frm_Facturacion();
     }//GEN-LAST:event_btn_facturas1ActionPerformed
 
     /**
