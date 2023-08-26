@@ -250,7 +250,7 @@ public class Frm_Menu_administrador extends javax.swing.JFrame {
 
     private void btn_hospitalizacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hospitalizacionesActionPerformed
         // TODO add your handling code here:
-        Frm_Empleado vista_empleado = new Frm_Empleado();
+        Frm_Hospitalizacion vista_hospitalizacion = new Frm_Hospitalizacion();
     }//GEN-LAST:event_btn_hospitalizacionesActionPerformed
 
     private void btn_citas2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_citas2ActionPerformed

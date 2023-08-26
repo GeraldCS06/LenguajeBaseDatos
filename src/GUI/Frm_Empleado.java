@@ -162,6 +162,11 @@ public class Frm_Empleado extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tabla_empleados);
 
         combo_persona.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona una Persona" }));
+        combo_persona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_personaActionPerformed(evt);
+            }
+        });
 
         combo_servicio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona un Servicio" }));
 
@@ -378,6 +383,10 @@ public class Frm_Empleado extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btn_buscarActionPerformed
+
+    private void combo_personaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_personaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_combo_personaActionPerformed
 
     private void mostrarDatosTabla() {
         DefaultTableModel contenido = (DefaultTableModel) tabla_empleados.getModel();

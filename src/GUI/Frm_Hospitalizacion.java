@@ -4,6 +4,19 @@
  */
 package GUI;
 
+import Bo.HospitalizacionBo;
+import Entidad.Hospitalizacion;
+import com.toedter.calendar.JCalendar;
+//import com.sun.jdi.connect.spi.Connection;
+import conexion.Conexion;
+import java.sql.SQLException;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSet;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+
 /**
  *
  * @author vrb00
@@ -13,11 +26,24 @@ public class Frm_Hospitalizacion extends javax.swing.JFrame {
     /**
      * Creates new form Frm_Persona
      */
+    
+    private int id_persona;
+    private int id_mascota;
+    private int id_hospitalizacion;
+    private DefaultTableModel tabla;
+    private Hospitalizacion hos = new Hospitalizacion();
+    private HospitalizacionBo hosBo = new HospitalizacionBo();
+    private String mensaje = "";
+    
+    
     public Frm_Hospitalizacion() {
         initComponents();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        mostrarDatosTabla();
+//        mostrarRoles();
+//        obtenerSeleccion();
     }
 
     /**
@@ -84,11 +110,21 @@ public class Frm_Hospitalizacion extends javax.swing.JFrame {
         btn_agregar.setBackground(new java.awt.Color(1, 186, 59));
         btn_agregar.setForeground(new java.awt.Color(255, 255, 255));
         btn_agregar.setText("Agregar");
+        btn_agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_agregarActionPerformed(evt);
+            }
+        });
 
         btn_editar.setBackground(new java.awt.Color(49, 66, 82));
         btn_editar.setForeground(new java.awt.Color(255, 255, 255));
         btn_editar.setText("Editar");
         btn_editar.setToolTipText("Guardar cambios");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         btn_buscar.setBackground(new java.awt.Color(0, 204, 204));
         btn_buscar.setForeground(new java.awt.Color(255, 255, 255));
@@ -97,6 +133,11 @@ public class Frm_Hospitalizacion extends javax.swing.JFrame {
         btn_eliminar.setBackground(new java.awt.Color(255, 0, 0));
         btn_eliminar.setForeground(new java.awt.Color(255, 255, 255));
         btn_eliminar.setText("Eliminar");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
 
         tabla_hospitalizaciones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -200,9 +241,131 @@ public class Frm_Hospitalizacion extends javax.swing.JFrame {
         Frm_Mascota vista_mascota = new Frm_Mascota();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
+        // TODO add your handling code here:
+        if (verificaDatos()) {
+            try {
+                hos.setId_mascota(id_persona);
+                hos.setFecha_entrada(txt_fecha_entrada.getText());
+                hos.setDescripcion(txt_descripcion.getText());
+                hos.setPrecio(Float.parseFloat(txt_precio.getText()));
+                mensaje = hosBo.agregarHospitalizacion(hos);
+                JOptionPane.showMessageDialog(this, mensaje);
+                limpiarCampos();
+                mostrarDatosTabla();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_agregarActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        // TODO add your handling code here:
+        if (verificaDatos()) {
+            try {
+                hos.setId_mascota(id_persona);
+                hos.setFecha_entrada(txt_fecha_entrada.getText());
+                hos.setDescripcion(txt_descripcion.getText());
+                hos.setPrecio(Float.parseFloat(txt_precio.getText()));
+                mensaje = hosBo.actualizarHospitalizacion(hos);
+                JOptionPane.showMessageDialog(this, mensaje);
+                limpiarCampos();
+                mostrarDatosTabla();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, mensaje);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Tienes que llenar todos los campos");
+        }
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+        // TODO add your handling code here:
+        try {
+            mensaje = hosBo.eliminarHospitalizacion(id_hospitalizacion);
+            JOptionPane.showMessageDialog(this, mensaje);
+            limpiarCampos();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, mensaje);
+        }
+        mostrarDatosTabla();
+    }//GEN-LAST:event_btn_eliminarActionPerformed
+
     /**
+     * 
      * @param args the command line arguments
      */
+    
+    private void mostrarDatosTabla() {
+        DefaultTableModel contenido = (DefaultTableModel) tabla_hospitalizaciones.getModel();
+
+        contenido.setRowCount(0);
+
+        try {
+            Connection conn = Conexion.Conectar();
+            
+            //Vista
+            String procedureCall = "Select * from vista_hospitalizacion";
+            CallableStatement stmt = conn.prepareCall(procedureCall);
+
+            stmt.execute();
+
+            ResultSet resultSet = stmt.getResultSet();
+            if (resultSet != null) {
+                while (resultSet.next()) {
+
+                    Integer HospitalizacionID = resultSet.getInt("IDHospitalizacion");
+                    Integer mascotaId = resultSet.getInt("IDMascota");
+                    String fecha_entrada = resultSet.getString("FechaEntrada");
+                    String descripcion = resultSet.getString("Descripcion");
+                    float precio = resultSet.getFloat("Precio");
+
+                    // Agregar los datos a la tabla
+                    ((DefaultTableModel) tabla_hospitalizaciones.getModel()).addRow(new Object[]{HospitalizacionID, mascotaId, fecha_entrada, descripcion, precio});
+                }
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            stmt.close();
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("Error al conectar: " + e);
+        }
+    }
+    
+    private void limpiarCampos() {
+        txt_fecha_entrada.setText("");
+        txt_precio.setText("");
+        txt_descripcion.setText("");
+    }
+    
+    private boolean verificaDatos() {
+        boolean verificar = false, verificarD = true;
+//        Date fecha_entrada = txt_fecha_entrada.get;
+//        float precio = txt_precio
+        String descripcion = txt_descripcion.getText();
+
+        if (descripcion == "") {
+            verificarD = false;
+        }
+
+//        boolean verificarR = false;
+//        if (combo_rol.getSelectedIndex() != 0) {
+//            verificarR = true;
+//        }
+
+        if (verificarD) {
+            verificar = true;
+        }
+        return verificar;
+    }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
