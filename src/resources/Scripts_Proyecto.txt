@@ -1329,3 +1329,139 @@ END;
 ---------------------------------------------------------------------
 Para Continuar ...
 ---------------------------------------------------------------------
+CREATE OR REPLACE VIEW vista_hospitalizacion AS
+SELECT
+    h.id_hospitalizacion AS IDHospitalizacion,
+    h.id_mascota AS IDMascota,
+    h.fecha_entrada AS FechaEntrada,
+    h.descripcion AS Descripcion,
+    h.precio AS Precio
+FROM Hospitalizacion h;
+---------------------------------------------------------
+--------------------------------------------------------
+
+CREATE OR REPLACE PACKAGE PKG_HOSPITALIZACION AS
+    -- Variables
+    TYPE refcursor IS REF CURSOR;
+
+    -- Funciones
+    FUNCTION buscar_hospitalizacion_id(p_id_hospitalizacion IN NUMBER) RETURN refcursor;
+    FUNCTION buscar_hospitalizacion_mascota(p_id_mascota IN NUMBER) RETURN refcursor;
+
+    -- Procedimientos
+    PROCEDURE insertar_hospitalizacion(
+        p_id_mascota IN NUMBER,
+        p_fecha_entrada IN VARCHAR2,
+        p_descripcion IN VARCHAR2,
+        p_precio IN FLOAT
+    );
+    PROCEDURE actualizar_hospitalizacion(
+        p_id_hospitalizacion IN NUMBER,
+        p_id_mascota IN NUMBER,
+        p_fecha_entrada IN VARCHAR2,
+        p_descripcion IN VARCHAR2,
+        p_precio IN FLOAT
+    );
+    FUNCTION eliminar_hospitalizacion(p_id_hospitalizacion IN NUMBER) RETURN VARCHAR2;
+END PKG_HOSPITALIZACION;
+--------------------------------------------------------------
+--------------------------------------------------------------
+
+CREATE OR REPLACE PACKAGE BODY PKG_HOSPITALIZACION AS
+    -- Procedimiento para insertar una hospitalización
+    PROCEDURE insertar_hospitalizacion(
+        p_id_mascota IN NUMBER,
+        p_fecha_entrada IN VARCHAR2,
+        p_descripcion IN VARCHAR2,
+        p_precio IN FLOAT
+    ) AS
+    BEGIN
+        INSERT INTO Hospitalizacion (
+            id_mascota,
+            fecha_entrada,
+            descripcion,
+            precio
+        )
+        VALUES (
+            p_id_mascota,
+            p_fecha_entrada,
+            p_descripcion,
+            p_precio
+        );
+        COMMIT;
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK;
+            RAISE;
+    END insertar_hospitalizacion;
+
+    -- Procedimiento para actualizar una hospitalización
+    PROCEDURE actualizar_hospitalizacion(
+        p_id_hospitalizacion IN NUMBER,
+        p_id_mascota IN NUMBER,
+        p_fecha_entrada IN VARCHAR2,
+        p_descripcion IN VARCHAR2,
+        p_precio IN FLOAT
+    ) AS
+    BEGIN
+        UPDATE Hospitalizacion
+        SET
+            id_mascota = p_id_mascota,
+            fecha_entrada = p_fecha_entrada,
+            descripcion = p_descripcion,
+            precio = p_precio
+        WHERE
+            id_hospitalizacion = p_id_hospitalizacion;
+        COMMIT;
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK;
+            RAISE;
+    END actualizar_hospitalizacion;
+
+    -- Función para eliminar una hospitalización
+    FUNCTION eliminar_hospitalizacion(p_id_hospitalizacion IN NUMBER) RETURN VARCHAR2 AS
+    BEGIN
+        DELETE FROM Hospitalizacion
+        WHERE id_hospitalizacion = p_id_hospitalizacion;
+        COMMIT;
+        RETURN 'Hospitalización eliminada exitosamente';
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK;
+            RAISE;
+    END eliminar_hospitalizacion;
+
+    -- Función para buscar una hospitalización por su ID
+    FUNCTION buscar_hospitalizacion_id(p_id_hospitalizacion IN NUMBER) RETURN refcursor AS
+        ref_cur refcursor;
+    BEGIN
+        OPEN ref_cur FOR
+            SELECT
+                h.id_hospitalizacion AS IDHospitalizacion,
+                h.id_mascota AS IDMascota,
+                h.fecha_entrada AS FechaEntrada,
+                h.descripcion AS Descripcion,
+                h.precio AS Precio
+            FROM Hospitalizacion h
+            WHERE h.id_hospitalizacion = p_id_hospitalizacion;
+        RETURN ref_cur;
+    END buscar_hospitalizacion_id;
+
+    -- Función para buscar hospitalizaciones por el ID de la mascota
+    FUNCTION buscar_hospitalizacion_mascota(p_id_mascota IN NUMBER) RETURN refcursor AS
+        ref_cur refcursor;
+    BEGIN
+        OPEN ref_cur FOR
+            SELECT
+                h.id_hospitalizacion AS IDHospitalizacion,
+                h.id_mascota AS IDMascota,
+                h.fecha_entrada AS FechaEntrada,
+                h.descripcion AS Descripcion,
+                h.precio AS Precio
+            FROM Hospitalizacion h
+            WHERE h.id_mascota = p_id_mascota;
+        RETURN ref_cur;
+    END buscar_hospitalizacion_mascota;
+
+END PKG_HOSPITALIZACION;
