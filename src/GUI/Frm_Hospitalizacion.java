@@ -16,6 +16,7 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.ResultSet;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.util.ArrayList;
 
 /**
  *
@@ -129,6 +130,11 @@ public class Frm_Hospitalizacion extends javax.swing.JFrame {
         btn_buscar.setBackground(new java.awt.Color(0, 204, 204));
         btn_buscar.setForeground(new java.awt.Color(255, 255, 255));
         btn_buscar.setText("Buscar");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscarActionPerformed(evt);
+            }
+        });
 
         btn_eliminar.setBackground(new java.awt.Color(255, 0, 0));
         btn_eliminar.setForeground(new java.awt.Color(255, 255, 255));
@@ -293,6 +299,51 @@ public class Frm_Hospitalizacion extends javax.swing.JFrame {
         }
         mostrarDatosTabla();
     }//GEN-LAST:event_btn_eliminarActionPerformed
+
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        // TODO add your handling code here:
+//        if (txt_fecha_entrada.getText() != "") {
+//            try {
+//                ArrayList<Hospitalizacion> hospitalizado = hosBo.buscarMascota(txt_fecha_entrada.getText());
+//
+//                for (Hospitalizacion e : empleado) {
+//                    id_empleado = e.getId_empleado();
+//                    id_persona = e.getId_persona();
+//                    id_servicio = e.getId_servicio();
+//                    txt_carnet.setText(e.getCarnet());
+//                    Txt_contrasenna.setText(e.getContrasenna());
+//                    setIndexComboPersona(e.getId_persona());
+//                    setIndexComboServicio(e.getId_servicio());
+//                    setIndexComboEstado(e.getEstado());
+//                }
+//            } catch (Exception sql) {
+//                JOptionPane.showMessageDialog(null, sql);
+//            }
+//        } else {
+//            if (txt_carnet != null) {
+//                if (txt_buscar.getText() != "") {
+//                    try {
+//                        ArrayList<Empleado> empleado = empBo.buscarEmpleadoNombre(txt_buscar.getText());
+//
+//                        for (Empleado e : empleado) {
+//                            id_empleado = e.getId_empleado();
+//                            id_persona = e.getId_persona();
+//                            id_servicio = e.getId_servicio();
+//                            txt_carnet.setText(e.getCarnet());
+//                            Txt_contrasenna.setText(e.getContrasenna());
+//                            setIndexComboPersona(e.getId_persona());
+//                            setIndexComboServicio(e.getId_servicio());
+//                            setIndexComboEstado(e.getEstado());
+//                        }
+//                    } catch (Exception sql) {
+//                        JOptionPane.showMessageDialog(null, sql);
+//                    }
+//                } else {
+//                    JOptionPane.showMessageDialog(this, "Debes ingresar un carnet o nombre a buscar");
+//                }
+//            }
+//        }
+    }//GEN-LAST:event_btn_buscarActionPerformed
 
     /**
      * 

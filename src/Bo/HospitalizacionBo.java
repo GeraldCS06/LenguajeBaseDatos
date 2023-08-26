@@ -11,8 +11,10 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import oracle.jdbc.OracleTypes;
+import java.sql.ResultSet;
 
 /**
  *
@@ -51,7 +53,7 @@ public class HospitalizacionBo {
 
     public String actualizarHospitalizacion(Hospitalizacion hos) throws SQLException {
 
-        String sql = "{CALL PKG_EMPLEADO.actualizar_hospitalizacion(?, ?, ?, ?)}";
+        String sql = "{CALL PKG_HOSPITALIZACION.actualizar_hospitalizacion(?, ?, ?, ?)}";
         Connection con = Conexion.Conectar();
         PreparedStatement pstmt = con.prepareCall(sql);
 
@@ -70,11 +72,51 @@ public class HospitalizacionBo {
         }
         return mensaje;
     }
+    public ArrayList buscarMascota(int p_id_hospitalizacion) {
+    ArrayList<Hospitalizacion> hospitalizado = new ArrayList<>();
+
+        try {
+            Connection con = Conexion.Conectar();
+
+            String callFunction = "{ ? = call PKG_HOSPITALIZACION.buscar_hospitalizacion_id(?) }";
+            CallableStatement stmt = con.prepareCall(callFunction);
+
+            stmt.registerOutParameter(1, OracleTypes.CURSOR);
+
+            stmt.setInt(1,p_id_hospitalizacion);
+
+            stmt.execute();
+
+            ResultSet rs = (ResultSet) stmt.getObject(1);
+
+            if (rs != null && rs.next()) {
+                do {
+                    int id_hos = rs.getInt("IDHospitalizacion");
+                    int id_mas = rs.getInt("IDMascota");
+                    String fecha = rs.getString("FechaEntrada");
+                    String decripcion = rs.getString("Descripcion");
+                    float precio = rs.getFloat("Precio");
+
+                    hospitalizado.add(new Hospitalizacion(id_hos, id_mas, fecha, decripcion, precio));
+
+                } while (rs.next());
+            }
+
+            rs.close();
+            stmt.close();
+            con.close();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "No se encontraron coincidencias" + e);
+            System.out.println("Error: " + e);
+        }
+        return hospitalizado;
+    }
 
     public String eliminarHospitalizacion(int id_hospitalizacion) throws SQLException {
         try {
             Connection con = Conexion.Conectar();
-            String callFunction = "{ ? = call PKG_EMPLEADO.eliminar_hospitalizacion(?) }";
+            String callFunction = "{ ? = call PKG_HOSPITALIZACION.eliminar_hospitalizacion(?) }";
             CallableStatement stmt = con.prepareCall(callFunction);
 
             stmt.registerOutParameter(1, OracleTypes.VARCHAR);
